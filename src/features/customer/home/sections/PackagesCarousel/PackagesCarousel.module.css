@@ -1,59 +1,62 @@
-.section { margin-top: 0; --pc-card: 300px; --pc-step: 208px; }
+/* Bounded 3D coverflow — mirrors the POC (perspective stage, active card
+   centred and emphasised, neighbours rotated back). */
+.section { margin-top: 0; }
 .head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
-.title { font-size: 1.3rem; font-weight: 800; color: var(--color-navy); margin: 0 0 6px; }
+.title { font-size: 1.3rem; font-weight: 800; color: var(--color-navy); margin: 0 0 6px; letter-spacing: -0.02em; }
 .subtitle { font-size: 0.84rem; color: var(--color-text-muted); margin: 0; }
 .build { display: inline-flex; align-items: center; gap: 3px; color: var(--color-primary); font-weight: 600; font-size: 0.95rem; text-decoration: none; white-space: nowrap; background: none; border: none; cursor: pointer; }
 .build:hover { text-decoration: underline; }
 
-/* Coverflow stage: a clipped viewport with a translating track of cards. */
-.stage { position: relative; display: flex; justify-content: center; align-items: center; }
-.viewport { width: 100%; overflow: hidden; padding: 34px 0 46px; }
-.track { position: relative; left: 50%; display: flex; align-items: center; transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform; }
+/* 3D stage. Cards are absolutely positioned and transformed per their distance
+   from the active index. */
+.stage { position: relative; height: 366px; perspective: 1600px; overflow: hidden; }
 
-.nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 8; width: 40px; height: 40px; border-radius: 999px; border: 1px solid var(--color-border); background: #fff; color: var(--color-navy); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-md); }
-.nav:hover { color: var(--color-primary); }
-.navLeft { left: 0; }
-.navRight { right: 0; }
+.slide { position: absolute; top: 12px; left: calc(50% - 165px); width: 330px; transform-origin: center center; transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s; cursor: pointer; }
+.slide:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 4px; border-radius: 20px; }
 
-/* Each slide reserves --pc-step of track width; the card inside is wider so
-   neighbours tuck behind the active card. */
-.slide { flex: 0 0 var(--pc-step); display: flex; justify-content: center; }
-.card { position: relative; width: var(--pc-card); background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 16px 30px rgba(11,20,48,0.14); transform: scale(0.9); transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.55s ease; z-index: 1; }
-.slideActive { z-index: 5; }
-.slideActive .card { transform: scale(1.02); box-shadow: 0 26px 50px -18px rgba(11,20,48,0.4); z-index: 5; }
+.card { display: flex; flex-direction: column; width: 330px; background: #fff; border: 1px solid var(--color-border); border-radius: 18px; overflow: hidden; box-shadow: none; transition: box-shadow 0.4s ease; }
+.slideActive .card { box-shadow: 0 34px 64px -30px rgba(16, 24, 42, 0.5); }
 
-/* Washed veil dims the inactive (side) cards. */
-.veil { position: absolute; inset: 0; z-index: 6; border-radius: 20px; background: rgba(250,249,247,0.4); pointer-events: none; }
-
-.badge { position: absolute; z-index: 7; top: 14px; left: 18px; padding: 4px 12px; border-radius: var(--radius-pill); background: #fbe3d6; color: #c2502a; font-size: 0.74rem; font-weight: 700; }
-.banner { position: relative; height: 128px; overflow: hidden; }
+.banner { position: relative; height: 152px; overflow: hidden; }
+.badge { position: absolute; z-index: 3; top: 12px; left: 12px; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.95); color: #c2502a; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
 .art { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-.art > svg:last-child { width: 110px; height: 88px; position: relative; z-index: 1; }
+.art > svg:last-child { width: 104px; height: 82px; position: relative; z-index: 1; }
 .art > svg:first-child { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* Subtle bottom scrim for depth (POC uses one over its photos). */
+.scrim { position: absolute; inset: 0; z-index: 2; background: linear-gradient(to top, rgba(11, 18, 38, 0.45), rgba(11, 18, 38, 0) 58%); pointer-events: none; }
 
-.body { padding: 16px 20px 18px; }
-.titleRow { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
-.cTitle { font-size: 1.12rem; font-weight: 800; color: var(--color-navy); margin: 0; }
-.guests { font-size: 0.8rem; color: var(--color-text-muted); white-space: nowrap; }
-.budget { font-size: 1.45rem; font-weight: 800; color: var(--color-primary); margin: 6px 0 12px; }
-.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
-.tag { padding: 4px 12px; border-radius: var(--radius-pill); background: #f1f1ef; color: var(--color-text-muted); font-size: 0.8rem; font-weight: 500; }
+.body { display: flex; flex-direction: column; padding: 15px 17px 18px; }
+.titleRow { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.cTitle { font-size: 1rem; font-weight: 700; color: var(--color-navy); margin: 0; }
+.guests { font-size: 0.72rem; color: var(--color-text-muted); white-space: nowrap; }
+.budget { font-size: 1.125rem; font-weight: 800; color: var(--color-primary); margin: 6px 0 11px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.tag { padding: 4px 10px; border-radius: var(--radius-pill); background: #f1f1ef; color: var(--color-text-muted); font-size: 0.72rem; font-weight: 500; }
 
-.explore { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 48px; border: none; border-radius: 12px; background: var(--color-primary); color: #fff; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s ease; }
-.explore:hover { background: var(--color-primary-hover); }
-.exploreLink { display: flex; align-items: center; justify-content: center; gap: 5px; width: 100%; height: 42px; border: 1px solid var(--color-border); border-radius: 11px; font-size: 0.84rem; font-weight: 600; color: var(--color-text-muted); }
+/* Active card = filled CTA; neighbours = outline (POC). */
+.explore { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 42px; border-radius: 11px; font-size: 0.85rem; font-weight: 600; }
+.exploreFilled { background: var(--color-primary); color: #fff; border: 1px solid var(--color-primary); }
+.exploreOutline { background: #fff; color: var(--color-text-muted); border: 1px solid var(--color-border); }
 
-.dots { display: flex; justify-content: center; gap: 7px; margin-top: 2px; }
-.dot { width: 7px; height: 7px; border-radius: 999px; background: #d7d9e0; border: none; cursor: pointer; transition: all 0.25s ease; }
+.nav { position: absolute; top: 40%; transform: translateY(-50%); z-index: 20; width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--color-border); background: #fff; color: var(--color-navy); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 8px 20px -6px rgba(16, 32, 64, 0.28); transition: color 0.15s ease, opacity 0.15s ease; }
+.nav:hover:not(:disabled) { color: var(--color-primary); }
+.nav:disabled { opacity: 0.35; cursor: default; }
+.navLeft { left: 8px; }
+.navRight { right: 8px; }
+
+.dots { display: flex; justify-content: center; gap: 7px; margin-top: 6px; }
+.dot { width: 8px; height: 8px; border-radius: 999px; background: var(--color-border); border: none; cursor: pointer; transition: all 0.3s ease; }
 .dotOn { width: 22px; background: var(--color-primary); }
 
 @media (prefers-reduced-motion: reduce) {
-  .track, .card { transition: none; }
+  .slide { transition: none; }
 }
 
+/* Mobile: drop the 3D coverflow and stack full cards (POC's narrow layout). */
 @media (max-width: 720px) {
-  .section { --pc-card: 82vw; --pc-step: 66vw; }
-  .nav { display: none; }
-  .card { transform: scale(0.94); }
-  .slideActive .card { transform: scale(1); }
+  .stage { height: auto; perspective: none; overflow: visible; display: flex; flex-direction: column; gap: 16px; }
+  .slide { position: static; left: auto; top: auto; width: 100%; transform: none !important; opacity: 1 !important; pointer-events: auto !important; }
+  .card { width: 100%; box-shadow: 0 16px 30px -14px rgba(11, 20, 48, 0.18); }
+  .exploreOutline { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+  .nav, .dots { display: none; }
 }

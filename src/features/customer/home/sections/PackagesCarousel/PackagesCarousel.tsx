@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { OccasionArt, Confetti } from '@shared/reusable';
@@ -14,13 +14,39 @@ const GRAD: Record<ArtKey, string> = {
   corporate: 'linear-gradient(165deg, #243a6b, #0e1a33)',
 };
 
-function Card({ item, active, onExplore }: { item: PackageItem; active: boolean; onExplore: () => void }) {
+function Card({
+  item,
+  activeCard,
+  style,
+  onClick,
+}: {
+  item: PackageItem;
+  activeCard: boolean;
+  style: React.CSSProperties;
+  onClick: () => void;
+}) {
   return (
-    <div className={`${styles.slide} ${active ? styles.slideActive : ''}`} aria-hidden={!active}>
+    <div
+      className={`${styles.slide} ${activeCard ? styles.slideActive : ''}`}
+      style={style}
+      role="button"
+      tabIndex={activeCard ? 0 : -1}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+    >
       <div className={styles.card}>
-        <span className={styles.badge}>{item.badge}</span>
         <div className={styles.banner} style={{ backgroundImage: GRAD[item.art] }}>
-          <span className={styles.art} aria-hidden><Confetti /><OccasionArt art={item.art} /></span>
+          <span className={styles.badge}>{item.badge}</span>
+          <span className={styles.art} aria-hidden>
+            <Confetti />
+            <OccasionArt art={item.art} />
+          </span>
+          <span className={styles.scrim} aria-hidden />
         </div>
         <div className={styles.body}>
           <div className={styles.titleRow}>
@@ -28,14 +54,15 @@ function Card({ item, active, onExplore }: { item: PackageItem; active: boolean;
             <span className={styles.guests}>{item.guests}</span>
           </div>
           <div className={styles.budget}>{item.budget}</div>
-          <div className={styles.tags}>{item.tags.map((t) => <span key={t} className={styles.tag}>{t}</span>)}</div>
-          {active ? (
-            <button type="button" className={styles.explore} onClick={onExplore}><ChevronRight size={16} /> Explore package</button>
-          ) : (
-            <span className={styles.exploreLink}><ChevronRight size={13} /> Explore package</span>
-          )}
+          <div className={styles.tags}>
+            {item.tags.map((t) => (
+              <span key={t} className={styles.tag}>{t}</span>
+            ))}
+          </div>
+          <span className={`${styles.explore} ${activeCard ? styles.exploreFilled : styles.exploreOutline}`}>
+            <ChevronRight size={15} /> Explore package
+          </span>
         </div>
-        {!active && <span className={styles.veil} aria-hidden />}
       </div>
     </div>
   );
@@ -46,59 +73,19 @@ export interface PackagesCarouselProps {
 }
 
 export function PackagesCarousel({ data }: PackagesCarouselProps) {
-  // Items + copy arrive via props from the aggregated home feed.
+  // Items + copy arrive via props from the aggregated home feed (dynamic).
   const items = data.items;
-  const navigate = useNavigate();
   const n = items.length;
+  const navigate = useNavigate();
 
-  // Coverflow track with clones on both ends for a seamless infinite slide.
-  // Track positions: 0 = clone(last), 1..n = real items, n+1 = clone(first).
-  const loop = n > 0 ? [items[n - 1]!, ...items, items[0]!] : [];
-  const [pos, setPos] = useState(1);
-  const [animate, setAnimate] = useState(true);
-  const [paused, setPaused] = useState(false);
-  const trackRef = useRef<HTMLDivElement | null>(null);
-
-  const realIndex = ((pos - 1) % n + n) % n;
-
-  const go = useCallback((d: number) => {
-    setAnimate(true);
-    setPos((p) => p + d);
-  }, []);
-
-  const jumpTo = (i: number) => {
-    setAnimate(true);
-    setPos(i + 1);
-  };
-
-  // Snap past the clones (no transition) once the slide finishes.
-  const handleTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
-    if (e.target !== trackRef.current || e.propertyName !== 'transform') return;
-    if (pos === n + 1) { setAnimate(false); setPos(1); }
-    else if (pos === 0) { setAnimate(false); setPos(n); }
-  };
-
-  // Re-enable the transition on the next frame after a snap.
-  useEffect(() => {
-    if (animate) return;
-    const id = requestAnimationFrame(() => setAnimate(true));
-    return () => cancelAnimationFrame(id);
-  }, [animate]);
-
-  // Auto-scroll: advance every 4.5s, paused on hover/focus. Respects reduced-motion.
-  useEffect(() => {
-    if (paused || n <= 1) return;
-    if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-    const id = window.setInterval(() => go(1), 4500);
-    return () => window.clearInterval(id);
-  }, [paused, n, go]);
+  // Bounded 3D coverflow (matches the POC): the active card is centred and
+  // emphasised; neighbours rotate back in 3D. No auto-advance, no infinite loop
+  // — arrows clamp to the ends, exactly like the POC.
+  const [active, setActive] = useState(n > 1 ? 1 : 0);
 
   if (n === 0) return null;
 
-  const trackStyle: React.CSSProperties = {
-    transform: `translateX(calc(-1 * (var(--pc-step) * ${pos} + var(--pc-step) / 2)))`,
-    transition: animate ? undefined : 'none',
-  };
+  const current = Math.min(active, n - 1);
 
   return (
     <section className={styles.section}>
@@ -107,37 +94,66 @@ export function PackagesCarousel({ data }: PackagesCarouselProps) {
           <h2 className={styles.title}>{data.title}</h2>
           <p className={styles.subtitle}>{data.subtitle}</p>
         </div>
-        <button type="button" className={styles.build} onClick={() => navigate('/plan')}>{data.buildLabel} <ChevronRight size={15} /></button>
+        <button type="button" className={styles.build} onClick={() => navigate('/plan')}>
+          {data.buildLabel} <ChevronRight size={15} />
+        </button>
       </header>
 
-      <div
-        className={styles.stage}
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-        onFocusCapture={() => setPaused(true)}
-        onBlurCapture={() => setPaused(false)}
-      >
+      <div className={styles.stage}>
+        {items.map((item, i) => {
+          const pos = i - current;
+          const ab = Math.abs(pos);
+          const style: React.CSSProperties = {
+            transform: `translateX(${pos * 222}px) rotateY(${-pos * 30}deg) scale(${pos === 0 ? 1 : 0.84})`,
+            zIndex: 10 - ab,
+            opacity: ab > 1 ? 0 : pos === 0 ? 1 : 0.62,
+            pointerEvents: ab > 1 ? 'none' : 'auto',
+          };
+          return (
+            <Card
+              key={item.id}
+              item={item}
+              activeCard={pos === 0}
+              style={style}
+              onClick={() => (pos === 0 ? navigate('/plan') : setActive(i))}
+            />
+          );
+        })}
+
         {n > 1 && (
-          <button type="button" className={`${styles.nav} ${styles.navLeft}`} onClick={() => go(-1)} aria-label="Previous"><ChevronLeft size={18} /></button>
+          <button
+            type="button"
+            className={`${styles.nav} ${styles.navLeft}`}
+            onClick={() => setActive((a) => Math.max(0, a - 1))}
+            disabled={current === 0}
+            aria-label="Previous package"
+          >
+            <ChevronLeft size={19} />
+          </button>
         )}
-
-        <div className={styles.viewport}>
-          <div ref={trackRef} className={styles.track} style={trackStyle} onTransitionEnd={handleTransitionEnd}>
-            {loop.map((it, i) => (
-              <Card key={i} item={it} active={i === pos} onExplore={() => navigate('/plan')} />
-            ))}
-          </div>
-        </div>
-
         {n > 1 && (
-          <button type="button" className={`${styles.nav} ${styles.navRight}`} onClick={() => go(1)} aria-label="Next"><ChevronRight size={18} /></button>
+          <button
+            type="button"
+            className={`${styles.nav} ${styles.navRight}`}
+            onClick={() => setActive((a) => Math.min(n - 1, a + 1))}
+            disabled={current === n - 1}
+            aria-label="Next package"
+          >
+            <ChevronRight size={19} />
+          </button>
         )}
       </div>
 
       {n > 1 && (
         <div className={styles.dots}>
           {items.map((it, i) => (
-            <button key={it.id} type="button" className={`${styles.dot} ${i === realIndex ? styles.dotOn : ''}`} onClick={() => jumpTo(i)} aria-label={`Go to ${it.title}`} />
+            <button
+              key={it.id}
+              type="button"
+              className={`${styles.dot} ${i === current ? styles.dotOn : ''}`}
+              onClick={() => setActive(i)}
+              aria-label={`Go to ${it.title}`}
+            />
           ))}
         </div>
       )}
