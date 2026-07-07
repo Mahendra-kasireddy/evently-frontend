@@ -1,0 +1,1 @@
+export { QuotesHero } from './QuotesHero';

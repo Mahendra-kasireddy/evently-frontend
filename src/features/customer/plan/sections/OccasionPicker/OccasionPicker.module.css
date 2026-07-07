@@ -1,0 +1,13 @@
+.block { margin-bottom: 28px; }
+.title { font-size: 1.15rem; font-weight: 800; color: var(--color-navy); margin: 0 0 14px; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.card { position: relative; aspect-ratio: 287 / 122; border-radius: 14px; overflow: hidden; cursor: pointer; border: 2px solid transparent; background-size: cover; padding: 0; transition: border-color 0.15s ease, transform 0.15s var(--ease-card); }
+.card:hover { transform: translateY(-2px); }
+.cardOn { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-soft); }
+.art { position: absolute; inset: 0; }
+.art > svg:last-child { position: absolute; top: 14px; left: 0; right: 0; margin: auto; width: 78px; height: 62px; }
+.art > svg:first-child { position: absolute; inset: 0; width: 100%; height: 100%; }
+.icon { position: absolute; top: 10px; left: 10px; width: 30px; height: 30px; border-radius: 9px; background: #fff; color: var(--color-navy); display: inline-flex; align-items: center; justify-content: center; z-index: 1; }
+.check { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; border-radius: 999px; background: var(--color-primary); color: #fff; display: inline-flex; align-items: center; justify-content: center; z-index: 1; }
+.label { position: absolute; left: 14px; bottom: 12px; color: #fff; font-size: 0.98rem; font-weight: 700; z-index: 1; }
+@media (max-width: 640px) { .grid { grid-template-columns: 1fr 1fr; } }

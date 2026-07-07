@@ -1,0 +1,8 @@
+.hero { position: relative; overflow: hidden; background: var(--color-navy-deep); border-radius: 18px; padding: 30px 32px; color: #fff; }
+.glow { position: absolute; top: -90px; right: 8%; width: 280px; height: 280px; border-radius: 999px; background: radial-gradient(circle, rgba(232,99,58,0.28), rgba(232,99,58,0) 70%); }
+.eyebrow { position: relative; z-index: 1; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; color: var(--color-accent-warm); }
+.heading { position: relative; z-index: 1; font-size: 1.9rem; font-weight: 800; margin: 8px 0 0; }
+.subtitle { position: relative; z-index: 1; font-size: 0.95rem; line-height: 1.5; color: rgba(255,255,255,0.74); margin: 10px 0 0; max-width: 560px; }
+.trust { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 22px; margin-top: 16px; }
+.trust span { display: inline-flex; align-items: center; gap: 7px; font-size: 0.85rem; color: rgba(255,255,255,0.82); }
+.trust svg { color: var(--color-accent-warm); }

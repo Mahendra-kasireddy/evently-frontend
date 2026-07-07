@@ -1,0 +1,48 @@
+.head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 22px; gap: 16px; }
+.cta { display: inline-flex; align-items: center; gap: 6px; color: var(--color-primary); font-weight: 600; font-size: 0.95rem; text-decoration: none; white-space: nowrap; }
+
+/* Fanned, overlapping deck (gentle smile arc) with a slow floating sway.
+   Uses independent rotate/translate props so the float never drops the tilt. */
+.row {
+  list-style: none; margin: 0; padding: 24px 0 12px;
+  display: flex; justify-content: center; align-items: flex-start;
+  min-height: 318px;
+}
+.card {
+  position: relative; width: 186px; height: 248px; flex: 0 0 auto;
+  margin-left: -20px;
+  border-radius: 16px; overflow: hidden; cursor: pointer; isolation: isolate;
+  border: none;
+  box-shadow: 0 14px 30px rgba(11, 20, 48, 0.26);
+  transition: translate 0.3s var(--ease-card), rotate 0.3s var(--ease-card), scale 0.3s var(--ease-card), box-shadow 0.3s ease;
+}
+.card:first-child { margin-left: 0; }
+.row .card:nth-child(1) { rotate: -12deg;  z-index: 1; animation: sway1 6s ease-in-out infinite; }
+.row .card:nth-child(2) { rotate: -7deg;   z-index: 2; animation: sway2 6.6s ease-in-out infinite; }
+.row .card:nth-child(3) { rotate: -2.5deg; z-index: 3; animation: sway3 7.2s ease-in-out infinite; }
+.row .card:nth-child(4) { rotate: 2.5deg;  z-index: 4; animation: sway3 7.2s ease-in-out infinite 0.4s; }
+.row .card:nth-child(5) { rotate: 7deg;    z-index: 5; animation: sway2 6.6s ease-in-out infinite 0.4s; }
+.row .card:nth-child(6) { rotate: 12deg;   z-index: 6; animation: sway1 6s ease-in-out infinite 0.4s; }
+.card:hover { translate: 0 -12px; rotate: 0deg; scale: 1.05; z-index: 7; animation-play-state: paused; box-shadow: var(--shadow-tile-hover); }
+
+@keyframes sway1 { 0%, 100% { translate: 0 2px; }  50% { translate: 0 -5px; } }
+@keyframes sway2 { 0%, 100% { translate: 0 12px; } 50% { translate: 0 5px; } }
+@keyframes sway3 { 0%, 100% { translate: 0 20px; } 50% { translate: 0 13px; } }
+
+.img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+.overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,20,48,0.04), rgba(11,20,48,0.82)); z-index: -1; }
+.icon { position: absolute; top: 12px; left: 12px; width: 34px; height: 34px; border-radius: 9px; background: rgba(255,255,255,0.95); color: var(--color-primary); display: inline-flex; align-items: center; justify-content: center; }
+.meta { position: absolute; left: 14px; right: 12px; bottom: 15px; color: #fff; }
+.cardTitle { margin: 0; font-size: 1rem; font-weight: 700; line-height: 1.15; }
+.cardSub { margin: 2px 0 0; font-size: 0.74rem; opacity: 0.82; }
+
+@media (max-width: 1024px) {
+  .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 0; min-height: 0; }
+  .card { width: auto; height: 220px; margin-left: 0; box-shadow: var(--shadow-md); rotate: 0 !important; translate: 0 !important; animation: none !important; }
+}
+@media (max-width: 640px) {
+  .row { grid-template-columns: repeat(2, 1fr); }
+  .head { flex-direction: column; align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) { .row .card { animation: none !important; } }
+.section { padding: 28px 0 56px; }

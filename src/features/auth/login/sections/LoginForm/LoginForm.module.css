@@ -1,0 +1,22 @@
+.panel { background: #fff; padding: 48px 44px; display: flex; flex-direction: column; }
+.title { font-size: 1.6rem; font-weight: 800; color: var(--color-navy); margin: 0 0 8px; }
+.subtitle { font-size: 0.95rem; color: var(--color-text-muted); line-height: 1.5; margin: 0 0 28px; }
+.label { font-size: 0.85rem; font-weight: 600; color: var(--color-navy); margin-bottom: 8px; display: block; }
+.inputWrap { display: flex; align-items: center; height: 50px; border: 1px solid var(--color-border); border-radius: 12px; padding: 0 14px; gap: 10px; background: #fff; transition: border-color 0.15s ease; }
+.inputWrap:focus-within { border-color: var(--color-primary); }
+.inputError { border-color: #e5484d; }
+.dial { font-size: 0.95rem; font-weight: 600; color: var(--color-navy); padding-right: 10px; border-right: 1px solid var(--color-border); }
+.input { flex: 1; border: none; outline: none; font-size: 1rem; color: var(--color-navy); background: transparent; }
+.err { color: #d4453a; font-size: 0.82rem; margin: 8px 0 0; }
+.ok { color: var(--color-green); font-size: 0.85rem; margin: 8px 0 0; }
+.full { width: 100%; margin-top: 18px; }
+.or { display: flex; align-items: center; text-align: center; color: var(--color-text-muted); font-size: 0.85rem; margin: 22px 0; }
+.or::before, .or::after { content: ''; flex: 1; height: 1px; background: var(--color-border); }
+.or span { padding: 0 14px; }
+.divider { height: 1px; background: var(--color-border); margin: 26px 0; }
+.roles { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.92rem; font-weight: 600; }
+.roles a { color: var(--color-primary); text-decoration: none; }
+.roles a:hover { text-decoration: underline; }
+.dot { color: var(--color-text-muted); }
+.terms { text-align: center; font-size: 0.8rem; color: var(--color-text-muted); margin: 16px 0 0; line-height: 1.5; }
+.terms strong { color: var(--color-navy); font-weight: 600; }

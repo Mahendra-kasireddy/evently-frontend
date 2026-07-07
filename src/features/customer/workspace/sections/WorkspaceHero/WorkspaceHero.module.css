@@ -1,0 +1,18 @@
+.hero { position: relative; overflow: hidden; display: flex; align-items: center; gap: 22px; background: var(--color-navy-deep); border-radius: 18px; padding: 24px 28px; color: #fff; }
+.circle { position: absolute; top: -40px; right: 180px; width: 200px; height: 200px; border-radius: 999px; background: rgba(232,99,58,0.12); }
+.back { position: relative; z-index: 1; flex: 0 0 auto; width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.06); color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.ring { position: relative; z-index: 1; width: 82px; height: 82px; flex: 0 0 auto; }
+.track { fill: none; stroke: rgba(255,255,255,0.14); stroke-width: 7; }
+.fill { fill: none; stroke: var(--color-primary); stroke-width: 7; stroke-linecap: round; }
+.ringText { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+.ringText strong { font-size: 0.95rem; font-weight: 800; }
+.ringText small { font-size: 0.56rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
+.info { position: relative; z-index: 1; flex: 1; }
+.eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; color: rgba(255,255,255,0.6); }
+.heading { font-size: 1.9rem; font-weight: 800; margin: 4px 0 0; }
+.subline { font-size: 0.92rem; color: rgba(255,255,255,0.74); margin: 6px 0 0; }
+.countdown { position: relative; z-index: 1; display: flex; gap: 18px; }
+.cd { text-align: center; }
+.cd strong { display: block; font-size: 1.7rem; font-weight: 800; }
+.cd small { font-size: 0.72rem; color: rgba(255,255,255,0.6); }
+@media (max-width: 760px) { .countdown { display: none; } }

@@ -1,0 +1,1 @@
+export { DiscoverHero } from './DiscoverHero';

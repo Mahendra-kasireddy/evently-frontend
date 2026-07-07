@@ -5,13 +5,24 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build --mode production",
+    "build:qa": "tsc -b && vite build --mode qa",
+    "build:prod": "tsc -b && vite build --mode production",
+    "preview": "vite preview",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
+    "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.12.0",
+    "axios": "^1.7.7",
+    "lucide-react": "^0.460.0",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.2.7",
+    "react-redux": "^9.3.0",
+    "react-router-dom": "^6.26.2",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -19,10 +30,15 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
+    "autoprefixer": "^10.4.20",
     "eslint": "^10.5.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
     "globals": "^17.6.0",
+    "postcss": "^8.4.47",
+    "prettier": "^3.3.3",
+    "tailwindcss": "^3.4.13",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.61.0",
     "vite": "^8.1.0"

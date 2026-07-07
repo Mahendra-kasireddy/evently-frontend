@@ -1,0 +1,14 @@
+.section { margin-top: 26px; }
+.title { font-size: 1.2rem; font-weight: 800; color: var(--color-navy); margin: 0 0 16px; }
+.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 22px; }
+.review { border-bottom: 1px solid var(--color-border); padding-bottom: 22px; }
+.review:last-child { border-bottom: none; padding-bottom: 0; }
+.head { display: flex; align-items: center; gap: 12px; }
+.avatar { width: 38px; height: 38px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 0.8rem; font-weight: 700; }
+.who { display: flex; flex-direction: column; line-height: 1.25; }
+.who strong { font-size: 0.95rem; color: var(--color-navy); }
+.who small { font-size: 0.78rem; color: var(--color-text-muted); }
+.stars { margin-left: auto; display: inline-flex; gap: 1px; color: #f4a93a; }
+.text { font-size: 0.95rem; color: var(--color-text); margin: 12px 0 0; }
+.reply { font-size: 0.9rem; color: var(--color-text-muted); margin: 10px 0 0 12px; }
+.reply strong { color: var(--color-navy); }

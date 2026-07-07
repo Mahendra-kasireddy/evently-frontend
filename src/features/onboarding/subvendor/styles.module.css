@@ -1,0 +1,6 @@
+.page { min-height: 70vh; background: var(--color-bg); padding: 44px 0 80px; }
+.card { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+.footer { display: flex; flex-direction: column; margin-top: 34px; }
+.cta { width: 100%; }
+.helper { text-align: center; font-size: 0.9rem; color: var(--color-text-muted); margin: 16px 0 0; }
+@media (max-width: 640px) { .card { padding: 0 16px; } }

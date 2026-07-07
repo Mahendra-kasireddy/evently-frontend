@@ -1,0 +1,18 @@
+.block { min-width: 0; }
+.title { font-size: 1.15rem; font-weight: 800; color: var(--color-navy); margin: 0 0 14px; }
+.list { display: flex; flex-direction: column; gap: 12px; }
+.card { background: #fff; border: 1px solid var(--color-border); border-radius: 14px; overflow: hidden; }
+.cardOpen { border-color: var(--border-card-hover); }
+.head { display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 18px; background: none; border: none; cursor: pointer; text-align: left; }
+.icon { flex: 0 0 auto; width: 38px; height: 38px; border-radius: 11px; background: #eef0f4; color: var(--color-navy); display: inline-flex; align-items: center; justify-content: center; }
+.titleCol { display: flex; flex-direction: column; line-height: 1.25; flex: 1; min-width: 0; }
+.titleCol strong { font-size: 0.98rem; font-weight: 700; color: var(--color-navy); }
+.titleCol small { font-size: 0.8rem; color: var(--color-text-muted); }
+.price { font-size: 1rem; font-weight: 800; color: var(--color-navy); }
+.caret { color: var(--color-text-muted); transition: transform 0.2s ease; }
+.caretOpen { transform: rotate(180deg); }
+.body { padding: 0 18px 16px 70px; }
+.subList { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+.subList li { display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--color-text-muted); }
+.subVal { color: var(--color-navy); font-weight: 600; }
+.note { margin: 12px 0 0; padding: 11px 13px; background: var(--color-bg); border-radius: 10px; font-size: 0.86rem; font-style: italic; color: var(--color-text-muted); }

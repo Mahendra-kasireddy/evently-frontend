@@ -1,0 +1,4 @@
+.page { min-height: 100vh; background: var(--color-bg); padding: 22px 0 48px; }
+.container { max-width: var(--container-max); margin: 0 auto; padding: 0 44px; display: flex; flex-direction: column; gap: 22px; }
+.grid { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 28px; align-items: start; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } .container { padding: 0 20px; } }

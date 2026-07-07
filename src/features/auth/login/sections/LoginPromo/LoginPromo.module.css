@@ -1,0 +1,17 @@
+.promo { position: relative; background: var(--color-navy-deep); color: #fff; overflow: hidden; display: flex; }
+.inner { position: relative; z-index: 1; padding: 48px 40px; display: flex; flex-direction: column; width: 100%; }
+.badge { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 6px 13px; border-radius: var(--radius-pill); background: rgba(94,224,168,0.16); border: 1px solid rgba(94,224,168,0.3); color: #5ee0a8; font-size: 0.78rem; font-weight: 600; }
+.title { margin: 22px 0 0; font-size: 2.1rem; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+.accent { color: var(--color-accent-warm); }
+.desc { margin: 18px 0 0; font-size: 0.98rem; line-height: 1.6; color: var(--color-text-on-dark); max-width: 360px; }
+.features { list-style: none; margin: 32px 0 0; padding: 0; display: flex; flex-direction: column; gap: 18px; }
+.features li { display: flex; align-items: center; gap: 14px; font-size: 0.92rem; color: #fff; line-height: 1.4; }
+.fIcon { width: 40px; height: 40px; flex-shrink: 0; border-radius: 11px; background: rgba(255,255,255,0.08); color: #fff; display: inline-flex; align-items: center; justify-content: center; }
+.proof { display: flex; align-items: center; gap: 12px; margin-top: auto; padding-top: 32px; }
+.avatars { display: flex; }
+.avatars span { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; color: #fff; border: 2px solid var(--color-navy-deep); margin-left: -8px; }
+.avatars span:first-child { margin-left: 0; background: #e8633a; }
+.avatars span:nth-child(2) { background: #1d9e75; }
+.avatars span:nth-child(3) { background: #3a5ca8; }
+.proof p { margin: 0; font-size: 0.85rem; color: var(--color-text-on-dark); }
+.proof strong { color: #fff; }

@@ -1,0 +1,11 @@
+.step { display: flex; flex-direction: column; }
+.title { font-size: 1.6rem; font-weight: 800; color: var(--color-navy); margin: 0 0 6px; letter-spacing: -0.01em; }
+.subtitle { font-size: 1rem; color: var(--color-text-muted); margin: 0 0 24px; }
+.label { font-size: 0.85rem; font-weight: 600; color: var(--color-navy); margin: 0 0 8px; }
+.label:not(:first-of-type) { margin-top: 20px; }
+.field { display: flex; align-items: center; height: 46px; border: 1px solid var(--color-border); border-radius: 10px; padding: 0 16px; background: #fff; transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+.field:focus-within { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-soft); }
+.prefix { font-size: 0.95rem; font-weight: 600; color: var(--color-navy); margin-right: 4px; }
+.input { flex: 1; border: none; outline: none; font-size: 0.95rem; color: var(--color-navy); background: transparent; min-width: 0; }
+.input::placeholder { color: var(--color-navy); opacity: 0.9; }
+.suffix { font-size: 0.95rem; color: var(--color-text-muted); margin-left: 8px; white-space: nowrap; }

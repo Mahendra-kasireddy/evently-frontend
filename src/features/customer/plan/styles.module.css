@@ -1,0 +1,9 @@
+.page { min-height: 100vh; background: var(--color-bg); padding: 22px 0 48px; }
+.container { max-width: var(--container-max); margin: 0 auto; padding: 0 44px; display: flex; flex-direction: column; gap: 22px; }
+.grid { display: grid; grid-template-columns: minmax(0, 1.95fr) minmax(0, 1fr); gap: 34px; align-items: start; }
+.col { min-width: 0; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } .container { padding: 0 20px; } }
+
+.banner { display: flex; align-items: flex-start; gap: 10px; background: var(--color-green-soft); border-radius: 12px; padding: 13px 15px; margin-top: 18px; font-size: 0.86rem; line-height: 1.45; color: var(--color-text); }
+.banner strong { color: var(--color-navy); }
+.bannerIcon { color: var(--color-green); flex: 0 0 auto; margin-top: 1px; }

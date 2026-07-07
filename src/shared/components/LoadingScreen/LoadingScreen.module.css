@@ -1,0 +1,30 @@
+.screen {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 22px; background: var(--color-bg);
+}
+.inline { position: static; min-height: 60vh; }
+
+.brand {
+  font-size: 2.1rem; font-weight: 800; letter-spacing: -0.02em; color: var(--color-navy);
+  animation: brandPulse 1.8s ease-in-out infinite;
+}
+.accent { color: var(--color-primary); }
+
+.bar {
+  position: relative; width: 200px; height: 5px; border-radius: 999px;
+  background: var(--color-border); overflow: hidden;
+}
+.fill {
+  position: absolute; inset: 0; width: 40%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-accent-warm), var(--color-primary));
+  animation: slide 1.25s var(--ease-card) infinite;
+}
+.msg { font-size: 0.92rem; color: var(--color-text-muted); margin: 0; }
+
+@keyframes brandPulse { 0%, 100% { opacity: 1; transform: translateY(0); } 50% { opacity: 0.72; transform: translateY(-3px); } }
+@keyframes slide { 0% { transform: translateX(-110%); } 100% { transform: translateX(360%); } }
+@media (prefers-reduced-motion: reduce) {
+  .brand { animation: none; }
+  .fill { animation: none; width: 100%; }
+}

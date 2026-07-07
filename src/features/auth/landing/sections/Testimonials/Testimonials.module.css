@@ -1,0 +1,42 @@
+.head { position: relative; margin-bottom: 40px; }
+.headText { text-align: center; max-width: 640px; margin: 0 auto; }
+.seeAll { position: absolute; right: 0; top: 4px; display: inline-flex; align-items: center; gap: 6px; color: var(--color-primary); font-weight: 600; font-size: 0.95rem; text-decoration: none; }
+
+/* 5 cards in a horizontally scrollable, snapping row */
+.grid {
+  list-style: none; margin: 0; padding: 4px 2px 14px;
+  display: flex; gap: 18px; overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+.card { position: relative; flex: 0 0 358px; height: 444px; border-radius: 18px; overflow: hidden; isolation: isolate; color: #fff; scroll-snap-align: start; transition: transform 0.22s var(--ease-card), box-shadow 0.22s ease; }
+.card:hover { transform: translateY(-4px); box-shadow: var(--shadow-tile-hover); }
+.bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+.scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,20,48,0.25) 30%, rgba(11,20,48,0.92)); z-index: -1; }
+.play { position: absolute; top: 16px; left: 16px; width: 40px; height: 40px; border-radius: 50%; border: none; background: rgba(255,255,255,0.9); color: var(--color-navy); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.sideActions { position: absolute; top: 16px; right: 16px; display: flex; flex-direction: column; gap: 10px; }
+.sideActions span { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.9); color: var(--color-navy); display: inline-flex; align-items: center; justify-content: center; }
+.body { position: absolute; left: 20px; right: 20px; bottom: 20px; }
+.tags { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.verified { display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; font-weight: 600; background: rgba(29,158,117,0.9); padding: 4px 9px; border-radius: var(--radius-pill); }
+.stars { color: #f5a623; display: inline-flex; gap: 1px; }
+.quote { margin: 0 0 16px; font-size: 1.05rem; font-weight: 700; line-height: 1.35; }
+.author { display: flex; align-items: center; gap: 10px; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--color-primary); display: inline-flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; }
+.name { display: block; font-size: 0.9rem; }
+.meta { font-size: 0.78rem; opacity: 0.8; }
+.likes { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; font-size: 0.85rem; color: #ff8b8b; }
+@media (max-width: 640px) { .card { flex-basis: 84%; } .seeAll { position: static; display: block; text-align: center; margin-top: 12px; } }
+
+.carousel { position: relative; }
+.nav {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 4;
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid var(--color-border); background: #fff; color: var(--color-navy);
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+  box-shadow: var(--shadow-md); transition: all 0.18s var(--ease-card);
+}
+.nav:hover { background: var(--color-navy); color: #fff; }
+.navLeft { left: -22px; }
+.navRight { right: -22px; }
+@media (max-width: 640px) { .nav { display: none; } }

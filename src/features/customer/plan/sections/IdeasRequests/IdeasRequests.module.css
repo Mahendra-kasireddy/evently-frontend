@@ -1,0 +1,13 @@
+.card { border: 1px solid var(--color-border); border-radius: 14px; padding: 18px 18px 20px; margin-top: 24px; }
+.head { display: flex; align-items: center; gap: 10px; }
+.icon { width: 32px; height: 32px; border-radius: 9px; background: var(--color-primary-soft); color: var(--color-primary); display: inline-flex; align-items: center; justify-content: center; }
+.title { font-size: 0.94rem; font-weight: 700; color: var(--color-navy); margin: 0; }
+.subtitle { font-size: 0.84rem; color: var(--color-text-muted); margin: 10px 0 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: #fff; font-size: 0.84rem; font-weight: 600; color: var(--color-navy); cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease; }
+.chip svg { color: var(--color-text-muted); }
+.chip:hover { border-color: var(--color-primary); background: var(--color-primary-soft); }
+.chip:hover svg { color: var(--color-primary); }
+.textarea { width: 100%; min-height: 88px; resize: vertical; border: 1px solid var(--color-border); border-radius: 12px; padding: 12px 14px; font: inherit; font-size: 0.88rem; color: var(--color-navy); outline: none; transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+.textarea::placeholder { color: var(--color-text-muted); }
+.textarea:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-soft); }

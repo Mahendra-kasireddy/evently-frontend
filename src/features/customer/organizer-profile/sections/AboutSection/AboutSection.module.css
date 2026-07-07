@@ -1,0 +1,6 @@
+.section { margin-top: 26px; }
+.title { font-size: 1.2rem; font-weight: 800; color: var(--color-navy); margin: 0 0 12px; }
+.text { font-size: 0.95rem; line-height: 1.6; color: var(--color-text-muted); margin: 0 0 16px; }
+.map { position: relative; height: 130px; border-radius: 14px; background: linear-gradient(135deg, #eef2f7, #e3e9f1); background-image: linear-gradient(rgba(26,46,90,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(26,46,90,0.05) 1px, transparent 1px); background-size: 28px 28px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.mapPin { color: var(--color-primary); }
+.areaPill { position: absolute; left: 14px; bottom: 14px; padding: 6px 12px; border-radius: var(--radius-pill); background: #fff; box-shadow: var(--shadow-sm); font-size: 0.82rem; font-weight: 600; color: var(--color-navy); }

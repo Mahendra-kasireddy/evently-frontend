@@ -1,0 +1,5 @@
+.dots { display: flex; justify-content: center; align-items: center; gap: 6px; position: relative; z-index: 2; margin-bottom: 16px; }
+.dot { width: 6px; height: 6px; border-radius: 999px; background: #d7d9e0; transition: all 0.3s var(--ease-card); }
+.done { background: var(--color-primary); }
+.active { width: 20px; background: var(--color-primary); }
+.pending { background: #d7d9e0; }

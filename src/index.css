@@ -1,111 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;1,500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Design tokens — single source of truth for the Evently visual language.
+ * Sampled from the reference design. CSS Modules reference these via var(),
+ * so colors/spacing are never hardcoded as magic values in components.
+ */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  /* Brand */
+  --color-primary: #e8633a; /* CTA / accents */
+  --color-primary-hover: #d4552e;
+  --color-primary-soft: #fdeee7;
+  --color-accent-warm: #ff8b5e; /* hero gradient accent */
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  /* Navy scale */
+  --color-navy: #1a2e5a; /* headings, dark surfaces */
+  --color-navy-deep: #0e1a33; /* hero / footer bg */
+  --color-navy-deeper: #0b1430;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Green (verification) */
+  --color-green: #1d9e75;
+  --color-green-soft: #e7f4ee;
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  /* Neutrals */
+  --color-bg: #f8f8f6; /* page background (cream) */
+  --color-surface: #ffffff; /* cards */
+  --color-border: #ebebeb;
+  --color-text: #1a2e5a; /* primary text */
+  --color-text-muted: #5b6675; /* body copy */
+  --color-text-on-dark: rgba(255, 255, 255, 0.82);
+  --color-text-on-dark-muted: rgba(255, 255, 255, 0.6);
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  /* Layout */
+  --container-max: 1200px;
+  --section-pad-y: 64px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-md: 0 8px 24px rgba(16, 24, 40, 0.08);
+  --shadow-lg: 0 20px 48px rgba(16, 24, 40, 0.12);
+
+  /* Interaction */
+  --ease-card: cubic-bezier(0.16, 0.84, 0.44, 1);
+  --shadow-card-hover: 0 14px 30px -14px rgba(26, 46, 90, 0.26);
+  --shadow-btn-hover: 0 8px 18px -7px rgba(16, 32, 64, 0.32);
+  --shadow-tile-hover: 0 18px 38px -16px rgba(26, 46, 90, 0.3);
+  --border-card-hover: #dde2ea;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+* {
+  box-sizing: border-box;
 }

@@ -1,0 +1,116 @@
+.hero {
+  position: relative;
+  background: var(--color-navy-deep);
+  overflow: hidden;
+  isolation: isolate;
+}
+.bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('/images/hero-arch.png');
+  background-size: cover;
+  background-position: center right;
+  opacity: 0.9;
+  z-index: -1;
+}
+.bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--color-navy-deep) 30%, rgba(14,26,51,0.4) 100%);
+}
+.inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 96px 44px 110px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+.content { position: relative; z-index: 1; max-width: 560px; flex: 1; }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 13px;
+  border-radius: var(--radius-pill);
+  background: rgba(94, 224, 168, 0.16);
+  border: 1px solid rgba(94, 224, 168, 0.3);
+  color: #5ee0a8;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.title {
+  margin: 24px 0 0;
+  font-size: clamp(2.6rem, 6vw, 4rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  display: flex;
+  flex-direction: column;
+}
+.titleLead { color: #fff; }
+.titleAccent { color: var(--color-accent-warm); }
+.subtitle {
+  margin: 24px 0 0;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--color-text-on-dark);
+  max-width: 460px;
+}
+.ctaRow { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+.proof { display: flex; align-items: center; gap: 16px; margin-top: 36px; }
+.avatars { display: flex; }
+.avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700; color: #fff;
+  border: 2px solid var(--color-navy-deep); margin-left: -10px;
+}
+.avatar[data-i='0'] { background: #2f9e7a; margin-left: 0; }
+.avatar[data-i='1'] { background: #4a90c2; }
+.avatar[data-i='2'] { background: #d98b2b; }
+.avatar[data-i='3'] { background: #7a5cc2; }
+.rating { color: #fff; font-size: 0.9rem; display: flex; flex-direction: column; gap: 2px; }
+.stars { color: #f5a623; display: inline-flex; gap: 1px; }
+.hero::after { content: ""; position: absolute; left: -70px; bottom: -50px; width: 270px; height: 270px; border-radius: 50%; background: #16284d; z-index: 0; }
+.statCards {
+  position: relative; z-index: 1;
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 16px; width: 248px;
+}
+.statCard {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255,255,255,0.95);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-md);
+}
+.statSkeleton { height: 72px; background: rgba(255,255,255,0.5); }
+.statIcon {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: var(--color-primary-soft); color: var(--color-primary);
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.statValue { display: block; font-size: 1.15rem; font-weight: 800; color: var(--color-navy); }
+.statLabel { font-size: 0.8rem; color: var(--color-text-muted); }
+@media (max-width: 960px) {
+  .statCards { display: none; }
+  .inner { padding-block: 72px 88px; }
+}
+
+/* Animated glow blobs (premium dark-section depth) */
+.glow { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.55; z-index: 0; pointer-events: none; }
+.glowOrange { width: 240px; height: 240px; background: #e8633a; top: 6%; right: 7%; animation: floatA 16s ease-in-out infinite; }
+.glowTeal { width: 180px; height: 180px; background: #1d9e75; bottom: 16%; left: 34%; animation: floatB 20s ease-in-out infinite; }
+@keyframes floatA { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-24px, 26px); } }
+@keyframes floatB { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(20px, -22px); } }
+
+/* Floating hero stat cards */
+@keyframes statFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+.statCard:nth-child(1) { animation: statFloat 5s ease-in-out infinite; }
+.statCard:nth-child(2) { animation: statFloat 5.6s ease-in-out infinite 0.5s; }
+.statCard:nth-child(3) { animation: statFloat 6.2s ease-in-out infinite 1s; }
+@media (prefers-reduced-motion: reduce) { .statCard { animation: none !important; } }

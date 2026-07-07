@@ -1,0 +1,50 @@
+.wrap { position: relative; background: var(--color-navy-deep); color: #fff; overflow: hidden; }
+.inner { position: relative; z-index: 1; max-width: var(--container-max); margin: 0 auto; padding: 80px 44px; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+.content { max-width: 520px; }
+.badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 13px; border-radius: var(--radius-pill); background: rgba(232,99,58,0.16); border: 1px solid rgba(232,99,58,0.3); color: var(--color-accent-warm); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; }
+.title { margin: 20px 0 0; font-size: clamp(2.2rem, 4.5vw, 3rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; display: flex; flex-direction: column; }
+.accent { color: var(--color-accent-warm); }
+.desc { margin: 18px 0 0; font-size: 1.02rem; line-height: 1.6; color: var(--color-text-on-dark); max-width: 460px; }
+
+.steps { list-style: none; margin: 28px 0 0; padding: 0; position: relative; display: flex; flex-direction: column; gap: 22px; }
+.steps::before { content: ''; position: absolute; left: 22px; top: 28px; bottom: 28px; width: 2px; background: rgba(255,255,255,0.12); }
+.step { display: flex; gap: 16px; position: relative; }
+.stepIcon { flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; z-index: 1; }
+.iconOrange { background: rgba(232,99,58,0.16); color: var(--color-accent-warm); }
+.iconGreen { background: rgba(29,158,117,0.18); color: #5fd6a8; }
+.stepTitle { margin: 2px 0 4px; font-size: 1rem; font-weight: 700; color: #fff; }
+.stepDesc { margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-on-dark-muted); max-width: 380px; }
+
+.ctaRow { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+
+.mock { position: relative; display: flex; justify-content: center; align-items: center; min-height: 560px; }
+.phone { position: relative; width: 300px; border-radius: 36px; background: linear-gradient(165deg, #16284d, #0b1430); border: 8px solid #060d20; padding: 30px 26px 22px; box-shadow: var(--shadow-lg); text-align: center; }
+.inviteBadge { display: inline-flex; align-items: center; gap: 6px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; color: var(--color-accent-warm); background: rgba(232,99,58,0.15); padding: 5px 10px; border-radius: var(--radius-pill); }
+.dots { display: flex; gap: 6px; justify-content: center; margin: 16px 0; }
+.dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.35); }
+.dots i:nth-child(1) { background: #e8633a; } .dots i:nth-child(2) { background: #e0a93c; } .dots i:nth-child(3) { background: #1d9e75; } .dots i:nth-child(4) { background: #5b7bd4; }
+.together { font-size: 0.6rem; letter-spacing: 0.14em; color: var(--color-text-on-dark-muted); margin: 0; }
+.names { font-family: var(--font-serif); font-size: 2rem; color: #fff; margin: 8px 0; line-height: 1.05; }
+.names em { color: var(--color-accent-warm); font-size: 1.1rem; display: block; font-style: italic; }
+.date { font-size: 0.78rem; letter-spacing: 0.08em; color: #fff; margin: 6px 0 4px; font-weight: 700; }
+.loc { display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; color: var(--color-text-on-dark-muted); margin: 0 0 16px; }
+.countdown { display: flex; gap: 10px; justify-content: center; margin-bottom: 18px; }
+.countdown div { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 0; width: 56px; display: flex; flex-direction: column; }
+.countdown strong { font-size: 1.2rem; font-weight: 800; color: #fff; }
+.countdown span { font-size: 0.55rem; letter-spacing: 0.1em; color: var(--color-text-on-dark-muted); }
+.phoneBar { display: flex; justify-content: space-around; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); color: var(--color-accent-warm); }
+.phoneBar :nth-child(n+2) { color: rgba(255,255,255,0.5); }
+
+.chip { position: absolute; display: inline-flex; align-items: center; gap: 6px; background: #fff; color: var(--color-navy); font-size: 0.78rem; font-weight: 600; padding: 9px 13px; border-radius: var(--radius-pill); box-shadow: var(--shadow-md); z-index: 3; }
+.chipCountdown { top: 4%; left: 2%; } .chipCountdown svg { color: var(--color-primary); }
+.chipPhotos { top: 42%; right: -2%; } .chipPhotos svg { color: var(--color-green); }
+.chipRide { bottom: 12%; left: 0; } .chipRide svg { color: #5b7bd4; }
+
+@media (max-width: 860px) { .inner { grid-template-columns: 1fr; } .mock { margin-top: 24px; min-height: 520px; } }
+
+/* Gentle floating on the invite chips */
+@keyframes chipFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+.chipCountdown { animation: chipFloat 4s ease-in-out infinite; }
+.chipPhotos { animation: chipFloat 5s ease-in-out infinite 0.5s; }
+.chipRide { animation: chipFloat 4.6s ease-in-out infinite 1s; }
+@media (prefers-reduced-motion: reduce) { .chipCountdown, .chipPhotos, .chipRide { animation: none; } }

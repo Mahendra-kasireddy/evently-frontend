@@ -1,0 +1,1 @@
+export { QuoteDetailHero } from './QuoteDetailHero';

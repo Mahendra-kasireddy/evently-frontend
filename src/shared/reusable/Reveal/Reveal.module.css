@@ -1,0 +1,10 @@
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.6s var(--ease-card), transform 0.6s var(--ease-card);
+  will-change: opacity, transform;
+}
+.reveal[data-revealed='true'] {
+  opacity: 1;
+  transform: none;
+}

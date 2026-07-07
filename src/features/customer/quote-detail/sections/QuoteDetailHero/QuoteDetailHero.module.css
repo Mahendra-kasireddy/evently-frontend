@@ -1,0 +1,13 @@
+.hero { position: relative; overflow: hidden; display: flex; align-items: center; gap: 16px; background: var(--color-navy-deep); border-radius: 18px; padding: 22px 26px; color: #fff; }
+.circle { position: absolute; top: -50px; right: 70px; width: 190px; height: 190px; border-radius: 999px; background: rgba(232,99,58,0.14); }
+.back { position: relative; z-index: 1; flex: 0 0 auto; width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.06); color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.avatar { position: relative; z-index: 1; flex: 0 0 auto; width: 56px; height: 56px; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 1.1rem; }
+.info { position: relative; z-index: 1; }
+.nameRow { display: flex; align-items: center; gap: 9px; }
+.name { font-size: 1.4rem; font-weight: 800; margin: 0; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: var(--radius-pill); font-size: 0.72rem; font-weight: 700; }
+.gold { background: #fbeccb; color: #a9791b; } .silver { background: #e8eaee; color: #6b7280; } .platinum { background: #dce8fb; color: #3b6bb0; } .bronze { background: #f3e2d3; color: #9a5b29; }
+.meta { display: flex; align-items: center; gap: 5px; font-size: 0.88rem; color: rgba(255,255,255,0.78); margin: 5px 0 0; }
+.star { color: #f4a93a; }
+.status { position: relative; z-index: 1; margin-left: auto; display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: var(--radius-pill); background: #fdf0d0; color: #a9791b; font-size: 0.78rem; font-weight: 700; }
+.status::before { content: ''; width: 6px; height: 6px; border-radius: 999px; background: currentColor; }

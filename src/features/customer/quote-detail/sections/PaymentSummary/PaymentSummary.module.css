@@ -1,0 +1,23 @@
+.sidebar { position: sticky; top: 88px; align-self: start; }
+.panel { background: #fff; border: 1px solid var(--color-border); border-radius: 16px; overflow: hidden; }
+.header { background: var(--color-navy-deep); color: #fff; padding: 20px 22px; }
+.eyebrow { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; color: rgba(255,255,255,0.55); }
+.total { font-size: 2rem; font-weight: 800; margin: 4px 0 2px; }
+.note { font-size: 0.8rem; color: rgba(255,255,255,0.6); }
+.body { padding: 18px 22px 22px; }
+.row { display: flex; justify-content: space-between; font-size: 0.92rem; color: var(--color-text-muted); margin-bottom: 12px; }
+.row strong { color: var(--color-navy); font-weight: 700; }
+.grand { padding-top: 12px; border-top: 1px solid var(--color-border); font-size: 1rem; }
+.grand span, .grand strong { color: var(--color-navy); font-weight: 800; }
+.advance { display: flex; justify-content: space-between; background: var(--color-primary-soft); border-radius: 12px; padding: 12px 14px; margin: 6px 0 16px; }
+.advance small { display: block; font-size: 0.72rem; color: var(--color-text-muted); }
+.advance strong { font-size: 1.05rem; font-weight: 800; color: var(--color-navy); }
+.advVal { color: var(--color-primary) !important; }
+.right { text-align: right; }
+.accept { display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; height: 50px; border: none; border-radius: 12px; background: var(--color-primary); color: #fff; font-size: 0.98rem; font-weight: 700; cursor: pointer; transition: background 0.15s ease; }
+.accept:hover { background: var(--color-primary-hover); }
+.altRow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.alt { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 44px; border: 1px solid var(--color-border); border-radius: 11px; background: #fff; font-size: 0.9rem; font-weight: 600; color: var(--color-navy); cursor: pointer; }
+.alt:hover { border-color: var(--border-card-hover); }
+.footnote { display: flex; align-items: flex-start; gap: 6px; font-size: 0.78rem; line-height: 1.4; color: var(--color-text-muted); margin: 14px 0 0; }
+.footnote svg { color: var(--color-green); flex: 0 0 auto; margin-top: 1px; }
