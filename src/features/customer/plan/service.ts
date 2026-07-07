@@ -1,18 +1,30 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { apiClient } from '@lib/api';
 import { baseApi, toQueryResult } from '@lib/rtk';
-import type { PlanData, PlanDraft, PlanOrganizer } from './types';
+import type {
+  PlanData,
+  PlanDraft,
+  PlanOrganizer,
+  PlanSubmission,
+  PlanUpsert,
+  RecommendationArgs,
+} from './types';
 
-/** Plan Event wizard data, from the backend `plan` screen-module. */
+/** Plan Event wizard config, assembled by the backend `plan` screen-module. */
 async function fetchPlanData(): Promise<PlanData> {
   const { data } = await apiClient.get<PlanData>('/plan/getPlanScreen');
   return data;
 }
 
-/** Real organizers matched against the user's selected categories. */
-async function fetchPlanOrganizers(categories: string[]): Promise<PlanOrganizer[]> {
+/** Real organizers scored by the backend recommendation engine against the plan context. */
+async function fetchPlanOrganizers(args: RecommendationArgs): Promise<PlanOrganizer[]> {
   const { data } = await apiClient.get<PlanOrganizer[]>('/plan/getOrganizers', {
-    params: { categories: categories.join(',') },
+    params: {
+      categories: args.categories.join(','),
+      occasion: args.occasion || undefined,
+      guests: args.guests || undefined,
+      city: args.city || undefined,
+    },
   });
   return data;
 }
@@ -30,20 +42,55 @@ export const planApi = baseApi.injectEndpoints({
     getPlanData: build.query<PlanData, void>({
       queryFn: () => toQueryResult(() => fetchPlanData()),
     }),
-    getPlanOrganizers: build.query<PlanOrganizer[], string[]>({
-      queryFn: (categories) => toQueryResult(() => fetchPlanOrganizers(categories)),
+    getPlanOrganizers: build.query<PlanOrganizer[], RecommendationArgs>({
+      queryFn: (args) => toQueryResult(() => fetchPlanOrganizers(args)),
     }),
     planRequestQuote: build.mutation<{ id: string }, PlanQuoteArgs>({
-      queryFn: (args) => toQueryResult(async () => (await apiClient.post<{ id: string }>(
-            '/quote/requestQuoteFromOrganizer',
-            args,
-          )).data),
+      queryFn: (args) =>
+        toQueryResult(
+          async () =>
+            (await apiClient.post<{ id: string }>('/quote/requestQuoteFromOrganizer', args)).data,
+        ),
       invalidatesTags: ['Quotes'],
+    }),
+
+    // ----- Persistence (authenticated customer) -----
+
+    /** Resume the customer's live draft (null if none). */
+    getMyDraft: build.query<PlanSubmission | null, void>({
+      queryFn: () =>
+        toQueryResult(async () => (await apiClient.get<PlanSubmission | null>('/plan/getMyDraft')).data),
+      providesTags: ['Plans'],
+    }),
+    /** All plans owned by the customer. */
+    getMyPlans: build.query<PlanSubmission[], void>({
+      queryFn: () =>
+        toQueryResult(async () => (await apiClient.get<PlanSubmission[]>('/plan/getMyPlans')).data),
+      providesTags: ['Plans'],
+    }),
+    /** Silent autosave of the wizard draft. */
+    savePlanDraft: build.mutation<PlanSubmission, PlanUpsert>({
+      queryFn: (body) =>
+        toQueryResult(async () => (await apiClient.put<PlanSubmission>('/plan/saveDraft', body)).data),
+      invalidatesTags: ['Plans'],
+    }),
+    /** Submit (persist) the plan — returns the created record + plan code. */
+    createPlan: build.mutation<PlanSubmission, PlanUpsert>({
+      queryFn: (body) =>
+        toQueryResult(async () => (await apiClient.post<PlanSubmission>('/plan/createPlan', body)).data),
+      invalidatesTags: ['Plans'],
     }),
   }),
 });
-export const { useGetPlanDataQuery, useGetPlanOrganizersQuery, usePlanRequestQuoteMutation } =
-  planApi;
+export const {
+  useGetPlanDataQuery,
+  useGetPlanOrganizersQuery,
+  usePlanRequestQuoteMutation,
+  useGetMyDraftQuery,
+  useGetMyPlansQuery,
+  useSavePlanDraftMutation,
+  useCreatePlanMutation,
+} = planApi;
 
 /** Editable event draft (client state) for the plan wizard. Date defaults to today. */
 const draftInitial: PlanDraft = {
@@ -62,7 +109,8 @@ export const planSlice = createSlice({
     toggleCategory: (s, a: PayloadAction<string>) => {
       s.categories = s.categories.includes(a.payload) ? s.categories.filter((c) => c !== a.payload) : [...s.categories, a.payload];
     },
+    hydrateDraft: (s, a: PayloadAction<Partial<PlanDraft>>) => ({ ...s, ...a.payload }),
   },
 });
-export const { setOccasion, setPlanField, setStep, toggleCategory } = planSlice.actions;
+export const { setOccasion, setPlanField, setStep, toggleCategory, hydrateDraft } = planSlice.actions;
 export const selectPlanDraft = (state: { planDraft: PlanDraft }) => state.planDraft;

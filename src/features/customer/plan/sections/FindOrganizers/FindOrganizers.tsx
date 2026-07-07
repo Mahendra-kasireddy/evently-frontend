@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SlidersHorizontal, Star, Award, Check } from 'lucide-react';
 import type { PlanFilters, OrgTier, PlanDraft, PlanOrganizer } from '../../types';
-import { useGetPlanOrganizersQuery, usePlanRequestQuoteMutation } from '../../service';
+import { useGetPlanOrganizersQuery, usePlanRequestQuoteMutation, useCreatePlanMutation } from '../../service';
 import styles from './FindOrganizers.module.css';
 
 const TIER_CLASS: Record<OrgTier, string> = { Bronze: 'bronze', Silver: 'silver', Gold: 'gold', Platinum: 'platinum' };
@@ -19,11 +19,13 @@ export interface FindOrganizersProps {
 
 export function FindOrganizers({ filters, draft, occasionLabel, organizers: passed }: FindOrganizersProps) {
   const navigate = useNavigate();
-  const { data: fetched = [], isLoading } = useGetPlanOrganizersQuery(draft?.categories ?? [], {
-    skip: !!passed, // don't fetch when a list is supplied
-  });
+  const { data: fetched = [], isLoading } = useGetPlanOrganizersQuery(
+    { categories: draft?.categories ?? [], occasion: draft?.occasionId, guests: draft?.guests, city: draft?.city },
+    { skip: !!passed }, // don't fetch when a list is supplied
+  );
   const organizers = passed ?? fetched;
   const [requestQuote, { isLoading: isRequesting }] = usePlanRequestQuoteMutation();
+  const [createPlan] = useCreatePlanMutation();
 
   const [tiers, setTiers] = useState<string[]>([]);
   const [rating, setRating] = useState<string>(''); // '' = any
@@ -62,6 +64,20 @@ export function FindOrganizers({ filters, draft, occasionLabel, organizers: pass
       return;
     }
     try {
+      // Persist the customer's plan (best-effort) before requesting the quote.
+      try {
+        await createPlan({
+          occasion: draft.occasionId,
+          eventDate: draft.eventDate || undefined,
+          city: draft.city,
+          area: draft.area,
+          guests: draft.guests,
+          ideas: draft.ideas,
+          categories: draft.categories,
+        }).unwrap();
+      } catch {
+        /* persistence is best-effort — the quote request still proceeds */
+      }
       await requestQuote({
         organizerId,
         occasion: occasionLabel ?? '',

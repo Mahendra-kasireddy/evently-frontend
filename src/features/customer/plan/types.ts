@@ -28,7 +28,6 @@ export interface PlanData {
   continueLabel: string;
   footnote: string;
   categories: PlanCategory[];
-  organizers: PlanOrganizer[];
   filters: PlanFilters;
 }
 
@@ -41,4 +40,41 @@ export interface PlanDraft {
   ideas: string;
   categories: string[];
   step: number;
+}
+
+/** Context sent to the backend recommendation engine (find-organizers step). */
+export interface RecommendationArgs {
+  categories: string[];
+  occasion?: string | undefined;
+  guests?: string | undefined;
+  city?: string | undefined;
+}
+
+export type PlanStatus = 'draft' | 'submitted' | 'quoted' | 'booked' | 'cancelled';
+
+/** A persisted event plan returned by the backend. */
+export interface PlanSubmission {
+  id: string;
+  planCode?: string;
+  occasion: string;
+  eventDate?: string;
+  city: string;
+  area: string;
+  guests: string;
+  ideas: string;
+  categories: string[];
+  status: PlanStatus;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+/** Payload for saving a draft / submitting a plan. */
+export interface PlanUpsert {
+  occasion?: string | undefined;
+  eventDate?: string | undefined;
+  city?: string | undefined;
+  area?: string | undefined;
+  guests?: string | undefined;
+  ideas?: string | undefined;
+  categories?: string[] | undefined;
 }
