@@ -1,0 +1,21 @@
+.screen {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 18px; background: var(--color-bg); padding: 24px; text-align: center;
+}
+.inline { position: static; min-height: 60vh; }
+
+.brand {
+  font-size: 2.1rem; font-weight: 800; letter-spacing: -0.02em; color: var(--color-navy);
+}
+.accent { color: var(--color-primary); }
+
+.msg { font-size: 0.95rem; color: var(--color-text-muted); margin: 0; max-width: 340px; }
+
+.retry {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 44px; padding: 0 22px; border: none; border-radius: 12px;
+  background: var(--color-primary); color: #fff; font-size: 0.92rem; font-weight: 700;
+  cursor: pointer; transition: background 0.15s ease;
+}
+.retry:hover { background: var(--color-primary-hover); }

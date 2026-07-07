@@ -3,4 +3,5 @@ export { Header } from './Header';
 export { Footer } from './Footer';
 export { ParticleField, type ParticleFieldProps } from './ParticleField';
 export { LoadingScreen, type LoadingScreenProps } from './LoadingScreen';
+export { ErrorState, type ErrorStateProps } from './ErrorState';
 export { AppHeader, type AppNavItem, type AppHeaderUser } from './AppHeader';

@@ -8,7 +8,7 @@ import type { CustomerHomeData } from '../types';
  * packages, organizers, booking and unread count into one payload.
  */
 export function useCustomerHome() {
-  const { data: feed, isLoading, isError } = useGetHomeFeedQuery();
+  const { data: feed, isLoading, isError, refetch } = useGetHomeFeedQuery();
 
   const data = useMemo<CustomerHomeData | undefined>(() => {
     if (!feed) return undefined;
@@ -40,5 +40,5 @@ export function useCustomerHome() {
     };
   }, [feed]);
 
-  return { data, isLoading, isError };
+  return { data, isLoading, isError, refetch };
 }
