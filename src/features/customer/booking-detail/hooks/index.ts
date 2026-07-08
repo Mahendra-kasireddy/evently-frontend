@@ -1,0 +1,1 @@
+export { useBookingDetail } from './useBookingDetail';

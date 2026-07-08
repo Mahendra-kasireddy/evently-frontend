@@ -7,10 +7,11 @@ export interface EventDetailsFormProps {
   draft: PlanDraft;
   cityOptions: string[];
   guestOptions: string[];
+  budgetOptions: string[];
   onField: (field: keyof PlanDraft, value: string) => void;
 }
 
-export function EventDetailsForm({ draft, cityOptions, guestOptions, onField }: EventDetailsFormProps) {
+export function EventDetailsForm({ draft, cityOptions, guestOptions, budgetOptions, onField }: EventDetailsFormProps) {
   const today = new Date().toISOString().slice(0, 10);
 
   const openCalendar = (e: MouseEvent<HTMLInputElement>) => {
@@ -84,6 +85,24 @@ export function EventDetailsForm({ draft, cityOptions, guestOptions, onField }: 
           ))}
         </div>
       </div>
+
+      {budgetOptions.length > 0 && (
+        <div className={styles.field}>
+          <label className={styles.label}>Budget (optional)</label>
+          <div className={styles.guests}>
+            {budgetOptions.map((b) => (
+              <button
+                key={b}
+                type="button"
+                className={`${styles.guest} ${b === draft.budget ? styles.guestOn : ''}`}
+                onClick={() => onField('budget', b === draft.budget ? '' : b)}
+              >
+                {b}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

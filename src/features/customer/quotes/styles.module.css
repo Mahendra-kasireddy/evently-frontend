@@ -2,3 +2,8 @@
 .container { max-width: var(--container-max); margin: 0 auto; padding: 0 44px; display: flex; flex-direction: column; gap: 22px; }
 .grid { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 28px; align-items: start; }
 @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } .container { padding: 0 20px; } }
+
+.actionRow { display: flex; justify-content: flex-end; margin-top: -8px; }
+.cancelReq { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--color-border); background: #fff; color: var(--color-text-muted); font-size: 0.82rem; font-weight: 600; padding: 8px 14px; border-radius: 10px; cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease; }
+.cancelReq:hover:not(:disabled) { border-color: var(--color-red, #e05656); color: var(--color-red, #b23b3b); }
+.cancelReq:disabled { opacity: 0.6; cursor: not-allowed; }

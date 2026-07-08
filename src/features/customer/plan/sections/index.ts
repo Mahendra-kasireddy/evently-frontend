@@ -6,3 +6,4 @@ export { SummarySidebar } from './SummarySidebar';
 export { IdeasRequests } from './IdeasRequests';
 export { CategoriesStep } from './CategoriesStep';
 export { FindOrganizers } from './FindOrganizers';
+export { ReviewStep } from './ReviewStep';

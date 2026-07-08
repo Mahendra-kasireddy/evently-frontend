@@ -44,13 +44,15 @@ export function ComparisonTable({ data, selected, onAcceptBest }: ComparisonTabl
             ))}
           </div>
 
-          <div className={styles.anomaly}>
-            <AlertTriangle size={17} className={styles.anomalyIcon} />
-            <div>
-              <strong>Heads up: pricing anomaly</strong>
-              <p>{data.anomaly} <a href="#why" className={styles.seeWhy}>See why ›</a></p>
+          {data.anomaly && (
+            <div className={styles.anomaly}>
+              <AlertTriangle size={17} className={styles.anomalyIcon} />
+              <div>
+                <strong>Heads up: pricing anomaly</strong>
+                <p>{data.anomaly} <a href="#why" className={styles.seeWhy}>See why ›</a></p>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className={styles.actions}>
             <button type="button" className={styles.share}><Share2 size={16} /> Share with family</button>

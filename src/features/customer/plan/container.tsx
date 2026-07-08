@@ -3,7 +3,7 @@ import { usePlan } from './hooks';
 import { Component } from './Component';
 
 export function PlanContainer() {
-  const { data, isLoading, isError, refetch, draft, setOccasion, setField, setStep, toggleCategory } = usePlan();
+  const { data, isLoading, isError, refetch, draft, setOccasion, setField, setStep, setSelectedOrganizer, toggleCategory } = usePlan();
   if (isError && !data) {
     return (
       <ErrorState
@@ -13,5 +13,15 @@ export function PlanContainer() {
     );
   }
   if (isLoading || !data) return <LoadingScreen message="Setting up your plan…" />;
-  return <Component data={data} draft={draft} setOccasion={setOccasion} setField={setField} setStep={setStep} toggleCategory={toggleCategory} />;
+  return (
+    <Component
+      data={data}
+      draft={draft}
+      setOccasion={setOccasion}
+      setField={setField}
+      setStep={setStep}
+      setSelectedOrganizer={setSelectedOrganizer}
+      toggleCategory={toggleCategory}
+    />
+  );
 }

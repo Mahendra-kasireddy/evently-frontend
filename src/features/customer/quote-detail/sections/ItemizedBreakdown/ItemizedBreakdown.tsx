@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Utensils, Droplet, Flower2, Camera, Music, ChevronDown, type LucideIcon } from 'lucide-react';
+import { Utensils, Droplet, Flower2, Camera, Music, Package, ChevronDown, type LucideIcon } from 'lucide-react';
 import type { LineItem, LineIcon } from '../../types';
 import styles from './ItemizedBreakdown.module.css';
 
-const ICON: Record<LineIcon, LucideIcon> = { food: Utensils, water: Droplet, decor: Flower2, photo: Camera, music: Music };
+const ICON: Record<LineIcon, LucideIcon> = { food: Utensils, water: Droplet, decor: Flower2, photo: Camera, music: Music, other: Package };
 
 export function ItemizedBreakdown({ items }: { items: LineItem[] }) {
   const [open, setOpen] = useState<string | null>(items[0]?.id ?? null);

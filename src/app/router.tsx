@@ -22,6 +22,7 @@ const OrganizerProfilePage = lazy(() => import('@features/customer/organizer-pro
 const QuotesPage = lazy(() => import('@features/customer/quotes/page'));
 const QuoteDetailPage = lazy(() => import('@features/customer/quote-detail/page'));
 const BookingPage = lazy(() => import('@features/customer/booking/page'));
+const BookingDetailPage = lazy(() => import('@features/customer/booking-detail/page'));
 const WorkspacePage = lazy(() => import('@features/customer/workspace/page'));
 const PaymentSuccessPage = lazy(() => import('@features/customer/payment-success/page'));
 const DiscoverPage = lazy(() => import('@features/customer/discover/page'));
@@ -43,9 +44,10 @@ export const router = createBrowserRouter([
       { path: '/organizer/:id', element: lazyRoute(OrganizerProfilePage, 'organizer-profile') },
       { path: '/quotes', element: lazyRoute(QuotesPage, 'quotes') },
       { path: '/quote/:id', element: lazyRoute(QuoteDetailPage, 'quote-detail') },
-      { path: '/booking', element: lazyRoute(BookingPage, 'booking') },
+      { path: '/booking/:quotationId', element: lazyRoute(BookingPage, 'booking') },
+      { path: '/booking-details/:id', element: lazyRoute(BookingDetailPage, 'booking-detail') },
       { path: '/workspace', element: lazyRoute(WorkspacePage, 'workspace') },
-      { path: '/payment-success', element: lazyRoute(PaymentSuccessPage, 'payment-success') },
+      { path: '/payment-success/:id', element: lazyRoute(PaymentSuccessPage, 'payment-success') },
       { path: '/discover', element: lazyRoute(DiscoverPage, 'discover') },
     ],
   },

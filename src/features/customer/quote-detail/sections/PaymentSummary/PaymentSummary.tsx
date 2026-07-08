@@ -1,8 +1,17 @@
-import { Check, MessageSquare, ShieldCheck } from 'lucide-react';
+import { Check, MessageSquare, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import type { QuoteDetail } from '../../types';
 import styles from './PaymentSummary.module.css';
 
-export function PaymentSummary({ q, onAccept }: { q: QuoteDetail; onAccept: () => void }) {
+export interface PaymentSummaryProps {
+  q: QuoteDetail;
+  onAccept: () => void;
+  onReject: () => void;
+  isActing?: boolean;
+  /** True once this quotation has been accepted/rejected/withdrawn — actions are locked. */
+  decided?: boolean;
+}
+
+export function PaymentSummary({ q, onAccept, onReject, isActing = false, decided = false }: PaymentSummaryProps) {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.panel}>
@@ -19,11 +28,22 @@ export function PaymentSummary({ q, onAccept }: { q: QuoteDetail; onAccept: () =
             <div><small>{q.advanceLabel}</small><strong className={styles.advVal}>{q.advance}</strong></div>
             <div className={styles.right}><small>{q.balanceLabel}</small><strong>{q.balance}</strong></div>
           </div>
-          <button type="button" className={styles.accept} onClick={onAccept}><Check size={18} /> Accept Quote</button>
-          <div className={styles.altRow}>
-            <button type="button" className={styles.alt}><MessageSquare size={15} /> Negotiate</button>
-            <button type="button" className={styles.alt}>Decline</button>
-          </div>
+
+          {decided ? (
+            <div className={styles.decided}>
+              <CheckCircle2 size={16} /> This quote is {q.status.toLowerCase()}
+            </div>
+          ) : (
+            <>
+              <button type="button" className={styles.accept} onClick={onAccept} disabled={isActing}>
+                <Check size={18} /> {isActing ? 'Working…' : 'Accept Quote'}
+              </button>
+              <div className={styles.altRow}>
+                <button type="button" className={styles.alt} disabled={isActing}><MessageSquare size={15} /> Negotiate</button>
+                <button type="button" className={styles.alt} onClick={onReject} disabled={isActing}>Decline</button>
+              </div>
+            </>
+          )}
           <p className={styles.footnote}><ShieldCheck size={14} /> {q.footnote}</p>
         </div>
       </div>

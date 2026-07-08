@@ -1,0 +1,18 @@
+.block { background: #fff; border: 1px solid var(--color-border); border-radius: 18px; padding: 20px 22px; }
+.head { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 14px; font-size: 1.02rem; font-weight: 800; color: var(--color-navy); }
+.list { display: flex; flex-direction: column; gap: 12px; }
+.card { display: flex; align-items: center; gap: 13px; width: 100%; text-align: left; border: 1px solid var(--color-border); border-radius: 14px; padding: 14px 16px; background: #fff; cursor: pointer; transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+.card:hover { border-color: var(--border-card-hover, #cfd6e4); box-shadow: var(--shadow-sm, 0 2px 8px rgba(16,26,51,0.06)); }
+.avatar { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 11px; color: #fff; font-weight: 800; font-size: 0.85rem; flex: 0 0 auto; }
+.body { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.title { font-size: 0.96rem; font-weight: 700; color: var(--color-navy); }
+.meta { font-size: 0.78rem; color: var(--color-text-muted); }
+.right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex: 0 0 auto; }
+.amount { font-size: 0.9rem; font-weight: 800; color: var(--color-navy); }
+.badge { font-size: 0.68rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+.pending { background: #eef1f6; color: #5b6472; }
+.confirmed { background: #e7f0ff; color: #2f6bd6; }
+.progress { background: #fff4e5; color: #b5730f; }
+.completed { background: #e6f4ee; color: #1d9e75; }
+.cancelled { background: #fdecec; color: #b23b3b; }
+.rejected { background: #fdecec; color: #b23b3b; }

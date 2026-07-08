@@ -2,7 +2,7 @@ import { Lock, ShieldCheck } from 'lucide-react';
 import type { BookingData } from '../../types';
 import styles from './OrderSummary.module.css';
 
-export function OrderSummary({ data, onConfirm }: { data: BookingData; onConfirm: () => void }) {
+export function OrderSummary({ data, onConfirm, isCreating = false }: { data: BookingData; onConfirm: () => void; isCreating?: boolean }) {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.panel}>
@@ -19,7 +19,7 @@ export function OrderSummary({ data, onConfirm }: { data: BookingData; onConfirm
             ))}
           </ul>
           <div className={styles.grand}><span>Grand total</span><strong>{data.grandTotal}</strong></div>
-          <button type="button" className={styles.confirm} onClick={onConfirm}><Lock size={16} /> {data.confirmLabel}</button>
+          <button type="button" className={styles.confirm} onClick={onConfirm} disabled={isCreating}><Lock size={16} /> {isCreating ? 'Confirming…' : data.confirmLabel}</button>
           <p className={styles.footnote}><ShieldCheck size={14} /> {data.footnote}</p>
         </div>
       </div>

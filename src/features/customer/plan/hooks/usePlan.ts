@@ -9,19 +9,21 @@ import {
   setOccasion,
   setPlanField,
   setStep,
+  setSelectedOrganizer,
   toggleCategory,
   hydrateDraft,
 } from '../service';
 import type { PlanDraft, PlanUpsert } from '../types';
 
 /** Maps the client draft to the persistence payload. */
-function draftToUpsert(draft: PlanDraft): PlanUpsert {
+export function draftToUpsert(draft: PlanDraft): PlanUpsert {
   return {
     occasion: draft.occasionId,
     eventDate: draft.eventDate || undefined,
     city: draft.city,
     area: draft.area,
     guests: draft.guests,
+    budget: draft.budget,
     ideas: draft.ideas,
     categories: draft.categories,
   };
@@ -29,7 +31,9 @@ function draftToUpsert(draft: PlanDraft): PlanUpsert {
 
 /** True once the user has entered anything worth persisting. */
 function isMeaningful(draft: PlanDraft): boolean {
-  return Boolean(draft.city || draft.area || draft.guests || draft.ideas || draft.categories.length);
+  return Boolean(
+    draft.city || draft.area || draft.guests || draft.budget || draft.ideas || draft.categories.length,
+  );
 }
 
 export function usePlan() {
@@ -52,6 +56,7 @@ export function usePlan() {
     if (savedDraft.city) patch.city = savedDraft.city;
     if (savedDraft.area) patch.area = savedDraft.area;
     if (savedDraft.guests) patch.guests = savedDraft.guests;
+    if (savedDraft.budget) patch.budget = savedDraft.budget;
     if (savedDraft.ideas) patch.ideas = savedDraft.ideas;
     if (savedDraft.categories?.length) patch.categories = savedDraft.categories;
     if (Object.keys(patch).length) dispatch(hydrateDraft(patch));
@@ -72,6 +77,7 @@ export function usePlan() {
     setOccasion: (id: string) => dispatch(setOccasion(id)),
     setField: (field: keyof PlanDraft, value: string) => dispatch(setPlanField({ field, value })),
     setStep: (n: number) => dispatch(setStep(n)),
+    setSelectedOrganizer: (id: string) => dispatch(setSelectedOrganizer(id)),
     toggleCategory: (id: string) => dispatch(toggleCategory(id)),
   };
 }

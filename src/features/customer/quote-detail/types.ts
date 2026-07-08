@@ -1,5 +1,5 @@
 export type QdTier = 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
-export type LineIcon = 'food' | 'water' | 'decor' | 'photo' | 'music';
+export type LineIcon = 'food' | 'water' | 'decor' | 'photo' | 'music' | 'other';
 export interface LineSubItem { label: string; value: string }
 export interface LineItem { id: string; icon: LineIcon; title: string; subtitle: string; price: string; subItems: LineSubItem[]; note?: string }
 export interface QuoteDetail {

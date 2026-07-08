@@ -1,47 +1,102 @@
-import { Sparkles, Heart, ChevronRight } from 'lucide-react';
-import type { WorkspaceData, CatStatus } from '../../types';
+import { MapPin, Users, Wallet, ListChecks, ChevronRight, FilePlus2, FileText } from 'lucide-react';
+import type { PlanSubmission, PlanStatus } from '../../types';
 import styles from './WorkspaceMain.module.css';
 
-const DOT: Record<CatStatus, string> = { 'On track': styles.dotOk ?? '', 'In progress': styles.dotProgress ?? '', 'Action needed': styles.dotAction ?? '' };
-const STAT: Record<CatStatus, string> = { 'On track': styles.sOk ?? '', 'In progress': styles.sProgress ?? '', 'Action needed': styles.sAction ?? '' };
+const STATUS_LABEL: Record<PlanStatus, string> = {
+  draft: 'Draft', submitted: 'Submitted', quoted: 'Quoted', booked: 'Booked', cancelled: 'Cancelled',
+};
+const STATUS_CLASS: Record<PlanStatus, string> = {
+  draft: 'draft', submitted: 'submitted', quoted: 'quoted', booked: 'booked', cancelled: 'cancelled',
+};
 
-export interface WorkspaceMainProps {
-  d: WorkspaceData;
-  onIdeas: () => void;
-  onReview: () => void;
+const OCCASION_LABEL: Record<string, string> = {
+  wedding: 'Wedding', birthday: 'Birthday', housewarming: 'Housewarming',
+  naming: 'Naming', anniversary: 'Anniversary', corporate: 'Corporate',
+};
+
+function occasionLabel(key: string) {
+  return OCCASION_LABEL[key] ?? (key ? key.charAt(0).toUpperCase() + key.slice(1) : 'Event');
 }
 
-export function WorkspaceMain({ d, onIdeas, onReview }: WorkspaceMainProps) {
+function dateLabel(iso?: string) {
+  if (!iso) return null;
+  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+export interface WorkspaceMainProps {
+  plans: PlanSubmission[];
+  onResume: () => void;
+  onStartPlan: () => void;
+}
+
+function PlanCard({ plan, onResume }: { plan: PlanSubmission; onResume: () => void }) {
+  const isDraft = plan.status === 'draft';
+  const updated = dateLabel(plan.updatedAt);
   return (
-    <div className={styles.col}>
-      <h2 className={styles.section}>Ideas &amp; planning board</h2>
-      <div className={styles.banner}>
-        <span className={styles.bIcon}><Sparkles size={18} /></span>
-        <div className={styles.bText}><strong>{d.ideas.title}</strong><small>{d.ideas.meta}</small></div>
-        <button type="button" className={styles.bCta} onClick={onIdeas}>{d.ideas.cta} <ChevronRight size={15} /></button>
+    <article className={styles.card}>
+      <div className={styles.cardHead}>
+        <div className={styles.titleWrap}>
+          <h4 className={styles.title}>{occasionLabel(plan.occasion)}</h4>
+          {plan.planCode && <span className={styles.code}>{plan.planCode}</span>}
+        </div>
+        <span className={`${styles.badge} ${styles[STATUS_CLASS[plan.status]]}`}>{STATUS_LABEL[plan.status]}</span>
       </div>
 
-      <h2 className={styles.section}>Guest invitation</h2>
-      <div className={styles.invite}>
-        <span className={styles.iIcon}><Heart size={18} /></span>
-        <div className={styles.bText}><strong>{d.invitation.title}</strong><small className={styles.iMeta}>{d.invitation.meta}</small></div>
-        <button type="button" className={styles.iCta} onClick={onReview}>{d.invitation.cta} <ChevronRight size={15} /></button>
+      <div className={styles.metaRow}>
+        {(plan.city || plan.area) && (
+          <span className={styles.meta}><MapPin size={13} /> {[plan.area, plan.city].filter(Boolean).join(', ')}</span>
+        )}
+        {plan.guests && <span className={styles.meta}><Users size={13} /> {plan.guests} guests</span>}
+        {plan.budget && <span className={styles.meta}><Wallet size={13} /> {plan.budget}</span>}
+        {plan.categories.length > 0 && (
+          <span className={styles.meta}><ListChecks size={13} /> {plan.categories.length} services</span>
+        )}
       </div>
 
-      <h2 className={styles.section}>Category progress</h2>
-      <div className={styles.grid}>
-        {d.categories.map((c) => (
-          <article key={c.id} className={styles.cat}>
-            <div className={styles.catHead}>
-              <span className={`${styles.dot} ${DOT[c.status]}`} />
-              <strong className={styles.catName}>{c.name}</strong>
-              <span className={`${styles.status} ${STAT[c.status]}`}>{c.status}</span>
-            </div>
-            <p className={styles.sub}>Sub-vendor: <strong>{c.subVendor}</strong></p>
-            <p className={styles.desc}>{c.desc}</p>
-          </article>
-        ))}
+      <div className={styles.cardFoot}>
+        <span className={styles.updated}>{updated ? `Updated ${updated}` : 'Not saved yet'}</span>
+        {isDraft && (
+          <button type="button" className={styles.resume} onClick={onResume}>
+            Resume <ChevronRight size={14} />
+          </button>
+        )}
       </div>
+    </article>
+  );
+}
+
+export function WorkspaceMain({ plans, onResume, onStartPlan }: WorkspaceMainProps) {
+  const drafts = plans.filter((p) => p.status === 'draft');
+  const history = plans.filter((p) => p.status !== 'draft');
+
+  return (
+    <div className={styles.main}>
+      <section className={styles.block}>
+        <div className={styles.blockHead}>
+          <h3 className={styles.blockTitle}><FilePlus2 size={17} /> Draft plans</h3>
+          <button type="button" className={styles.link} onClick={onStartPlan}>New plan</button>
+        </div>
+        {drafts.length ? (
+          <div className={styles.list}>
+            {drafts.map((p) => <PlanCard key={p.id} plan={p} onResume={onResume} />)}
+          </div>
+        ) : (
+          <p className={styles.emptyLine}>No drafts in progress. Start a new plan whenever you’re ready.</p>
+        )}
+      </section>
+
+      <section className={styles.block}>
+        <div className={styles.blockHead}>
+          <h3 className={styles.blockTitle}><FileText size={17} /> Submitted plans & history</h3>
+        </div>
+        {history.length ? (
+          <div className={styles.list}>
+            {history.map((p) => <PlanCard key={p.id} plan={p} onResume={onResume} />)}
+          </div>
+        ) : (
+          <p className={styles.emptyLine}>Nothing submitted yet. Submit a plan to request quotes from organizers.</p>
+        )}
+      </section>
     </div>
   );
 }

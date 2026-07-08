@@ -19,6 +19,7 @@ export interface PlanData {
   steps: PlanStep[];
   cityOptions: string[];
   guestOptions: string[];
+  budgetOptions: string[];
   subtitle: string;
   trust: PlanTrust[];
   whatNext: WhatNextItem[];
@@ -37,8 +38,11 @@ export interface PlanDraft {
   city: string;
   area: string;
   guests: string;
+  budget: string;
   ideas: string;
   categories: string[];
+  /** Organizer chosen on the recommendations step, confirmed on Review. */
+  selectedOrganizerId: string;
   step: number;
 }
 
@@ -48,6 +52,7 @@ export interface RecommendationArgs {
   occasion?: string | undefined;
   guests?: string | undefined;
   city?: string | undefined;
+  budget?: string | undefined;
 }
 
 export type PlanStatus = 'draft' | 'submitted' | 'quoted' | 'booked' | 'cancelled';
@@ -61,11 +66,33 @@ export interface PlanSubmission {
   city: string;
   area: string;
   guests: string;
+  budget: string;
   ideas: string;
   categories: string[];
   status: PlanStatus;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export type QuoteRequestStatus = 'open' | 'quoted' | 'closed';
+
+/** A quote request the customer has raised (workspace "quote status"). */
+export interface PlanQuoteRequest {
+  id: string;
+  occasion: string;
+  when: string;
+  where: string;
+  guests: string;
+  status: QuoteRequestStatus;
+  createdAt?: string;
+  organizer?: {
+    id: string;
+    name: string;
+    initials: string;
+    avatarColor: string;
+    tier: string;
+    rating: number;
+  } | null;
 }
 
 /** Payload for saving a draft / submitting a plan. */
@@ -75,6 +102,7 @@ export interface PlanUpsert {
   city?: string | undefined;
   area?: string | undefined;
   guests?: string | undefined;
+  budget?: string | undefined;
   ideas?: string | undefined;
   categories?: string[] | undefined;
 }

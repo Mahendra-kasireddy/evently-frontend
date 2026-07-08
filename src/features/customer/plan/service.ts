@@ -5,6 +5,7 @@ import type {
   PlanData,
   PlanDraft,
   PlanOrganizer,
+  PlanQuoteRequest,
   PlanSubmission,
   PlanUpsert,
   RecommendationArgs,
@@ -24,6 +25,7 @@ async function fetchPlanOrganizers(args: RecommendationArgs): Promise<PlanOrgani
       occasion: args.occasion || undefined,
       guests: args.guests || undefined,
       city: args.city || undefined,
+      budget: args.budget || undefined,
     },
   });
   return data;
@@ -68,6 +70,14 @@ export const planApi = baseApi.injectEndpoints({
         toQueryResult(async () => (await apiClient.get<PlanSubmission[]>('/plan/getMyPlans')).data),
       providesTags: ['Plans'],
     }),
+    /** All quote requests the customer has raised (workspace quote status). */
+    getMyQuotes: build.query<PlanQuoteRequest[], void>({
+      queryFn: () =>
+        toQueryResult(
+          async () => (await apiClient.get<PlanQuoteRequest[]>('/quote/getMyQuotes')).data,
+        ),
+      providesTags: ['Quotes'],
+    }),
     /** Silent autosave of the wizard draft. */
     savePlanDraft: build.mutation<PlanSubmission, PlanUpsert>({
       queryFn: (body) =>
@@ -88,13 +98,14 @@ export const {
   usePlanRequestQuoteMutation,
   useGetMyDraftQuery,
   useGetMyPlansQuery,
+  useGetMyQuotesQuery,
   useSavePlanDraftMutation,
   useCreatePlanMutation,
 } = planApi;
 
 /** Editable event draft (client state) for the plan wizard. Date defaults to today. */
 const draftInitial: PlanDraft = {
-  occasionId: 'wedding', eventDate: new Date().toISOString().slice(0, 10), city: '', area: '', guests: '', ideas: '', categories: [], step: 0,
+  occasionId: 'wedding', eventDate: new Date().toISOString().slice(0, 10), city: '', area: '', guests: '', budget: '', ideas: '', categories: [], selectedOrganizerId: '', step: 0,
 };
 
 export const planSlice = createSlice({
@@ -106,11 +117,12 @@ export const planSlice = createSlice({
       if (a.payload.field !== 'step') (s[a.payload.field] as string) = a.payload.value;
     },
     setStep: (s, a: PayloadAction<number>) => { s.step = a.payload; },
+    setSelectedOrganizer: (s, a: PayloadAction<string>) => { s.selectedOrganizerId = a.payload; },
     toggleCategory: (s, a: PayloadAction<string>) => {
       s.categories = s.categories.includes(a.payload) ? s.categories.filter((c) => c !== a.payload) : [...s.categories, a.payload];
     },
     hydrateDraft: (s, a: PayloadAction<Partial<PlanDraft>>) => ({ ...s, ...a.payload }),
   },
 });
-export const { setOccasion, setPlanField, setStep, toggleCategory, hydrateDraft } = planSlice.actions;
+export const { setOccasion, setPlanField, setStep, setSelectedOrganizer, toggleCategory, hydrateDraft } = planSlice.actions;
 export const selectPlanDraft = (state: { planDraft: PlanDraft }) => state.planDraft;

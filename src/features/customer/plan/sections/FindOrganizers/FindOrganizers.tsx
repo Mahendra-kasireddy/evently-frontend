@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SlidersHorizontal, Star, Award, Check } from 'lucide-react';
+import { SlidersHorizontal, Star, Award, Check, SearchX } from 'lucide-react';
+import { EmptyState } from '@shared/components';
 import type { PlanFilters, OrgTier, PlanDraft, PlanOrganizer } from '../../types';
-import { useGetPlanOrganizersQuery, usePlanRequestQuoteMutation, useCreatePlanMutation } from '../../service';
+import { useGetPlanOrganizersQuery } from '../../service';
 import styles from './FindOrganizers.module.css';
 
 const TIER_CLASS: Record<OrgTier, string> = { Bronze: 'bronze', Silver: 'silver', Gold: 'gold', Platinum: 'platinum' };
@@ -10,22 +11,22 @@ const RATING_MIN: Record<string, number> = { '4.0+': 4.0, '4.5+': 4.5, '4.8+': 4
 
 export interface FindOrganizersProps {
   filters: PlanFilters;
-  /** Plan wizard: fetch matched organizers by the draft's categories + submit real quotes. */
+  /** Plan wizard: fetch matched organizers by the draft's categories. */
   draft?: PlanDraft;
   occasionLabel?: string;
   /** Discover/browse: use a pre-loaded organizer list instead of fetching. */
   organizers?: PlanOrganizer[];
+  /** Wizard: select an organizer and advance to the Review step. */
+  onSelectOrganizer?: (id: string) => void;
 }
 
-export function FindOrganizers({ filters, draft, occasionLabel, organizers: passed }: FindOrganizersProps) {
+export function FindOrganizers({ filters, draft, organizers: passed, onSelectOrganizer }: FindOrganizersProps) {
   const navigate = useNavigate();
   const { data: fetched = [], isLoading } = useGetPlanOrganizersQuery(
-    { categories: draft?.categories ?? [], occasion: draft?.occasionId, guests: draft?.guests, city: draft?.city },
+    { categories: draft?.categories ?? [], occasion: draft?.occasionId, guests: draft?.guests, city: draft?.city, budget: draft?.budget },
     { skip: !!passed }, // don't fetch when a list is supplied
   );
   const organizers = passed ?? fetched;
-  const [requestQuote, { isLoading: isRequesting }] = usePlanRequestQuoteMutation();
-  const [createPlan] = useCreatePlanMutation();
 
   const [tiers, setTiers] = useState<string[]>([]);
   const [rating, setRating] = useState<string>(''); // '' = any
@@ -57,38 +58,17 @@ export function FindOrganizers({ filters, draft, occasionLabel, organizers: pass
     return list;
   }, [organizers, tiers, rating, cats, sort]);
 
-  const getQuote = async (organizerId: string) => {
-    // Browse mode (no wizard draft): just go to the quotes screen.
-    if (!draft) {
+  const selectedId = draft?.selectedOrganizerId;
+
+  const chooseOrganizer = (organizerId: string) => {
+    // Browse mode (no wizard draft): jump straight to the quotes screen.
+    if (!draft || !onSelectOrganizer) {
       navigate('/quotes');
       return;
     }
-    try {
-      // Persist the customer's plan (best-effort) before requesting the quote.
-      try {
-        await createPlan({
-          occasion: draft.occasionId,
-          eventDate: draft.eventDate || undefined,
-          city: draft.city,
-          area: draft.area,
-          guests: draft.guests,
-          ideas: draft.ideas,
-          categories: draft.categories,
-        }).unwrap();
-      } catch {
-        /* persistence is best-effort — the quote request still proceeds */
-      }
-      await requestQuote({
-        organizerId,
-        occasion: occasionLabel ?? '',
-        when: draft.eventDate,
-        where: [draft.area, draft.city].filter(Boolean).join(', '),
-        guests: draft.guests,
-      }).unwrap();
-      navigate('/quotes');
-    } catch {
-      /* mutation state surfaces the error */
-    }
+    // Wizard mode: remember the pick and advance to Review — the plan and quote
+    // are created transactionally there, so nothing is persisted prematurely.
+    onSelectOrganizer(organizerId);
   };
 
   return (
@@ -137,35 +117,62 @@ export function FindOrganizers({ filters, draft, occasionLabel, organizers: pass
           ))}
         </div>
 
-        <div className={styles.grid}>
-          {visible.map((o) => (
-            <article key={o.id} className={styles.card}>
-              <div className={styles.top}>
-                <span className={styles.avatar} style={{ backgroundColor: o.avatarColor }}>{o.initials}</span>
-                <div className={styles.idCol}>
-                  <div className={styles.nameRow}>
-                    <h3 className={styles.name}>{o.name}</h3>
-                    <span className={`${styles.badge} ${styles[TIER_CLASS[o.tier]]}`}><Award size={12} /> {o.tier}</span>
+        {!isLoading && visible.length === 0 ? (
+          <EmptyState
+            icon={SearchX}
+            title="No organizers match your event yet"
+            message={
+              organizers.length === 0
+                ? 'We couldn’t find organizers for these services in your city. Try broadening your categories or checking back soon.'
+                : 'No organizers match the filters you’ve applied. Clear a filter or two to see more matches.'
+            }
+            {...(organizers.length > 0
+              ? {
+                  actionLabel: 'Clear filters',
+                  onAction: () => {
+                    setTiers([]);
+                    setRating('');
+                    setCats([]);
+                  },
+                }
+              : {})}
+          />
+        ) : (
+          <div className={styles.grid}>
+            {visible.map((o) => {
+              const isSelected = selectedId === o.id;
+              return (
+                <article key={o.id} className={styles.card}>
+                  <div className={styles.top}>
+                    <span className={styles.avatar} style={{ backgroundColor: o.avatarColor }}>{o.initials}</span>
+                    <div className={styles.idCol}>
+                      <div className={styles.nameRow}>
+                        <h3 className={styles.name}>{o.name}</h3>
+                        <span className={`${styles.badge} ${styles[TIER_CLASS[o.tier]]}`}><Award size={12} /> {o.tier}</span>
+                      </div>
+                      <div className={styles.rating}>
+                        <span className={styles.stars}>{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={13} fill="currentColor" strokeWidth={0} />)}</span>
+                        <strong>{o.rating}</strong><span className={styles.muted}>({o.reviews})</span>
+                      </div>
+                      <p className={styles.meta}>{o.events} events · {o.location}</p>
+                    </div>
                   </div>
-                  <div className={styles.rating}>
-                    <span className={styles.stars}>{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={13} fill="currentColor" strokeWidth={0} />)}</span>
-                    <strong>{o.rating}</strong><span className={styles.muted}>({o.reviews})</span>
+                  <div className={styles.tags}>{o.tags.map((t) => <span key={t} className={styles.tag}>{t}</span>)}</div>
+                  <div className={styles.matchRow}>
+                    <span className={styles.match}><Check size={14} strokeWidth={3} /> Matches {o.matches} of {o.total}</span>
+                    <span className={styles.est}><small>EST. RANGE</small><strong>{o.estRange}</strong></span>
                   </div>
-                  <p className={styles.meta}>{o.events} events · {o.location}</p>
-                </div>
-              </div>
-              <div className={styles.tags}>{o.tags.map((t) => <span key={t} className={styles.tag}>{t}</span>)}</div>
-              <div className={styles.matchRow}>
-                <span className={styles.match}><Check size={14} strokeWidth={3} /> Matches {o.matches} of {o.total}</span>
-                <span className={styles.est}><small>EST. RANGE</small><strong>{o.estRange}</strong></span>
-              </div>
-              <div className={styles.actions}>
-                <button type="button" className={styles.view2} onClick={() => navigate(`/organizer/${o.id}`)}>View profile</button>
-                <button type="button" className={styles.quote} onClick={() => getQuote(o.id)} disabled={isRequesting}>Get Quote</button>
-              </div>
-            </article>
-          ))}
-        </div>
+                  <div className={styles.actions}>
+                    <button type="button" className={styles.view2} onClick={() => navigate(`/organizer/${o.id}`)}>View profile</button>
+                    <button type="button" className={styles.quote} onClick={() => chooseOrganizer(o.id)}>
+                      {draft && onSelectOrganizer ? (isSelected ? 'Selected · Review' : 'Select & review') : 'Get Quote'}
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import styles from './SuccessCard.module.css';
 
 const NEXT_ICON: Record<NextIcon, LucideIcon> = { chat: MessageSquare, sparkles: Sparkles, list: ListChecks };
 
-export function SuccessCard({ data, onOpen }: { data: PaymentSuccessData; onOpen: () => void }) {
+export function SuccessCard({ data, onOpen, onViewBooking }: { data: PaymentSuccessData; onOpen: () => void; onViewBooking: () => void }) {
   return (
     <div className={styles.card}>
       <div className={styles.header}>
@@ -32,7 +32,7 @@ export function SuccessCard({ data, onOpen }: { data: PaymentSuccessData; onOpen
         </ul>
         <button type="button" className={styles.cta} onClick={onOpen}>{data.ctaLabel} <ChevronRight size={16} /></button>
         <div className={styles.altRow}>
-          <button type="button" className={styles.alt}><Heart size={15} /> {data.viewLabel}</button>
+          <button type="button" className={styles.alt} onClick={onViewBooking}><Heart size={15} /> {data.viewLabel}</button>
           <button type="button" className={styles.alt}><Download size={15} /> {data.downloadLabel}</button>
         </div>
       </div>

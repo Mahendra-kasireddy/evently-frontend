@@ -1,4 +1,4 @@
-import { Calendar, MapPin, Users, ListChecks, Sparkles, FileText, BarChart3, Heart, ShieldCheck, ChevronRight, type LucideIcon } from 'lucide-react';
+import { Calendar, MapPin, Users, Wallet, ListChecks, Sparkles, FileText, BarChart3, Heart, ShieldCheck, ChevronRight, Info, type LucideIcon } from 'lucide-react';
 import type { PlanDraft, PlanStep, WhatNextItem, NextIcon, QuoteNote } from '../../types';
 import styles from './SummarySidebar.module.css';
 
@@ -14,9 +14,12 @@ export interface SummarySidebarProps {
   footnote: string;
   selectedCats?: string[];
   onContinue: () => void;
+  /** When false, the continue button is disabled and blockReason is shown. */
+  canContinue?: boolean;
+  blockReason?: string | undefined;
 }
 
-export function SummarySidebar({ occasionLabel, draft, steps, whatNext, quoteNote, continueLabel, footnote, selectedCats = [], onContinue }: SummarySidebarProps) {
+export function SummarySidebar({ occasionLabel, draft, steps, whatNext, quoteNote, continueLabel, footnote, selectedCats = [], onContinue, canContinue = true, blockReason }: SummarySidebarProps) {
   const total = steps.length;
   const pct = ((draft.step + 1) / total) * 100;
   const stepLabel = steps[draft.step]?.label ?? '';
@@ -28,7 +31,8 @@ export function SummarySidebar({ occasionLabel, draft, steps, whatNext, quoteNot
     { Icon: Calendar, label: 'Date', value: dateLabel, muted: !draft.eventDate },
     { Icon: MapPin, label: 'Location', value: locationLabel, muted: !draft.area && !draft.city },
     { Icon: Users, label: 'Guests', value: draft.guests ? `${draft.guests} guests` : 'Choose count', muted: !draft.guests },
-    { Icon: ListChecks, label: 'Categories', value: "You'll choose these next", muted: true },
+    { Icon: Wallet, label: 'Budget', value: draft.budget || 'Optional', muted: !draft.budget },
+    { Icon: ListChecks, label: 'Categories', value: selectedCats.length ? `${selectedCats.length} selected` : "You'll choose these next", muted: !selectedCats.length },
     { Icon: Sparkles, label: 'Special requests', value: draft.ideas ? draft.ideas : 'Add yours below', muted: !draft.ideas },
   ];
 
@@ -82,9 +86,18 @@ export function SummarySidebar({ occasionLabel, draft, steps, whatNext, quoteNot
               <p>{quoteNote.text}</p>
             </div>
           </div>
-          <button type="button" className={styles.continue} onClick={onContinue}>
+          <button
+            type="button"
+            className={styles.continue}
+            onClick={onContinue}
+            disabled={!canContinue}
+            style={!canContinue ? { opacity: 0.55, cursor: 'not-allowed' } : undefined}
+          >
             <ChevronRight size={16} /> {continueLabel}
           </button>
+          {!canContinue && blockReason && (
+            <p className={styles.footnote} role="alert"><Info size={14} /> {blockReason}</p>
+          )}
           <p className={styles.footnote}><ShieldCheck size={14} /> {footnote}</p>
         </div>
       </div>

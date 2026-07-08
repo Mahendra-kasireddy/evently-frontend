@@ -1,30 +1,45 @@
-import { ChevronLeft } from 'lucide-react';
-import type { WorkspaceData } from '../../types';
+import { CalendarPlus, FileText, FilePlus2, MessageSquareQuote } from 'lucide-react';
 import styles from './WorkspaceHero.module.css';
 
-export function WorkspaceHero({ d, onBack }: { d: WorkspaceData; onBack: () => void }) {
-  const r = 34, c = 2 * Math.PI * r, off = c * (1 - d.progress / 100);
+export interface WorkspaceHeroProps {
+  total: number;
+  draftCount: number;
+  submittedCount: number;
+  quoteCount: number;
+  onStartPlan: () => void;
+}
+
+export function WorkspaceHero({ total, draftCount, submittedCount, quoteCount, onStartPlan }: WorkspaceHeroProps) {
+  const stats = [
+    { Icon: FilePlus2, label: 'Drafts', value: draftCount },
+    { Icon: FileText, label: 'Submitted', value: submittedCount },
+    { Icon: MessageSquareQuote, label: 'Quote requests', value: quoteCount },
+  ];
+
   return (
     <section className={styles.hero}>
-      <span className={styles.circle} aria-hidden />
-      <button type="button" className={styles.back} onClick={onBack} aria-label="Back"><ChevronLeft size={18} /></button>
-      <div className={styles.ring}>
-        <svg width="82" height="82" viewBox="0 0 82 82">
-          <circle cx="41" cy="41" r={r} className={styles.track} />
-          <circle cx="41" cy="41" r={r} className={styles.fill} strokeDasharray={c} strokeDashoffset={off} transform="rotate(-90 41 41)" />
-        </svg>
-        <span className={styles.ringText}><strong>{d.progress}%</strong><small>complete</small></span>
+      <span className={styles.circle} />
+      <div className={styles.head}>
+        <span className={styles.eyebrow}>YOUR WORKSPACE</span>
+        <h1 className={styles.heading}>
+          {total > 0 ? `You're planning ${total} ${total === 1 ? 'event' : 'events'}` : 'Your events live here'}
+        </h1>
+        <p className={styles.sub}>Track every plan, resume drafts, and follow your quote requests in one place.</p>
       </div>
-      <div className={styles.info}>
-        <span className={styles.eyebrow}>{d.eyebrow}</span>
-        <h1 className={styles.heading}>{d.heading}</h1>
-        <p className={styles.subline}>{d.subline}</p>
-      </div>
-      <div className={styles.countdown}>
-        {([['days', d.countdown.days, 'Days'], ['hrs', d.countdown.hrs, 'Hrs'], ['min', d.countdown.min, 'Min']] as const).map(([k, v, l]) => (
-          <div key={k} className={styles.cd}><strong>{v}</strong><small>{l}</small></div>
+
+      <div className={styles.stats}>
+        {stats.map((s) => (
+          <div key={s.label} className={styles.stat}>
+            <span className={styles.statIcon}><s.Icon size={16} /></span>
+            <strong className={styles.statValue}>{s.value}</strong>
+            <span className={styles.statLabel}>{s.label}</span>
+          </div>
         ))}
       </div>
+
+      <button type="button" className={styles.cta} onClick={onStartPlan}>
+        <CalendarPlus size={17} /> Plan a new event
+      </button>
     </section>
   );
 }

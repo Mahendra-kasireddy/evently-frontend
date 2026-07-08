@@ -1,15 +1,17 @@
-import { useNavigate } from 'react-router-dom';
 import { SuccessCard } from './sections';
 import type { PaymentSuccessData } from './types';
 import styles from './styles.module.css';
 
-export function Component({ data }: { data: PaymentSuccessData }) {
-  const navigate = useNavigate();
+export interface PaymentSuccessComponentProps {
+  data: PaymentSuccessData;
+  onOpenWorkspace: () => void;
+  onViewBooking: () => void;
+}
+
+export function Component({ data, onOpenWorkspace, onViewBooking }: PaymentSuccessComponentProps) {
   return (
-    <>
-      <main className={styles.page}>
-        <SuccessCard data={data} onOpen={() => navigate('/workspace')} />
-      </main>
-    </>
+    <main className={styles.page}>
+      <SuccessCard data={data} onOpen={onOpenWorkspace} onViewBooking={onViewBooking} />
+    </main>
   );
 }
