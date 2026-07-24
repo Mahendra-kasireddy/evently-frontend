@@ -24,7 +24,7 @@ export function WorkspaceBookings({ bookings, onOpen }: WorkspaceBookingsProps) 
       <h3 className={styles.head}><CalendarCheck size={17} /> My bookings</h3>
       <div className={styles.list}>
         {bookings.map((b) => {
-          const s = STATUS[b.status];
+          const s = STATUS[b.status] ?? { label: b.status || 'Unknown', cls: 'pending' };
           return (
             <button key={b.id} type="button" className={styles.card} onClick={() => onOpen(b.id)}>
               <span className={styles.avatar} style={{ backgroundColor: b.organizer?.avatarColor ?? '#7c5bd6' }}>

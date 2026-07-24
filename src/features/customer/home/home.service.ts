@@ -4,6 +4,7 @@ import type {
   HomeContent,
   ProfileSummary,
   BookedEventData,
+  CurrentEventData,
   PackageItem,
   Organizer,
 } from './types';
@@ -15,6 +16,7 @@ export interface HomeFeed {
   packages: PackageItem[];
   topOrganizers: Organizer[];
   booking: BookedEventData | null;
+  currentEvent: CurrentEventData | null;
   unreadCount: number;
 }
 

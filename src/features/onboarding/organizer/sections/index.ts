@@ -1,3 +1,7 @@
 export { Stepper, type StepperProps } from './Stepper';
-export { BasicInfoForm, type BasicInfoFormProps } from './BasicInfoForm';
+export { BasicInfoForm } from './BasicInfoForm';
+export { VerificationForm } from './VerificationForm';
+export { BankForm } from './BankForm';
+export { ServicesForm } from './ServicesForm';
+export { PortfolioForm } from './PortfolioForm';
 export { StepPlaceholder } from './StepPlaceholder';

@@ -11,7 +11,7 @@ export interface EventDetailsFormProps {
   onField: (field: keyof PlanDraft, value: string) => void;
 }
 
-export function EventDetailsForm({ draft, cityOptions, guestOptions, budgetOptions, onField }: EventDetailsFormProps) {
+export function EventDetailsForm({ draft, cityOptions, guestOptions, budgetOptions = [], onField }: EventDetailsFormProps) {
   const today = new Date().toISOString().slice(0, 10);
 
   const openCalendar = (e: MouseEvent<HTMLInputElement>) => {

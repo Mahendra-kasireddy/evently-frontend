@@ -25,7 +25,19 @@ async function fetchPlanOrganizers(args: RecommendationArgs): Promise<PlanOrgani
       occasion: args.occasion || undefined,
       guests: args.guests || undefined,
       city: args.city || undefined,
+      area: args.area || undefined,
       budget: args.budget || undefined,
+      eventDate: args.eventDate || undefined,
+      venue: args.venue || undefined,
+      sort: args.sort || undefined,
+      minRating: args.minRating || undefined,
+      tiers: args.tiers && args.tiers.length ? args.tiers.join(',') : undefined,
+      requireCategories:
+        args.requireCategories && args.requireCategories.length
+          ? args.requireCategories.join(',')
+          : undefined,
+      maxPrice: args.maxPrice || undefined,
+      availableOnly: args.availableOnly ? 'true' : undefined,
     },
   });
   return data;

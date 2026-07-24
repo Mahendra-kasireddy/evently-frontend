@@ -26,6 +26,56 @@ export interface BookedEventData {
   steps: BookedStep[];
 }
 
+/**
+ * The eight stages of the customer's event journey (mirrors the backend
+ * CurrentEventStage). The Home "Current Event" card renders whichever stage is
+ * currently active.
+ */
+export type CurrentEventStage =
+  | 'draft'
+  | 'submitted'
+  | 'quotes_received'
+  | 'quote_accepted'
+  | 'booking_created'
+  | 'booking_confirmed'
+  | 'in_progress'
+  | 'completed';
+
+export type BookingStatusValue =
+  | 'pending'
+  | 'confirmed'
+  | 'in_progress'
+  | 'completed'
+  | 'cancelled'
+  | 'rejected';
+
+export interface CurrentEventOrganizer {
+  id: string;
+  name: string;
+  initials: string;
+  avatarColor: string;
+  tier: string;
+  rating: number;
+}
+
+/** Single "Current Event" object from the home feed (null when none active). */
+export interface CurrentEventData {
+  stage: CurrentEventStage;
+  rank: number;
+  refId: string;
+  refCode: string | null;
+  source: 'plan' | 'quote' | 'booking';
+  title: string;
+  occasion: string;
+  progress: number;
+  daysToGo: number | null;
+  organizer: CurrentEventOrganizer | null;
+  quoteCount: number;
+  bookingStatus: BookingStatusValue | null;
+  quotationId: string | null;
+  hasNewActivity: boolean;
+}
+
 export type OccasionIcon = 'heart' | 'gift' | 'home' | 'sparkles' | 'star' | 'briefcase';
 export type OccasionArt = 'wedding' | 'birthday' | 'housewarming' | 'naming' | 'anniversary' | 'corporate';
 export interface OccasionCard { id: string; icon: OccasionIcon; art: OccasionArt; label: string; cta: string }
@@ -55,6 +105,7 @@ export interface CustomerHomeData {
   nav: NavItem[];
   hero: HeroData;
   bookedEvent?: BookedEventData | undefined; // per-user; from the home feed
+  currentEvent?: CurrentEventData | undefined; // per-user; latest active event stage
   planSection: PlanSection;
   howItWorks: HowItWorks;
   topOrganizers: TopOrganizers;

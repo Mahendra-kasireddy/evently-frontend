@@ -1,1 +1,1 @@
-export { BasicInfoForm, type BasicInfoFormProps } from './BasicInfoForm';
+export { BasicInfoForm } from './BasicInfoForm';

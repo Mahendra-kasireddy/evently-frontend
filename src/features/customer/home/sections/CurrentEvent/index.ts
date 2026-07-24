@@ -1,0 +1,1 @@
+export { CurrentEvent } from './CurrentEvent';

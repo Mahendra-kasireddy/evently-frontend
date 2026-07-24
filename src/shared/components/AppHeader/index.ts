@@ -1,1 +1,8 @@
-export { AppHeader, type AppHeaderProps, type AppNavItem, type AppHeaderUser } from './AppHeader';
+export {
+  AppHeader,
+  type AppHeaderProps,
+  type AppNavItem,
+  type AppHeaderUser,
+  type HeaderNotification,
+  type HeaderNotificationType,
+} from './AppHeader';

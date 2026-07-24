@@ -4,7 +4,33 @@ export interface PlanOccasion { id: string; label: string; art: ArtKey }
 export type CategoryIcon = 'food' | 'water' | 'decor' | 'photo' | 'music' | 'priest' | 'mehendi' | 'transport';
 export interface PlanCategory { id: string; title: string; subtitle: string; icon: CategoryIcon }
 export type OrgTier = 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
-export interface PlanOrganizer { id: string; initials: string; name: string; avatarColor: string; tier: OrgTier; rating: number; reviews: number; events: number; location: string; tags: string[]; matches: number; total: number; estRange: string }
+export interface PlanOrganizer {
+  id: string;
+  initials: string;
+  name: string;
+  avatarColor: string;
+  tier: OrgTier;
+  rating: number;
+  reviews: number;
+  events: number;
+  location: string;
+  tags: string[];
+  matches: number;
+  total: number;
+  estRange: string;
+  // Engine-enriched fields (present for wizard recommendations, absent in browse).
+  reasons?: string[];
+  estMin?: number;
+  estMax?: number;
+  available?: boolean;
+  responseHours?: number;
+  score?: number;
+  /** True for Evently's own concierge fallback. */
+  concierge?: boolean;
+}
+
+/** Sort keys understood by the recommendation engine. */
+export type RecommendationSort = 'best' | 'rating' | 'price' | 'events' | 'response' | 'nearest';
 export interface PlanFilters { tiers: OrgTier[]; ratings: string[]; categories: string[]; sorts: string[] }
 export interface PlanStep { id: string; label: string; heading: string; subtitle: string }
 export type TrustIcon = 'zap' | 'shield' | 'calendar';
@@ -46,13 +72,23 @@ export interface PlanDraft {
   step: number;
 }
 
-/** Context sent to the backend recommendation engine (find-organizers step). */
+/** Context + filters sent to the backend recommendation engine. */
 export interface RecommendationArgs {
   categories: string[];
   occasion?: string | undefined;
   guests?: string | undefined;
   city?: string | undefined;
+  area?: string | undefined;
   budget?: string | undefined;
+  eventDate?: string | undefined;
+  venue?: 'indoor' | 'outdoor' | undefined;
+  // Filters + sort (server-side)
+  sort?: RecommendationSort | undefined;
+  minRating?: number | undefined;
+  tiers?: string[] | undefined;
+  requireCategories?: string[] | undefined;
+  maxPrice?: number | undefined;
+  availableOnly?: boolean | undefined;
 }
 
 export type PlanStatus = 'draft' | 'submitted' | 'quoted' | 'booked' | 'cancelled';

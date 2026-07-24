@@ -22,6 +22,11 @@ async function fetchNotifications(): Promise<NotificationItem[]> {
   return data;
 }
 
+/** Mark every notification as read. Authenticated (bearer token). */
+async function markAllNotificationsRead(): Promise<void> {
+  await apiClient.post('/notification/markAllRead');
+}
+
 export const notificationsApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getUnreadCount: build.query<number, void>({
@@ -32,7 +37,15 @@ export const notificationsApi = baseApi.injectEndpoints({
       queryFn: () => toQueryResult(() => fetchNotifications()),
       providesTags: ['Notifications'],
     }),
+    markAllNotificationsRead: build.mutation<void, void>({
+      queryFn: () => toQueryResult(() => markAllNotificationsRead()),
+      invalidatesTags: ['Notifications'],
+    }),
   }),
 });
 
-export const { useGetUnreadCountQuery, useGetMyNotificationsQuery } = notificationsApi;
+export const {
+  useGetUnreadCountQuery,
+  useGetMyNotificationsQuery,
+  useMarkAllNotificationsReadMutation,
+} = notificationsApi;

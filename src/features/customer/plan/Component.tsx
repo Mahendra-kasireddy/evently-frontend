@@ -40,11 +40,20 @@ export interface PlanComponentProps {
 }
 
 export function Component({ data, draft, setOccasion, setField, setStep, setSelectedOrganizer, toggleCategory }: PlanComponentProps) {
-  const occasion = data.occasions.find((o) => o.id === draft.occasionId) ?? data.occasions[0];
+  // Defensive defaults — never crash if the API omits an array (e.g. an older
+  // backend without budgetOptions, or config not yet re-seeded).
+  const occasions = data.occasions ?? [];
+  const cmsSteps = data.steps ?? [];
+  const categories = data.categories ?? [];
+  const budgetOptions = data.budgetOptions ?? [];
+  const cityOptions = data.cityOptions ?? [];
+  const guestOptions = data.guestOptions ?? [];
+
+  const occasion = occasions.find((o) => o.id === draft.occasionId) ?? occasions[0];
   if (!occasion) return null;
 
   // Ensure the Review step exists even if the CMS config hasn't been re-seeded.
-  const steps = data.steps.some((s) => s.id === 'review') ? data.steps : [...data.steps, REVIEW_FALLBACK];
+  const steps = cmsSteps.some((s) => s.id === 'review') ? cmsSteps : [...cmsSteps, REVIEW_FALLBACK];
   const reviewIndex = steps.findIndex((s) => s.id === 'review');
   const organizersIndex = steps.findIndex((s) => s.id === 'organizers');
 
@@ -52,7 +61,7 @@ export function Component({ data, draft, setOccasion, setField, setStep, setSele
   const stepInfo = steps[step];
   const eyebrow = `PLAN YOUR ${occasion.label.toUpperCase()} · STEP ${step + 1} OF ${steps.length}`;
   const selectedCats = draft.categories
-    .map((id) => data.categories.find((c) => c.id === id)?.title.split(/[ /]/)[0] ?? '')
+    .map((id) => categories.find((c) => c.id === id)?.title.split(/[ /]/)[0] ?? '')
     .filter(Boolean);
 
   const blockReason = blockReasonFor(step, draft);
@@ -83,8 +92,8 @@ export function Component({ data, draft, setOccasion, setField, setStep, setSele
               <div className={styles.col}>
                 {step === 0 ? (
                   <>
-                    <OccasionPicker occasions={data.occasions} selectedId={draft.occasionId} onSelect={setOccasion} />
-                    <EventDetailsForm draft={draft} cityOptions={data.cityOptions} guestOptions={data.guestOptions} budgetOptions={data.budgetOptions} onField={setField} />
+                    <OccasionPicker occasions={occasions} selectedId={draft.occasionId} onSelect={setOccasion} />
+                    <EventDetailsForm draft={draft} cityOptions={cityOptions} guestOptions={guestOptions} budgetOptions={budgetOptions} onField={setField} />
                     <IdeasRequests
                       config={data.ideas}
                       value={draft.ideas}
@@ -97,7 +106,7 @@ export function Component({ data, draft, setOccasion, setField, setStep, setSele
                     </div>
                   </>
                 ) : (
-                  <CategoriesStep occasionLabel={occasion.label} categories={data.categories} selected={draft.categories} onToggle={toggleCategory} />
+                  <CategoriesStep occasionLabel={occasion.label} categories={categories} selected={draft.categories} onToggle={toggleCategory} />
                 )}
               </div>
               <SummarySidebar

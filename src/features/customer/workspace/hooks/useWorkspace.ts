@@ -9,9 +9,11 @@ export function useWorkspace() {
   return {
     plans: plansQ.data ?? [],
     quotes: quotesQ.data ?? [],
+    // Bookings are supplementary — a failure here (e.g. an older backend without
+    // the endpoint) must not blank out the whole workspace.
     bookings: bookingsQ.data ?? [],
-    isLoading: plansQ.isLoading || quotesQ.isLoading || bookingsQ.isLoading,
-    isError: plansQ.isError || quotesQ.isError || bookingsQ.isError,
+    isLoading: plansQ.isLoading || quotesQ.isLoading,
+    isError: plansQ.isError || quotesQ.isError,
     refetch: () => {
       void plansQ.refetch();
       void quotesQ.refetch();

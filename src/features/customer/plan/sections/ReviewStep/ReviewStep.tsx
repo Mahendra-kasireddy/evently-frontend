@@ -40,6 +40,16 @@ export function ReviewStep({ data, draft, occasionLabel, onEdit }: ReviewStepPro
   const busy = phase !== 'idle';
   const planSaved = savedPlanId !== null;
 
+  /** Pull the real server detail out of a normalized API error for the UI. */
+  const detailOf = (err: unknown): string => {
+    const e = err as { status?: number; message?: string } | undefined;
+    if (!e) return '';
+    const parts: string[] = [];
+    if (e.message) parts.push(e.message);
+    if (e.status) parts.push(`(${e.status})`);
+    return parts.join(' ');
+  };
+
   const submit = async () => {
     setError(null);
     // Priority 1 — plan must persist before any quote is created.
@@ -50,9 +60,14 @@ export function ReviewStep({ data, draft, occasionLabel, onEdit }: ReviewStepPro
         const plan = await createPlan(draftToUpsert(draft)).unwrap();
         planId = plan.id;
         setSavedPlanId(plan.id);
-      } catch {
+      } catch (err) {
         setPhase('idle');
-        setError('We couldn’t save your plan. Nothing was submitted — please try again.');
+        const detail = detailOf(err);
+        setError(
+          detail
+            ? `Couldn’t save your plan: ${detail}. Nothing was submitted.`
+            : 'We couldn’t save your plan. Nothing was submitted — please try again.',
+        );
         return; // Do NOT continue to the quote request.
       }
     }
@@ -68,9 +83,14 @@ export function ReviewStep({ data, draft, occasionLabel, onEdit }: ReviewStepPro
         guests: draft.guests,
       }).unwrap();
       navigate('/quotes');
-    } catch {
+    } catch (err) {
       setPhase('idle');
-      setError('Your plan is saved, but the quote request didn’t go through. You can retry without losing anything.');
+      const detail = detailOf(err);
+      setError(
+        detail
+          ? `Your plan is saved, but the quote request failed: ${detail}. You can retry.`
+          : 'Your plan is saved, but the quote request didn’t go through. You can retry without losing anything.',
+      );
     }
   };
 

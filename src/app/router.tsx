@@ -26,6 +26,9 @@ const BookingDetailPage = lazy(() => import('@features/customer/booking-detail/p
 const WorkspacePage = lazy(() => import('@features/customer/workspace/page'));
 const PaymentSuccessPage = lazy(() => import('@features/customer/payment-success/page'));
 const DiscoverPage = lazy(() => import('@features/customer/discover/page'));
+const ProfilePage = lazy(() => import('@features/customer/profile/page'));
+const SettingsPage = lazy(() => import('@features/customer/settings/page'));
+const MyInvitationPage = lazy(() => import('@features/customer/my-invitation/page'));
 
 export const router = createBrowserRouter([
   { path: '/', element: lazyRoute(LandingPage, 'landing') },
@@ -49,6 +52,9 @@ export const router = createBrowserRouter([
       { path: '/workspace', element: lazyRoute(WorkspacePage, 'workspace') },
       { path: '/payment-success/:id', element: lazyRoute(PaymentSuccessPage, 'payment-success') },
       { path: '/discover', element: lazyRoute(DiscoverPage, 'discover') },
+      { path: '/profile', element: lazyRoute(ProfilePage, 'profile') },
+      { path: '/settings', element: lazyRoute(SettingsPage, 'settings') },
+      { path: '/my-invitation', element: lazyRoute(MyInvitationPage, 'my-invitation') },
     ],
   },
 

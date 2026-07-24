@@ -5,7 +5,8 @@ import type { CustomerHomeData } from '../types';
 /**
  * Customer-home view model — sourced from the single backend `home` screen
  * module endpoint (GET /home/getHomeFeed), which composes profile, content,
- * packages, organizers, booking and unread count into one payload.
+ * packages, organizers, the resolved "current event" and unread count into one
+ * payload.
  */
 export function useCustomerHome() {
   const { data: feed, isLoading, isError, refetch } = useGetHomeFeedQuery();
@@ -32,6 +33,7 @@ export function useCustomerHome() {
         trust: c.hero.trust,
       },
       bookedEvent: feed.booking ?? undefined,
+      currentEvent: feed.currentEvent ?? undefined,
       planSection: c.planSection,
       howItWorks: c.howItWorks,
       topOrganizers: { ...c.topOrganizers, organizers: feed.topOrganizers },

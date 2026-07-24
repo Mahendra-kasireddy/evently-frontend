@@ -26,7 +26,7 @@ const CLOSED = new Set(['cancelled', 'rejected']);
 
 export function Component({ booking: b, isCancelling, onCancel }: BookingDetailComponentProps) {
   const navigate = useNavigate();
-  const status = STATUS_META[b.status];
+  const status = STATUS_META[b.status] ?? { label: b.status || 'Unknown', cls: 'pending' };
   const canCancel = CANCELLABLE.includes(b.status);
 
   return (
@@ -69,7 +69,7 @@ export function Component({ booking: b, isCancelling, onCancel }: BookingDetailC
               <div style={{ marginTop: 16 }}>
                 <div className={styles.bar}><span className={styles.fill} style={{ width: `${b.progress}%` }} /></div>
                 <ul className={styles.steps}>
-                  {b.steps.map((s) => (
+                  {(b.steps ?? []).map((s) => (
                     <li key={s.label} className={`${styles.step} ${s.done ? '' : styles.stepMuted}`}>
                       <span className={`${styles.stepDot} ${s.done ? styles.stepDone : ''}`}>{s.done && <Check size={11} strokeWidth={3} />}</span>
                       {s.label}
@@ -82,7 +82,7 @@ export function Component({ booking: b, isCancelling, onCancel }: BookingDetailC
             <section className={styles.panel} style={{ marginTop: 20 }}>
               <h3 className={styles.panelTitle}><History size={17} /> Booking timeline</h3>
               <ul className={styles.timeline}>
-                {b.timeline.map((e, i) => (
+                {(b.timeline ?? []).map((e, i) => (
                   <li key={`${e.status}-${i}`} className={styles.tItem}>
                     <span className={`${styles.tDot} ${CLOSED.has(e.status) ? styles.tDotMuted : ''}`} />
                     <div className={styles.tBody}>

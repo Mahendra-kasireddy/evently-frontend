@@ -15,3 +15,24 @@
 .legend { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--color-text-muted); margin: 4px 0 0; flex: 1; }
 .secure { color: var(--color-green); }
 .actions { display: flex; align-items: center; gap: 16px; margin-top: 6px; }
+
+/* Profile photo uploader */
+.photoRow { display: flex; align-items: center; gap: 16px; }
+.photoPreview { width: 72px; height: 72px; border-radius: 999px; object-fit: cover; border: 2px solid var(--color-border); background: var(--color-primary-soft); flex: 0 0 auto; }
+.photoPlaceholder { width: 72px; height: 72px; border-radius: 999px; display: flex; align-items: center; justify-content: center; background: var(--color-primary-soft); color: var(--color-primary); border: 2px dashed var(--color-border); flex: 0 0 auto; }
+.photoActions { display: flex; flex-direction: column; gap: 4px; }
+.uploadBtn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: #fff; color: var(--color-navy); font-size: 0.85rem; font-weight: 600; cursor: pointer; width: fit-content; }
+.uploadBtn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.hint { font-size: 0.75rem; color: var(--color-text-muted); }
+.readonly { height: 44px; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 0 12px; font-size: 0.95rem; color: var(--color-text-muted); background: var(--color-bg); display: flex; align-items: center; }
+
+/* Save state + completion */
+.statusBar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.saveState { font-size: 0.8rem; color: var(--color-text-muted); }
+.saved { color: var(--color-green); }
+.saving { color: var(--color-primary); }
+.completion { font-size: 0.8rem; font-weight: 700; color: var(--color-navy); }
+.progress { height: 6px; border-radius: 999px; background: var(--color-primary-soft); overflow: hidden; }
+.progressFill { height: 100%; background: var(--color-primary); transition: width 0.3s ease; }
+.success { display: flex; flex-direction: column; gap: 8px; padding: 20px; border: 1px solid var(--color-green); background: var(--color-green-soft); border-radius: var(--radius-lg); color: var(--color-navy); }
+.successTitle { font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }

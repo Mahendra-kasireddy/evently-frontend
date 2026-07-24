@@ -12,8 +12,8 @@ export const ONBOARDING_STEPS = [
   { id: 'profile', order: 5, title: 'Profile & portfolio' },
 ] as const;
 
-export const CITIES = ['Hyderabad', 'Vijayawada', 'Bangalore', 'Chennai', 'Pune', 'Mumbai'];
-export const CATEGORIES = ['Weddings', 'Birthdays', 'Housewarming', 'Naming ceremony', 'Anniversaries', 'Corporate'];
+// NOTE: cities, categories and business types are no longer hardcoded here —
+// they come from MongoDB via GET /organizer/onboarding-config.
 
 export const STEP_STATUS_LABEL: Record<string, string> = {
   completed: 'Completed',
