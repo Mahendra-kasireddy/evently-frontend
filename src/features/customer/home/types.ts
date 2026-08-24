@@ -17,12 +17,35 @@ export interface HeroData {
 }
 
 export interface BookedStep { label: string; done: boolean }
+
+/**
+ * Which live state the booking is in — drives the card's badge wording.
+ *
+ * `pending` is included because a booking exists (and is paid for) from the
+ * moment the customer accepts a quote; only the organizer can move it to
+ * confirmed. Leaving it out meant the customer saw no booked event at all until
+ * the organizer got round to confirming.
+ */
+export type BookedEventStatus = 'pending' | 'confirmed' | 'in_progress';
+
+/**
+ * The customer's ongoing booking, behind Home's rich "BOOKED" card. The backend
+ * only ever returns it for a confirmed or in-progress booking, so the card is
+ * shown exactly when there is a real, live booking to open.
+ */
 export interface BookedEventData {
+  id: string;
   ref: string;
+  /** "Your Wedding · 28 Dec 2026" — composed by the API from occasion + date. */
   title: string;
   description: string;
+  /** Share of the milestones below that are done, so ring and ticks agree. */
   progress: number;
   daysToGo: number;
+  status: BookedEventStatus;
+  /** False while the booking is paid for but not yet accepted by the organizer. */
+  organizerConfirmed: boolean;
+  organizerName: string;
   steps: BookedStep[];
 }
 
@@ -93,7 +116,15 @@ export interface Organizer {
   id: string; initials: string; name: string; avatarColor: string;
   tier: OrganizerTier; rating: number; reviews: number; events: number; tags: string[];
 }
-export interface TopOrganizers { title: string; seeAllLabel: string; organizers: Organizer[] }
+export type NearbyScope = 'city' | 'all';
+export interface TopOrganizers {
+  title: string;
+  seeAllLabel: string;
+  organizers: Organizer[];
+  /** Where the list came from, and the city asked for — drives the labelling. */
+  scope: NearbyScope;
+  city: string;
+}
 
 export type HowIcon = 'edit' | 'file' | 'chart' | 'shield';
 export interface HowStep { num: string; icon: HowIcon; title: string; description: string }

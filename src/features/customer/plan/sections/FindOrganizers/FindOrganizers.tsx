@@ -94,7 +94,9 @@ export function FindOrganizers({ filters, draft, organizers: passed, onSelectOrg
 
   const chooseOrganizer = (organizerId: string) => {
     if (!draft || !onSelectOrganizer) {
-      navigate('/quotes');
+      // No draft to attach the organizer to — send the customer to My Events,
+      // where every request they have made is listed with its responses.
+      navigate('/workspace');
       return;
     }
     onSelectOrganizer(organizerId);

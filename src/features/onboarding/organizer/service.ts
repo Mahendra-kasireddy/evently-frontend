@@ -103,7 +103,20 @@ export const organizerOnboardingApi = baseApi.injectEndpoints({
       queryFn: () => toQueryResult(registerOrganizer),
       invalidatesTags: ['OrganizerProfile'],
     }),
-    getOrganizerProfile: build.query<OrganizerProfile, void>({
+    /*
+     * Named for the onboarding flow, deliberately NOT `getOrganizerProfile`.
+     *
+     * There is one `baseApi`, and `injectEndpoints` silently discards a second
+     * definition of an already-registered endpoint name — the warning about it
+     * is dev-only, so a production build says nothing.
+     * `features/customer/organizer-profile` defines `getOrganizerProfile` for
+     * `GET /organizer/getOrganizerById/:id` and takes an id; this one takes no
+     * argument and reads the caller's own `GET /organizer/profile`. While they
+     * shared a name, whichever lazy chunk loaded first won it — so opening an
+     * organizer's public profile after visiting onboarding ran this query
+     * function instead, ignored the id, and fetched the wrong document.
+     */
+    getMyOnboardingProfile: build.query<OrganizerProfile, void>({
       queryFn: () => toQueryResult(fetchProfile),
       providesTags: ['OrganizerProfile'],
     }),
@@ -124,7 +137,7 @@ export const {
   useGetOnboardingConfigQuery,
   useGetServicesConfigQuery,
   useRegisterOrganizerMutation,
-  useGetOrganizerProfileQuery,
+  useGetMyOnboardingProfileQuery,
   useUpdateOrganizerProfileMutation,
   useUpdateVerificationMutation,
   useUpdateBankMutation,

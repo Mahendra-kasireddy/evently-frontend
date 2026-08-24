@@ -1,0 +1,318 @@
+/*
+ * P-09 Calendar. Shell supplies the page title and the 24px gutter. Metrics
+ * sampled from the reference: 18px month label, 6px grid gap, 1.15 aspect
+ * cells at radius 9, and a fixed 300px right rail.
+ */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---------- top bar ---------- */
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.month {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--c-navy);
+}
+.monthNav {
+  display: flex;
+  gap: 6px;
+}
+.monthNav button {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--c-muted);
+  display: inline-flex;
+}
+.monthNav button:hover {
+  color: var(--c-navy);
+}
+
+.barActions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.segment {
+  display: flex;
+  background: var(--c-page);
+  border-radius: 9px;
+  padding: 3px;
+}
+.segmentBtn {
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--c-muted);
+  padding: 6px 14px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.segmentOn {
+  background: #fff;
+  color: var(--c-navy);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* ---------- block range ---------- */
+
+.rangePanel {
+  padding: 12px 14px;
+}
+.rangeForm {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.rangeField {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.rangeField span {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--c-navy);
+}
+.rangeField input {
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--c-navy);
+  border: 1px solid var(--c-line);
+  border-radius: 9px;
+  padding: 8px 11px;
+  background: #fff;
+}
+.rangeField input:focus {
+  outline: none;
+  border-color: var(--c-coral);
+}
+
+/* ---------- layout ---------- */
+
+.layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+.gridCard {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 18px;
+}
+.rail {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ---------- grid ---------- */
+
+.weekdays,
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.weekdays {
+  margin-bottom: 8px;
+}
+.weekday {
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--c-muted);
+}
+
+.day {
+  aspect-ratio: 1.15;
+  border-radius: 9px;
+  border: 1px solid var(--c-line);
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 6px 7px;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+.dayNum {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-navy);
+}
+.dayTag {
+  margin-top: auto;
+  font-size: 9.5px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.booked {
+  background: var(--c-coral);
+  border-color: var(--c-coral);
+}
+.booked .dayNum {
+  color: #fff;
+}
+.blocked {
+  background: #e7e9ee;
+}
+.blocked .dayNum {
+  color: var(--c-muted);
+}
+.past .dayNum {
+  color: var(--c-muted2);
+}
+.outside {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+.selected {
+  outline: 2px solid var(--c-navy);
+  outline-offset: 1px;
+}
+
+/* ---------- day panel ---------- */
+
+.detailCard {
+  padding: 20px;
+}
+.detailHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.dateTile {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--c-coral);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex: none;
+}
+.dateTileMuted {
+  background: var(--c-navy-wash);
+  color: var(--c-navy);
+}
+.detailTitle {
+  min-width: 0;
+}
+.detailTitle strong {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--c-navy);
+}
+.detailSub {
+  font-size: 11.5px;
+  color: var(--c-muted);
+}
+
+.rows {
+  margin: 0;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12.5px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--c-line2);
+}
+.row:last-child {
+  border-bottom: none;
+}
+.row dt {
+  color: var(--c-muted);
+}
+.row dd {
+  margin: 0;
+  font-weight: 600;
+  color: var(--c-navy);
+  text-align: right;
+}
+
+.viewBtn {
+  margin-top: 12px;
+}
+.hint {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--c-muted);
+  line-height: 1.5;
+}
+
+/* ---------- legend ---------- */
+
+.legend {
+  display: flex;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--c-muted);
+  padding: 0 4px;
+  flex-wrap: wrap;
+}
+.legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.legend i {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--c-line);
+}
+.swBooked {
+  background: var(--c-coral);
+}
+.swBlocked {
+  background: #e7e9ee;
+}
+.swAvailable {
+  background: #fff;
+}
+
+@media (max-width: 1000px) {
+  .layout {
+    flex-direction: column;
+  }
+  .rail {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+@media (max-width: 560px) {
+  .barActions {
+    margin-left: 0;
+    width: 100%;
+  }
+}

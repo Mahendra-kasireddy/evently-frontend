@@ -1,0 +1,37 @@
+/* P-05 enquiry inbox. The shell supplies the page title and gutter; these are
+   only the values the shared partner primitives don't cover (sc_O_05). */
+
+/* The design's notice reads as body copy — navy 500 on the amber wash —
+   rather than the amber-on-amber of the shared Notice atom. */
+.notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--c-amber-wash);
+  color: var(--c-amber);
+}
+.noticeText {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--c-navy);
+}
+
+.pills {
+  margin-bottom: 20px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Tailwind's preflight makes every svg a block, which knocks EmptyBox's
+   centred icon to the left edge. */
+.emptyIcon {
+  display: inline-block;
+  color: var(--c-muted2);
+}

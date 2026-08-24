@@ -1,6 +1,5 @@
 import {
-  useCategories, useFaqs, useFeatures, useFeaturedEvents,
-  useStatistics, useSteps, useTestimonials,
+  useCategories, useFaqs, useFeatures, useSteps,
 } from './hooks';
 import { Component, type SectionData } from './Component';
 
@@ -20,22 +19,16 @@ function toData<T>(q: QueryLike<T[]>): SectionData<T> {
  * slices to the presentational Component. Keeps react-query out of the UI.
  */
 export function LandingContainer() {
-  const statistics = useStatistics();
   const steps = useSteps();
   const categories = useCategories();
   const features = useFeatures();
-  const testimonials = useTestimonials();
-  const vendors = useFeaturedEvents();
   const faqs = useFaqs();
 
   return (
     <Component
-      statistics={toData(statistics)}
       steps={toData(steps)}
       categories={toData(categories)}
       features={toData(features)}
-      testimonials={toData(testimonials)}
-      vendors={toData(vendors)}
       faqs={toData(faqs)}
     />
   );

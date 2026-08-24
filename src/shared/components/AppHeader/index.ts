@@ -5,4 +5,5 @@ export {
   type AppHeaderUser,
   type HeaderNotification,
   type HeaderNotificationType,
+  type ProfileMenuItem,
 } from './AppHeader';

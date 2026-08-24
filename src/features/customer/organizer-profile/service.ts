@@ -1,45 +1,83 @@
-import { baseApi } from '@lib/rtk';
-import type { OrganizerProfile } from './types';
+import { apiClient } from '@lib/api';
+import { baseApi, toQueryResult } from '@lib/rtk';
+import type { OrganizerProfile, ProfileTier, ProfileTile } from './types';
 
-const sharma: OrganizerProfile = {
-  id: 'sharma', initials: 'SE', name: 'Sharma Events', avatarColor: '#7c5bd6', tier: 'Gold',
-  rating: 4.8, reviews: 128, location: 'Hyderabad', certified: true,
-  stats: [
-    { value: '214', label: 'Events' },
-    { value: '< 2 hrs', label: 'Response' },
-    { value: '7 yrs', label: 'Active' },
-    { value: '38%', label: 'Repeat' },
-  ],
-  about: 'Full-service wedding & celebration specialists serving Hyderabad for 7 years. We coordinate catering, decor, photography and priests under one trusted roof.',
-  serviceArea: 'Serves 15km · Banjara Hills',
-  portfolio: [
-    { id: 'p1', color: '#f7e7e7' }, { id: 'p2', color: '#e3efe8' }, { id: 'p3', color: '#e7ebf3' },
-    { id: 'p4', color: '#f6efd9' }, { id: 'p5', color: '#ece7f5' }, { id: 'p6', color: '#f5e6da' },
-  ],
-  reviewsList: [
-    { id: 'r1', initials: 'AV', avatarColor: '#1d9e75', name: 'Anjali Verma', meta: 'Wedding · Apr 2026', rating: 5, text: 'Flawless coordination. The decor was exactly what we dreamed of.', reply: 'Thank you Anjali! It was a joy working with your family.' },
-    { id: 'r2', initials: 'KR', avatarColor: '#1a2e5a', name: 'Karthik Rao', meta: 'Anniversary · Mar 2026', rating: 5, text: 'Great food and on-time service. Would book again.' },
-  ],
-  estLabel: 'Est. for your Wedding',
-  estRange: '₹2.4L – 3.2L',
-};
+/** Subset of GET /organizer/getOrganizerById/:id (the backend's sanitized public view) this page reads. */
+interface ApiPublicOrganizer {
+  id: string;
+  name: string;
+  initials: string;
+  avatarColor: string;
+  tier: string;
+  rating: number;
+  reviews: number;
+  events: number;
+  location: string;
+  serviceAreas: string[];
+  responseHours: number;
+  yearsOfExperience: number;
+  businessDescription: string;
+  estRange: string;
+  coverPhoto: { url: string } | null;
+  gallery: { key: string; url: string }[];
+}
 
-const PROFILES: Record<string, OrganizerProfile> = {
-  sharma,
-  telugu: { ...sharma, id: 'telugu', initials: 'TV', name: 'Telugu Vibes', avatarColor: '#1d9e75', tier: 'Platinum', rating: 4.9, reviews: 201, estRange: '₹2.8L – 4.1L' },
-  ravi: { ...sharma, id: 'ravi', initials: 'RE', name: 'Ravi Events', avatarColor: '#1a2e5a', tier: 'Silver', rating: 4.6, reviews: 82, estRange: '₹1.8L – 2.6L' },
-  mangala: { ...sharma, id: 'mangala', initials: 'MC', name: 'Mangala Celebrations', avatarColor: '#c2502a', tier: 'Gold', rating: 4.7, reviews: 154, estRange: '₹2.2L – 3.0L' },
-};
+const TIERS: ProfileTier[] = ['Bronze', 'Silver', 'Gold', 'Platinum'];
+function coerceTier(tier: string): ProfileTier {
+  return (TIERS as string[]).includes(tier) ? (tier as ProfileTier) : 'Silver';
+}
 
-export async function fetchProfile(id: string): Promise<OrganizerProfile> {
-  await new Promise((r) => setTimeout(r, 200));
-  return PROFILES[id] ?? sharma;
+/** Real portfolio images only — no fabricated placeholder tiles. Falls back
+ * to the cover photo alone if the gallery is empty, or nothing at all. */
+function buildPortfolio(o: ApiPublicOrganizer): ProfileTile[] {
+  if (o.gallery.length > 0) {
+    return o.gallery.map((g) => ({ id: g.key, color: '#eef1f7', image: g.url }));
+  }
+  if (o.coverPhoto?.url) {
+    return [{ id: 'cover', color: '#eef1f7', image: o.coverPhoto.url }];
+  }
+  return [];
+}
+
+function toOrganizerProfile(o: ApiPublicOrganizer): OrganizerProfile {
+  return {
+    id: o.id,
+    initials: o.initials,
+    name: o.name,
+    avatarColor: o.avatarColor,
+    tier: coerceTier(o.tier),
+    rating: o.rating,
+    reviews: o.reviews,
+    location: o.location,
+    // No real verification/certification signal exists in the backend yet —
+    // false rather than fabricated, and the badge only renders when true.
+    certified: false,
+    stats: [
+      { value: String(o.events), label: 'Events' },
+      { value: o.responseHours ? `< ${o.responseHours}h` : '—', label: 'Response' },
+      { value: o.yearsOfExperience ? `${o.yearsOfExperience} yrs` : '—', label: 'Experience' },
+    ],
+    about: o.businessDescription || 'This organizer hasn’t added a description yet.',
+    serviceArea: o.serviceAreas.length > 0 ? o.serviceAreas.join(', ') : o.location,
+    portfolio: buildPortfolio(o),
+    // No reviews/ratings-comments feature exists in the backend yet — an
+    // honest empty list (Reviews section shows "No reviews yet") rather
+    // than fabricated testimonials.
+    reviewsList: [],
+    estLabel: 'Estimated price range',
+    estRange: o.estRange || 'Contact for a quote',
+  };
+}
+
+async function fetchOrganizerProfile(id: string): Promise<OrganizerProfile> {
+  const { data } = await apiClient.get<ApiPublicOrganizer>(`/organizer/getOrganizerById/${id}`);
+  return toOrganizerProfile(data);
 }
 
 export const profileApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getOrganizerProfile: build.query<OrganizerProfile, string>({
-      queryFn: async (id) => ({ data: await fetchProfile(id) }),
+      queryFn: (id) => toQueryResult(() => fetchOrganizerProfile(id)),
     }),
   }),
 });

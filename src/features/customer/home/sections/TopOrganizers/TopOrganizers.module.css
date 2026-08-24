@@ -34,3 +34,59 @@
 
 @media (max-width: 960px) { .grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+/* Empty state: no organizers for the customer's location yet. */
+.emptyCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 20px 22px;
+  flex-wrap: wrap;
+}
+.emptyIcon {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: #fdeee7;
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.emptyText { flex: 1 1 320px; min-width: 0; }
+.emptyTitle { margin: 0 0 4px; font-size: 1rem; font-weight: 700; color: var(--color-navy); }
+.emptyBody { margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-muted); }
+.emptyCta {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 44px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: #fff;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.emptyCta:hover { background: var(--color-primary-hover, #d4552c); }
+@media (max-width: 700px) {
+  .emptyCta { width: 100%; justify-content: center; }
+}
+
+/* Shown when the list was widened beyond the customer's city. */
+.scopeNote {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: -4px 0 12px;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}

@@ -1,5 +1,32 @@
-.row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 28px; }
-.chip, .chipActive { padding: 9px 18px; border-radius: var(--radius-pill); font-size: 0.92rem; cursor: pointer; transition: all 0.15s var(--ease-card); }
-.chip { border: 1px solid var(--color-border); background: #fff; color: var(--color-navy); font-weight: 500; }
-.chip:hover { border-color: #cfd3dc; }
-.chipActive { border: 1px solid var(--color-navy); background: #eef0f6; color: var(--color-navy); font-weight: 600; }
+.row {
+  display: flex;
+  gap: 9px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+.chip,
+.chipActive {
+  font: inherit;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s var(--ease-card);
+}
+.chip {
+  border: 1px solid var(--c-line);
+  background: #fff;
+  color: var(--c-muted);
+}
+.chip:hover {
+  border-color: #cfd3dc;
+  color: var(--c-navy);
+}
+.chipActive {
+  border: 1px solid var(--c-navy);
+  background: var(--c-navy-wash);
+  color: var(--c-navy);
+}

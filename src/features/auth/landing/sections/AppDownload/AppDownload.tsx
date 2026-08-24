@@ -1,18 +1,23 @@
 import { Play, Apple, Star, Home, Search, MessageSquare, User } from 'lucide-react';
-import { AsyncSection } from '@shared/reusable';
 import { SECTION_COPY } from '../../constants';
-import type { FeaturedEvent } from '../../types';
 import styles from './AppDownload.module.css';
-
-export interface AppDownloadProps {
-  vendors: FeaturedEvent[];
-  isLoading: boolean;
-  isError: boolean;
-}
 
 const { appDownload } = SECTION_COPY;
 
-export function AppDownload({ vendors, isLoading, isError }: AppDownloadProps) {
+/*
+ * The phone is a product illustration of what the app looks like — `aria-hidden`
+ * and captioned as an example. Its rows used to be fetched through a mock
+ * `/events/featured` RTK endpoint, which made invented vendor names and a
+ * "₹1.05L" figure indistinguishable from live data to anyone reading the code.
+ * They are static illustration copy now, and named as such.
+ */
+const ILLUSTRATION_ROWS = [
+  { id: 'row-1', title: 'Decoration', vendor: 'Your decorator', status: 'On track' },
+  { id: 'row-2', title: 'Catering', vendor: 'Your caterer', status: 'Quoted' },
+  { id: 'row-3', title: 'Photography', vendor: 'Your photographer', status: 'Booked' },
+];
+
+export function AppDownload() {
   return (
     <section className={styles.wrap}>
       <div className={styles.inner}>
@@ -31,28 +36,19 @@ export function AppDownload({ vendors, isLoading, isError }: AppDownloadProps) {
 
         <div className={styles.phone} aria-hidden>
           <div className={styles.phoneTop}>
-            <span className={styles.phoneTag}>Sharma Events · on track</span>
+            <span className={styles.phoneTag}>Example workspace</span>
           </div>
           <p className={styles.vendorsLabel}>Your vendors</p>
           <ul className={styles.vendors}>
-            <AsyncSection
-              isLoading={isLoading}
-              isError={isError}
-              loading={Array.from({ length: 3 }).map((_, i) => (
-                <li key={i} className={styles.vendorSkel} />
-              ))}
-            >
-              {vendors.map((v) => (
-                <li key={v.id} className={styles.vendor}>
-                  <img src={v.imageUrl} alt="" className={styles.vendorImg} />
-                  <div>
-                    <strong>{v.title}</strong>
-                    <span>{v.vendorName}</span>
-                  </div>
-                  <span className={`${styles.status} ${v.status === 'On track' ? styles.statusGreen : ''}`}>{v.status}</span>
-                </li>
-              ))}
-            </AsyncSection>
+            {ILLUSTRATION_ROWS.map((r) => (
+              <li key={r.id} className={styles.vendor}>
+                <div>
+                  <strong>{r.title}</strong>
+                  <span>{r.vendor}</span>
+                </div>
+                <span className={`${styles.status} ${r.status === 'On track' ? styles.statusGreen : ''}`}>{r.status}</span>
+              </li>
+            ))}
           </ul>
           <nav className={styles.tabbar}>
             <Home size={18} /><Search size={18} /><MessageSquare size={18} /><User size={18} />

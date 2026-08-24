@@ -11,6 +11,17 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
+    // Uploaded-file URLs from the API are relative ("/api/upload/file/…") so
+    // they resolve correctly in production behind a shared origin. In dev
+    // the frontend and backend are different ports, so plain <img>/<a> tags
+    // (which don't go through apiClient's baseURL) need this proxy to reach
+    // the real backend instead of 404ing against the Vite dev server itself.
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
   },
   resolve: {
     alias: {

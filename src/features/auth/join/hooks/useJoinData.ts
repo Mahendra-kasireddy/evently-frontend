@@ -1,5 +1,6 @@
 /**
- * Join data hooks — backed by RTK Query (was TanStack Query). Endpoints live in
- * ../service; aliased here to the names components use.
+ * Join data hooks — backed by RTK Query. Endpoints live in ../service; aliased
+ * here to the name the container uses. The city list is the only thing this
+ * screen fetches; the role cards are static copy from ../constants.
  */
-export { useGetRolesQuery as useRoles, useGetCitiesQuery as useCities } from '../service';
+export { useGetCitiesQuery as useCities } from '../service';

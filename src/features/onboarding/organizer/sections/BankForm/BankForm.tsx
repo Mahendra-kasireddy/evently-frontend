@@ -1,5 +1,5 @@
-import { Input } from '@shared/reusable';
-import { FileField } from '../Fields';
+import { Lock } from 'lucide-react';
+import { FileField, TextField } from '../Fields';
 import type { UseOnboardingResult } from '../../hooks/useOnboarding';
 import form from '../StepForm.module.css';
 
@@ -17,57 +17,57 @@ export function BankForm({ onb }: { onb: UseOnboardingResult }) {
   return (
     <div className={form.form}>
       <div className={form.grid2}>
-        <Input
+        <TextField
           label="Account holder name"
           required
           value={values.accountHolderName}
-          onChange={(e) => onb.setField('accountHolderName', e.target.value)}
+          onChange={(v) => onb.setField('accountHolderName', v)}
         />
-        <Input
+        <TextField
           label="Bank name"
           required
           value={values.bankName}
-          onChange={(e) => onb.setField('bankName', e.target.value)}
+          onChange={(v) => onb.setField('bankName', v)}
         />
       </div>
 
       <div className={form.grid2}>
-        <Input
+        <TextField
           label="Branch name"
           value={values.branchName}
-          onChange={(e) => onb.setField('branchName', e.target.value)}
+          onChange={(v) => onb.setField('branchName', v)}
         />
-        <Input
-          label="IFSC"
+        <TextField
+          label="IFSC code"
           required
           value={values.ifsc}
-          onChange={(e) => onb.setField('ifsc', e.target.value.toUpperCase())}
+          onChange={(v) => onb.setField('ifsc', v.toUpperCase())}
           {...err('ifsc')}
         />
       </div>
 
       <div className={form.grid2}>
-        <Input
+        <TextField
           label="Account number"
           required
           value={values.accountNumber}
-          onChange={(e) => onb.setField('accountNumber', e.target.value)}
+          onChange={(v) => onb.setField('accountNumber', v)}
           {...err('accountNumber')}
         />
-        <Input
+        <TextField
           label="Confirm account number"
           required
           value={values.confirmAccountNumber}
-          onChange={(e) => onb.setField('confirmAccountNumber', e.target.value)}
+          onChange={(v) => onb.setField('confirmAccountNumber', v)}
           {...(mismatch ? { error: 'Account numbers do not match' } : {})}
         />
       </div>
 
       <div className={form.grid2}>
-        <Input
+        <TextField
           label="UPI ID (optional)"
           value={values.upiId}
-          onChange={(e) => onb.setField('upiId', e.target.value)}
+          onChange={(v) => onb.setField('upiId', v)}
           {...err('upiId')}
         />
         <FileField
@@ -81,6 +81,11 @@ export function BankForm({ onb }: { onb: UseOnboardingResult }) {
           hint="PDF, JPG or PNG · up to 10MB"
         />
       </div>
+
+      <p className={form.noteNavy}>
+        <Lock size={15} />
+        Bank details are encrypted and never shared with customers.
+      </p>
     </div>
   );
 }

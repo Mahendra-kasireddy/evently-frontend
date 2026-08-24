@@ -1,1 +1,1 @@
-export { useRoles, useCities } from './useJoinData';
+export { useCities } from './useJoinData';

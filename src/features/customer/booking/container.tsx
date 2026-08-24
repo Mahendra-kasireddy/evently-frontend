@@ -17,8 +17,8 @@ export function BookingContainer({ quotationId }: { quotationId: string }) {
           icon={FileQuestion}
           title="Nothing to book"
           message="Accept a quotation first, and we’ll bring you here to confirm your booking."
-          actionLabel="View quotes"
-          onAction={() => navigate('/quotes')}
+          actionLabel="Go to My Events"
+          onAction={() => navigate('/workspace')}
         />
       </div>
     );

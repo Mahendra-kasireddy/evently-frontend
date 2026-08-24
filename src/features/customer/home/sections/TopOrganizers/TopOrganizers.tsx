@@ -1,4 +1,4 @@
-import { Star, Award, ChevronRight } from 'lucide-react';
+import { Star, Award, ChevronRight, Compass, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@app/hooks';
 import type { TopOrganizers as TopOrganizersData, OrganizerTier } from '../../types';
@@ -26,11 +26,42 @@ export function TopOrganizers({ data }: TopOrganizersProps) {
   const getQuote = async (organizerId: string) => {
     try {
       await requestQuote({ organizerId, draft }).unwrap();
-      navigate('/quotes');
+      navigate('/workspace');
     } catch {
       /* mutation state surfaces the error */
     }
   };
+
+  /*
+   * No organizers registered for this location yet. An empty carousel under a
+   * "near you" heading reads as a broken page, so the section becomes a single
+   * honest prompt that routes to the wider directory. No placeholder cards.
+   */
+  if (organizers.length === 0) {
+    return (
+      <section className={styles.section}>
+        <header className={styles.head}>
+          <h2 className={styles.title}>{data.title}</h2>
+        </header>
+        <div className={styles.emptyCard}>
+          <span className={styles.emptyIcon}>
+            <Compass size={22} />
+          </span>
+          <div className={styles.emptyText}>
+            <h3 className={styles.emptyTitle}>Looking for organizers in your area?</h3>
+            <p className={styles.emptyBody}>
+              {data.city
+                ? `We couldn’t find organizers in ${data.city} yet. Explore organizers in other areas — you can change your city from the header any time.`
+                : 'We couldn’t find organizers nearby yet. Explore organizers in other areas — you can change your city from the header any time.'}
+            </p>
+          </div>
+          <button type="button" className={styles.emptyCta} onClick={() => navigate('/discover')}>
+            Explore Organizers <ChevronRight size={15} />
+          </button>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={styles.section}>
@@ -40,6 +71,17 @@ export function TopOrganizers({ data }: TopOrganizersProps) {
           {data.seeAllLabel} <ChevronRight size={15} />
         </button>
       </header>
+
+      {/* These came from outside the customer's city — say so rather than
+          letting a "near you" heading imply otherwise. */}
+      {data.scope === 'all' && (
+        <p className={styles.scopeNote}>
+          <MapPin size={14} />
+          {data.city
+            ? `No organizers in ${data.city} yet — showing highly-rated organizers from other areas.`
+            : 'Set your location to see organizers near you. Showing highly-rated organizers for now.'}
+        </p>
+      )}
 
       <div className={styles.grid}>
         {organizers.map((o) => (

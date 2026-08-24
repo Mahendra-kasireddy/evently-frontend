@@ -1,0 +1,65 @@
+/* Enquiry card (P-05). Values sampled from the reference design (sc_O_05);
+   the card, chips, tags, meta row and buttons come from @shared/partner. */
+
+.head {
+  display: flex;
+  gap: 14px;
+}
+.body {
+  flex: 1;
+  min-width: 0;
+}
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-navy);
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.side {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  text-align: right;
+}
+.time {
+  font-size: 11.5px;
+  color: var(--c-muted2);
+  white-space: nowrap;
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--c-line2);
+}
+.spacer {
+  flex: 1;
+}
+.quoteTotal {
+  font-size: 12.5px;
+  color: var(--c-muted);
+  white-space: nowrap;
+}
+.quoteTotal strong {
+  font-weight: 700;
+  color: var(--c-navy);
+}

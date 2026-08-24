@@ -8,7 +8,16 @@ export interface VerifyOtpResult {
   token: string;
   refreshToken?: string;
   isNewUser?: boolean;
-  user?: { id: string; name?: string; email?: string };
+  user?: { id: string; name?: string; email?: string; city?: string; roles?: string[] };
+}
+
+/**
+ * True when the account still needs the welcome steps: a fresh signup, or one
+ * that never got as far as saving a name and a city. Shared by the login screen
+ * and the in-place auth dialog so both route the same way.
+ */
+export function needsOnboarding(result: VerifyOtpResult): boolean {
+  return result.isNewUser === true || !result.user?.name?.trim() || !result.user?.city?.trim();
 }
 
 async function sendOtpRequest(body: MobileFormValues): Promise<OtpResponse> {

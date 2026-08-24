@@ -1,19 +1,140 @@
-.card { border: 1px solid var(--color-border); border-radius: 18px; overflow: hidden; background: #fff; box-shadow: var(--shadow-sm); transition: transform 0.22s var(--ease-card), box-shadow 0.22s ease; }
-.card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
-.banner { position: relative; padding: 20px; min-height: 200px; display: flex; flex-direction: column; color: #fff; }
-.organizer .banner { background: linear-gradient(140deg, #241f47 0%, #6b3a4f 48%, #e8633a 100%); }
-.subvendor .banner { background: linear-gradient(140deg, #146049 0%, #1d9e75 100%); }
-.icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.18); display: inline-flex; align-items: center; justify-content: center; }
-.badge { position: absolute; top: 20px; right: 20px; display: inline-flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.92); font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: var(--radius-pill); }
-.organizer .badge { color: #b07d12; }
-.subvendor .badge { color: var(--color-navy); }
-.stats { margin-top: auto; display: flex; gap: 8px; }
-.stat { background: rgba(255,255,255,0.94); border-radius: 10px; padding: 8px 12px; display: flex; flex-direction: column; min-width: 58px; }
-.statLabel { font-size: 0.68rem; color: var(--color-text-muted); }
-.statValue { font-size: 1rem; font-weight: 800; color: var(--color-navy); }
-.body { padding: 22px; }
-.title { font-size: 1.3rem; font-weight: 800; color: var(--color-navy); margin: 0 0 8px; }
-.desc { font-size: 0.92rem; line-height: 1.5; color: var(--color-text-muted); margin: 0 0 16px; }
-.cta { display: inline-flex; align-items: center; gap: 5px; font-weight: 700; text-decoration: none; }
-.organizer .cta { color: var(--color-primary); }
-.subvendor .cta { color: var(--color-green); }
+.card {
+  flex: 1 1 0;
+  min-width: 280px;
+  background: #fff;
+  border: 1px solid var(--c-line);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  transition: transform 0.22s var(--ease-card), box-shadow 0.22s ease;
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-tile-hover);
+}
+
+.banner {
+  position: relative;
+  overflow: hidden;
+  height: 148px;
+  flex: none;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+}
+.organizer .banner {
+  background: linear-gradient(135deg, var(--c-navy), var(--c-coral));
+}
+.subvendor .banner {
+  background: linear-gradient(135deg, var(--c-teal), #0e7a57);
+}
+/* Blob({top:-24,right:-16,size:96,color:'#fff',op:.12}) */
+.banner::before {
+  content: '';
+  position: absolute;
+  top: -24px;
+  right: -16px;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0.12;
+}
+/* Blob({bottom:-30,left:'40%',size:90,color:'#000',op:.08,sq:true}) */
+.banner::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: 40%;
+  width: 90px;
+  height: 90px;
+  border-radius: 28%;
+  background: #000;
+  opacity: 0.08;
+}
+
+.bannerTop {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.scoreBadge {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.stats {
+  position: relative;
+  margin-top: auto;
+  display: flex;
+  gap: 8px;
+}
+.stat {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 9px;
+  padding: 7px 11px;
+  text-align: left;
+}
+.statLabel {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--c-muted);
+}
+.statValue,
+.statValueTeal {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-navy);
+}
+.statValueTeal {
+  color: var(--c-teal);
+}
+
+.body {
+  padding: 20px 22px 22px;
+}
+.title {
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--c-navy);
+  margin: 0 0 7px;
+}
+.desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--c-muted);
+  margin: 0 0 16px;
+}
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+.organizer .cta {
+  color: var(--c-coral);
+}
+.subvendor .cta {
+  color: var(--c-teal);
+}

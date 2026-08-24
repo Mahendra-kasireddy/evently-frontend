@@ -2,11 +2,10 @@ import { Header, Footer } from '@shared/components';
 import { Reveal } from '@shared/reusable';
 import {
   Hero, HowItWorks, Categories, WhyEvently, AfterBooking,
-  Testimonials, AppDownload, Faq, OrganizerCta,
+  AppDownload, Faq, OrganizerCta,
 } from './sections';
 import type {
-  Category, FaqItem, Feature, FeaturedEvent, HowItWorksStep,
-  Statistic, Testimonial,
+  Category, FaqItem, Feature, HowItWorksStep,
 } from './types';
 
 /** Loading/error-aware data slice handed to a section. */
@@ -17,12 +16,9 @@ export interface SectionData<T> {
 }
 
 export interface LandingComponentProps {
-  statistics: SectionData<Statistic>;
   steps: SectionData<HowItWorksStep>;
   categories: SectionData<Category>;
   features: SectionData<Feature>;
-  testimonials: SectionData<Testimonial>;
-  vendors: SectionData<FeaturedEvent>;
   faqs: SectionData<FaqItem>;
 }
 
@@ -32,12 +28,12 @@ export interface LandingComponentProps {
  * up on scroll via <Reveal>; Hero animates on load (it's in view immediately).
  */
 export function Component(props: LandingComponentProps) {
-  const { statistics, steps, categories, features, testimonials, vendors, faqs } = props;
+  const { steps, categories, features, faqs } = props;
   return (
     <>
       <Header />
       <Reveal>
-        <Hero statistics={statistics.data} statsLoading={statistics.isLoading} />
+        <Hero />
       </Reveal>
       <Reveal>
         <HowItWorks steps={steps.data} isLoading={steps.isLoading} isError={steps.isError} />
@@ -52,10 +48,7 @@ export function Component(props: LandingComponentProps) {
         <AfterBooking />
       </Reveal>
       <Reveal>
-        <Testimonials testimonials={testimonials.data} isLoading={testimonials.isLoading} isError={testimonials.isError} />
-      </Reveal>
-      <Reveal>
-        <AppDownload vendors={vendors.data} isLoading={vendors.isLoading} isError={vendors.isError} />
+        <AppDownload />
       </Reveal>
       <Reveal>
         <Faq faqs={faqs.data} isLoading={faqs.isLoading} isError={faqs.isError} />

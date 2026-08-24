@@ -1,0 +1,267 @@
+/*
+ * P-07 execution board. Three equal columns of task cards, sampled from the
+ * reference design: 12px-radius column wells on the page background, 10px-radius
+ * white cards, and a dashed proof dropzone on anything not yet done.
+ */
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.column {
+  background: var(--c-page);
+  border: 1px solid var(--c-line);
+  border-radius: 12px;
+  padding: 14px;
+  min-width: 0;
+}
+
+.columnHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  flex: none;
+}
+.columnTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-navy);
+}
+.count {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--c-muted);
+  background: #fff;
+  border: 1px solid var(--c-line);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+
+.empty {
+  margin: 0;
+  padding: 14px 0 4px;
+  font-size: 12.5px;
+  color: var(--c-muted2);
+  text-align: center;
+}
+
+/* ---------- card ---------- */
+
+.card {
+  background: #fff;
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 9px;
+}
+.card:last-child {
+  margin-bottom: 0;
+}
+
+.cardTitle {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-navy);
+  line-height: 1.35;
+}
+
+.cardRow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.assignee {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.assigneeName {
+  font-size: 11.5px;
+  color: var(--c-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.unassign {
+  border: none;
+  background: none;
+  padding: 0 2px;
+  cursor: pointer;
+  color: var(--c-muted2);
+  font-size: 14px;
+  line-height: 1;
+}
+.unassign:hover {
+  color: var(--c-red);
+}
+
+.assign {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--c-coral);
+}
+.noVendors {
+  font-size: 11.5px;
+  color: var(--c-muted2);
+}
+.assignSelect {
+  font: inherit;
+  font-size: 11.5px;
+  color: var(--c-navy);
+  border: 1px solid var(--c-line);
+  border-radius: 7px;
+  padding: 3px 6px;
+  background: #fff;
+  max-width: 140px;
+}
+
+.due {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex: none;
+}
+
+.assignTag {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--c-navy-wash);
+  color: var(--c-navy);
+}
+.pending {
+  background: var(--c-amber-wash);
+  color: var(--c-amber);
+}
+.accepted {
+  background: var(--c-teal-wash);
+  color: var(--c-teal);
+}
+.declined {
+  background: var(--c-red-wash);
+  color: var(--c-red);
+}
+
+/* ---------- photo proof ---------- */
+
+.hiddenInput {
+  display: none;
+}
+
+.proofZone {
+  margin-top: 9px;
+  width: 100%;
+  height: 54px;
+  border: 1.5px dashed var(--c-line);
+  border-radius: 8px;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 11.5px;
+  color: var(--c-muted2);
+  cursor: pointer;
+}
+.proofZone:hover {
+  border-color: var(--c-coral);
+  color: var(--c-coral);
+}
+
+.proofLink {
+  margin-top: 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--c-teal);
+  text-decoration: none;
+}
+
+/* ---------- actions ---------- */
+
+/*
+ * The design's card shows no controls. Keeping the existing move/remove
+ * actions but revealing them on hover or keyboard focus preserves the
+ * functionality without cluttering the default view. Always shown on touch,
+ * where there is no hover.
+ */
+/*
+ * Deliberate deviation from the reference: the design's card shows no
+ * controls, but move / unassign / remove are existing working features that
+ * must stay operable. A hover-only reveal was tried and rejected — collapsing
+ * the row left the buttons clipped underneath the proof dropzone, so they
+ * could not be clicked. Always visible, small and low-contrast, is the
+ * honest trade: one extra row per card, everything reachable by mouse,
+ * keyboard and touch alike.
+ */
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 9px;
+  flex-wrap: wrap;
+}
+
+.iconBtn,
+.doneBtn,
+.removeBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 7px;
+  border: 1px solid var(--c-line);
+  background: #fff;
+  color: var(--c-navy);
+  cursor: pointer;
+}
+.doneBtn {
+  border-color: var(--c-teal);
+  color: var(--c-teal);
+}
+.removeBtn {
+  margin-left: auto;
+  color: var(--c-muted2);
+  border-color: transparent;
+}
+.removeBtn:hover {
+  color: var(--c-red);
+  border-color: var(--c-line);
+}
+
+@media (max-width: 900px) {
+  .board {
+    grid-template-columns: 1fr;
+  }
+}

@@ -26,6 +26,12 @@
 .empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 280px; border: 1px dashed var(--color-border); border-radius: 16px; color: var(--color-text-muted); text-align: center; padding: 24px; }
 .empty svg { color: var(--color-text-muted); }
 .empty p { font-size: 0.95rem; max-width: 320px; margin: 0; }
+/* `.acceptBest` is sized for the horizontal `.actions` row (flex: 1.6). Dropped
+   into this column-direction container, that grow factor applied down the main
+   axis instead and stretched the button into a tall square. Pin it to its own
+   content here; the icon must not stretch either. */
+.empty .acceptBest { flex: 0 0 auto; width: auto; min-width: 210px; padding: 0 22px; margin-top: 6px; }
+.empty .acceptBest svg { color: currentColor; flex: 0 0 auto; }
 
 
 .actions { display: flex; gap: 12px; margin-top: 16px; }
@@ -34,3 +40,23 @@
 .acceptBest { display: inline-flex; align-items: center; justify-content: center; gap: 7px; flex: 1.6; height: 50px; border: none; border-radius: 12px; background: var(--color-primary); color: #fff; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.15s ease; }
 .acceptBest:hover { background: var(--color-primary-hover); }
 @media (max-width: 700px) { .actions { flex-direction: column; } }
+
+/*
+ * Shown in place of "Accept best quote" when the selected quotes tie on total.
+ * There is no single winner to name, and picking one arbitrarily — or falling
+ * back to a quote the customer unticked — is what this replaced.
+ */
+.acceptHint {
+  flex: 1 1 260px;
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+
+@media (max-width: 700px) {
+  .acceptHint {
+    text-align: left;
+  }
+}

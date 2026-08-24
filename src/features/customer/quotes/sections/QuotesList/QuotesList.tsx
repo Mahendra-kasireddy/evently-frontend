@@ -1,5 +1,4 @@
 import { Check, Award, ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import type { QuoteCard, QuoteTier } from '../../types';
 import styles from './QuotesList.module.css';
 
@@ -9,10 +8,15 @@ export interface QuotesListProps {
   quotes: QuoteCard[];
   selected: string[];
   onToggle: (id: string) => void;
+  /**
+   * Opens one response in full. Supplied by the parent rather than routed here:
+   * the destination depends on which event the list belongs to, which this
+   * component does not know — it used to hard-code the old flat /quote/:id path.
+   */
+  onOpen: (quotationId: string) => void;
 }
 
-export function QuotesList({ quotes, selected, onToggle }: QuotesListProps) {
-  const navigate = useNavigate();
+export function QuotesList({ quotes, selected, onToggle, onOpen }: QuotesListProps) {
   return (
     <div className={styles.col}>
       <h2 className={styles.title}>{quotes.length} quotes received</h2>
@@ -34,7 +38,7 @@ export function QuotesList({ quotes, selected, onToggle }: QuotesListProps) {
                 <div className={styles.total}><small>GRAND TOTAL</small><strong>{q.grandTotal}</strong></div>
                 {q.status && <span className={`${styles.status} ${q.status === 'New' ? styles.statusNew : styles.statusRev}`}>{q.status}</span>}
               </div>
-              <span className={styles.detail} role="link" tabIndex={0} onClick={(e) => { e.stopPropagation(); navigate(`/quote/${q.id}`); }} onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); navigate(`/quote/${q.id}`); } }}>View full quote <ChevronRight size={13} /></span>
+              <span className={styles.detail} role="link" tabIndex={0} onClick={(e) => { e.stopPropagation(); onOpen(q.id); }} onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); onOpen(q.id); } }}>View full quote <ChevronRight size={13} /></span>
             </button>
           );
         })}

@@ -1,5 +1,4 @@
-import { Input } from '@shared/reusable';
-import { FileField, GalleryField } from '../Fields';
+import { FileField, GalleryField, TextAreaField, TextField } from '../Fields';
 import type { UseOnboardingResult } from '../../hooks/useOnboarding';
 import form from '../StepForm.module.css';
 
@@ -13,17 +12,13 @@ export function PortfolioForm({ onb }: { onb: UseOnboardingResult }) {
 
   return (
     <div className={form.form}>
-      <label className={form.form} style={{ gap: 8 }}>
-        <span style={{ fontSize: '0.85rem', fontWeight: 500 }}>
-          Business description <span style={{ color: '#e5484d' }}>*</span>
-        </span>
-        <textarea
-          className={form.textarea}
-          value={values.businessDescription}
-          onChange={(e) => onb.setField('businessDescription', e.target.value)}
-          placeholder="Tell couples and families what makes your events special…"
-        />
-      </label>
+      <TextAreaField
+        label="Short bio"
+        required
+        value={values.businessDescription}
+        onChange={(v) => onb.setField('businessDescription', v)}
+        placeholder="Tell couples and families what makes your events special…"
+      />
 
       <FileField
         label="Cover photo"
@@ -37,7 +32,7 @@ export function PortfolioForm({ onb }: { onb: UseOnboardingResult }) {
       />
 
       <GalleryField
-        label="Gallery images"
+        label="Portfolio (up to 8)"
         required
         files={files.gallery}
         onUpload={onb.uploadFile('gallery')}
@@ -76,43 +71,43 @@ export function PortfolioForm({ onb }: { onb: UseOnboardingResult }) {
       />
 
       <div className={form.grid2}>
-        <Input
+        <TextField
           label="Years of experience"
           type="number"
           value={values.yearsOfExperience}
-          onChange={(e) => onb.setField('yearsOfExperience', e.target.value)}
+          onChange={(v) => onb.setField('yearsOfExperience', v)}
         />
-        <Input
+        <TextField
           label="Website (optional)"
           value={values.website}
-          onChange={(e) => onb.setField('website', e.target.value)}
+          onChange={(v) => onb.setField('website', v)}
           {...(fieldErrors.website ? { error: fieldErrors.website } : {})}
         />
       </div>
 
       <div className={form.grid2}>
-        <Input
+        <TextField
           label="Instagram (optional)"
           value={values.instagram}
-          onChange={(e) => onb.setField('instagram', e.target.value)}
+          onChange={(v) => onb.setField('instagram', v)}
         />
-        <Input
+        <TextField
           label="Facebook (optional)"
           value={values.facebook}
-          onChange={(e) => onb.setField('facebook', e.target.value)}
+          onChange={(v) => onb.setField('facebook', v)}
         />
       </div>
 
       <div className={form.grid2}>
-        <Input
+        <TextField
           label="YouTube (optional)"
           value={values.youtube}
-          onChange={(e) => onb.setField('youtube', e.target.value)}
+          onChange={(v) => onb.setField('youtube', v)}
         />
-        <Input
+        <TextField
           label="LinkedIn (optional)"
           value={values.linkedin}
-          onChange={(e) => onb.setField('linkedin', e.target.value)}
+          onChange={(v) => onb.setField('linkedin', v)}
         />
       </div>
     </div>

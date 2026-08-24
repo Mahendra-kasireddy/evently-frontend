@@ -1,6 +1,6 @@
 import { SubvendorHomeContainer } from './container';
 
-/** Sub-vendor home entry. */
+/** Sub-vendor home — tasks dashboard. */
 export function SubvendorHomePage() {
   return <SubvendorHomeContainer />;
 }

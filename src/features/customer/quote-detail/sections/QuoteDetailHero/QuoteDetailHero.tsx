@@ -4,11 +4,29 @@ import styles from './QuoteDetailHero.module.css';
 
 const TIER: Record<QdTier, string> = { Bronze: 'bronze', Silver: 'silver', Gold: 'gold', Platinum: 'platinum' };
 
-export function QuoteDetailHero({ q, onBack }: { q: QuoteDetail; onBack: () => void }) {
+export interface QuoteDetailHeroProps {
+  q: QuoteDetail;
+  /** Omit when the page carries its own breadcrumb trail with a back control. */
+  onBack?: (() => void) | undefined;
+  /** Names the destination — a bare arrow left customers guessing where it went. */
+  backLabel?: string | undefined;
+}
+
+export function QuoteDetailHero({ q, onBack, backLabel }: QuoteDetailHeroProps) {
   return (
     <section className={styles.hero}>
       <span className={styles.circle} aria-hidden />
-      <button type="button" className={styles.back} onClick={onBack} aria-label="Back"><ChevronLeft size={18} /></button>
+      {onBack && (
+        <button
+          type="button"
+          className={`${styles.back} ${backLabel ? styles.backLabelled : ''}`}
+          onClick={onBack}
+          {...(backLabel ? {} : { 'aria-label': 'Back' })}
+        >
+          <ChevronLeft size={backLabel ? 15 : 18} />
+          {backLabel}
+        </button>
+      )}
       <span className={styles.avatar} style={{ backgroundColor: q.avatarColor }}>{q.initials}</span>
       <div className={styles.info}>
         <div className={styles.nameRow}>

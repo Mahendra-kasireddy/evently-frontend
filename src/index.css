@@ -34,6 +34,49 @@
   --color-text-on-dark: rgba(255, 255, 255, 0.82);
   --color-text-on-dark-muted: rgba(255, 255, 255, 0.6);
 
+  /*
+   * Partner-surface palette (organizer + sub-vendor portals).
+   * Sampled 1:1 from the reference design's `C` token map so the working
+   * tool reads as one system. Customer-facing tokens above are unchanged.
+   */
+  --c-navy: #1a2e5a;
+  --c-navy2: #13203d;
+  --c-ink: #26314e;
+  --c-coral: #e8633a;
+  --c-coral-d: #cf5530;
+  --c-coral-wash: #fbede7;
+  --c-teal: #1d9e75;
+  --c-teal-wash: #e7f5ef;
+  --c-amber: #ba7517;
+  --c-amber-wash: #fbf2e0;
+  --c-red: #e24b4a;
+  --c-red-wash: #fbeaea;
+  --c-gold: #b0852b;
+  --c-gold-wash: #f6ecd3;
+  --c-navy-wash: #eef1f7;
+  --c-cream: #fbf4ed;
+  --c-line: #ebebeb;
+  --c-line2: #f0f2f5;
+  --c-page: #f8f8f6;
+  --c-muted: #6b7280;
+  --c-muted2: #9aa1ad;
+
+  /* Tier chips */
+  --tier-bronze-bg: #b87333;
+  --tier-bronze-fg: #ffffff;
+  --tier-silver-bg: #a8a9ad;
+  --tier-silver-fg: #1a2e5a;
+  --tier-gold-bg: #ffd700;
+  --tier-gold-fg: #5a4a00;
+  --tier-platinum-bg: #a0c4ff;
+  --tier-platinum-fg: #10233f;
+
+  /* Partner shell metrics */
+  --org-side-w: 228px;
+  --org-side-rail-w: 64px;
+  --org-topbar-h: 58px;
+  --org-pad: 24px;
+
   /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;

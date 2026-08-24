@@ -101,7 +101,9 @@ export function Header({ variant = 'default', authCta }: HeaderProps) {
                       <span className={styles.featuredPill}><Sparkles size={12} /> FEATURED</span>
                       <h3 className={styles.featuredTitle}>Plan anything,<br />celebrate anywhere</h3>
                       <p className={styles.featuredText}>Browse verified organizers across every celebration and service, all in one place.</p>
-                      <Button variant="brand" size="sm">Explore now <ChevronRight size={16} /></Button>
+                      <Link to="/discover">
+                        <Button variant="brand" size="sm">Explore now <ChevronRight size={16} /></Button>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -120,7 +122,11 @@ export function Header({ variant = 'default', authCta }: HeaderProps) {
                 <kbd className={styles.kbd}>⌘K</kbd>
               </button>
               <Link to="/login" className={styles.login}>Log in</Link>
-              <Button variant="brand" size="md">Plan Your Event <ChevronRight size={16} /></Button>
+              {/* The planner is open to anonymous visitors — sign-in is asked
+                  for at submit, in a dialog, so this must actually navigate. */}
+              <Link to="/plan">
+                <Button variant="brand" size="md">Plan Your Event <ChevronRight size={16} /></Button>
+              </Link>
             </div>
           </>
         )}

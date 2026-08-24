@@ -1,4 +1,9 @@
-export interface RoleStat { label: string; value: string; }
+export interface RoleStat {
+  label: string;
+  value: string;
+  /** Value colour — navy, except the design's teal earnings figure. */
+  tone?: 'navy' | 'teal';
+}
 export type RoleTone = 'organizer' | 'subvendor';
 
 export interface JoinRole {

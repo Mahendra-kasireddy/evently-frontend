@@ -1,0 +1,333 @@
+/*
+ * P-03 Evently Academy. The shell (OrganizerLayout) supplies the page title
+ * and the 24px gutter, so this screen starts straight at the hero band.
+ */
+
+.page {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------------- hero ---------------- */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--c-navy);
+  border-radius: 16px;
+  padding: 24px 26px;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.hero::before,
+.hero::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+/* Blob({top:-30,right:30,size:130,color:'#E8633A',op:.3}) */
+.hero::before {
+  top: -30px;
+  right: 30px;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: var(--c-coral);
+  opacity: 0.3;
+}
+/* Blob({bottom:-40,right:-20,size:120,color:'#27447E',op:.7,sq:true}) */
+.hero::after {
+  bottom: -40px;
+  right: -20px;
+  width: 120px;
+  height: 120px;
+  border-radius: 28%;
+  background: #27447e;
+  opacity: 0.7;
+}
+
+.heroText {
+  position: relative;
+}
+.heroTitle {
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  margin: 10px 0 6px;
+  letter-spacing: -0.01em;
+}
+.heroSub {
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.78);
+  max-width: 460px;
+  line-height: 1.5;
+  margin: 0;
+}
+.heroRing {
+  position: relative;
+  margin-left: auto;
+  text-align: center;
+  flex: none;
+}
+
+/* ---------------- stage 1 ---------------- */
+
+.stageHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.stageTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--c-navy);
+  margin: 0;
+}
+.stageCount {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--c-muted);
+  font-weight: 500;
+}
+
+.lessonGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  margin-bottom: 26px;
+}
+@media (max-width: 1180px) {
+  .lessonGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  .lessonGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.lesson {
+  background: #fff;
+  border: 1px solid var(--c-line);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.lessonThumb {
+  position: relative;
+  overflow: hidden;
+  flex: none;
+  height: 96px;
+  background: var(--c-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Blob({top:-20,right:-10,size:70,color:'#E8633A',op:.35}) */
+.lessonThumb::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: -10px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: var(--c-coral);
+  opacity: 0.35;
+}
+.lessonThumbIcon {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.lessonBody {
+  padding: 13px;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+.lessonTitle {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--c-navy);
+  margin-bottom: 6px;
+  line-height: 1.35;
+}
+.lessonMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--c-muted);
+  margin-top: auto;
+  margin-bottom: 10px;
+}
+
+/* ---------------- stage 2 + 3 ---------------- */
+
+.stageGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+@media (max-width: 900px) {
+  .stageGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.locked {
+  opacity: 0.72;
+}
+.panelTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--c-navy);
+  margin-bottom: 4px;
+}
+.panelSub {
+  font-size: 12.5px;
+  color: var(--c-muted);
+  margin: 0 0 14px;
+}
+.panelEmpty {
+  font-size: 12.5px;
+  color: var(--c-muted2);
+  margin: 0;
+}
+
+.workshop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+}
+.workshop + .workshop {
+  border-top: 1px solid var(--c-line2);
+}
+.workshopIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--c-navy-wash);
+  color: var(--c-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.workshopText {
+  min-width: 0;
+}
+.workshopTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-navy);
+}
+.workshopWhen {
+  font-size: 11.5px;
+  color: var(--c-muted);
+}
+.workshopAction {
+  margin-left: auto;
+  flex: none;
+}
+
+.stage3List {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.stage3Btn,
+.stage3Done {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--c-navy);
+  background: none;
+  border: none;
+  padding: 0;
+}
+.stage3Btn {
+  cursor: pointer;
+}
+.stage3Btn svg {
+  color: var(--c-coral);
+  flex: none;
+}
+.stage3Btn:disabled {
+  cursor: not-allowed;
+  color: var(--c-muted2);
+}
+.stage3Btn:disabled svg {
+  color: var(--c-muted2);
+}
+.stage3Done svg {
+  color: var(--c-teal);
+  flex: none;
+}
+
+.forumLink {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--c-coral);
+  text-decoration: none;
+}
+
+/* ---------------- helpline ---------------- */
+
+.helpline {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--c-teal-wash);
+  border: none;
+}
+.helplineIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: #fff;
+  color: var(--c-teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.helplineTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-navy);
+}
+.helplineSub {
+  font-size: 12.5px;
+  color: var(--c-muted);
+}
+.helplineCta {
+  margin-left: auto;
+  flex: none;
+}

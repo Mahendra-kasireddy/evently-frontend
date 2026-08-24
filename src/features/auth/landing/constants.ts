@@ -11,8 +11,6 @@ export const HERO = {
     'One booking connects you with trained, verified organizers who handle every detail — catering, decor, photography and more.',
   primaryCta: 'Plan Your Event',
   secondaryCta: "I'm an Organizer",
-  ratingValue: '4.8',
-  ratingLabel: 'from 2,400+ families',
 } as const;
 
 export const SECTION_COPY = {

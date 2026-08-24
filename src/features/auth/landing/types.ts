@@ -22,13 +22,6 @@ export interface Category {
   imageUrl: string;
 }
 
-export interface Statistic {
-  id: string;
-  value: string;
-  label: string;
-  icon: IconKey;
-}
-
 export interface HowItWorksStep {
   id: string;
   order: number;
@@ -45,43 +38,10 @@ export interface Feature {
   icon: IconKey;
 }
 
-export interface Testimonial {
-  id: string;
-  quote: string;
-  authorName: string;
-  authorInitials: string;
-  city: string;
-  occasion: string;
-  rating: number;
-  likes: number;
-  imageUrl: string;
-  verified: boolean;
-}
-
-export interface Organizer {
-  id: string;
-  name: string;
-  initials: string;
-  specialty: string;
-  rating: number;
-  eventsCount: number;
-  city: string;
-  verified: boolean;
-}
-
 export interface FaqItem {
   id: string;
   question: string;
   answer: string;
-}
-
-export interface FeaturedEvent {
-  id: string;
-  title: string;
-  category: string;
-  vendorName: string;
-  status: string;
-  imageUrl: string;
 }
 
 export type IconKey =

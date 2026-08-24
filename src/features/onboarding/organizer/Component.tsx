@@ -1,5 +1,6 @@
-import { CheckCircle2 } from 'lucide-react';
-import { Button } from '@shared/reusable';
+import { Check, CheckCircle2, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Btn } from '@shared/partner';
 import {
   Stepper,
   BasicInfoForm,
@@ -9,7 +10,7 @@ import {
   PortfolioForm,
 } from './sections';
 import { SaveIndicator } from './sections/Fields';
-import { ONB_COPY } from './constants';
+import { ONB_COPY, STEP_HEADINGS } from './constants';
 import type { UseOnboardingResult } from './hooks/useOnboarding';
 import type { SectionId } from './types';
 import styles from './styles.module.css';
@@ -37,90 +38,92 @@ function StepBody({ onb }: { onb: UseOnboardingResult }) {
 }
 
 export function Component({ onb }: OnboardingComponentProps) {
+  const navigate = useNavigate();
   const current = onb.steps.find((s) => s.id === onb.currentId);
   const order = onb.steps.map((s) => s.id);
   const idx = order.indexOf(onb.currentId);
   const prevId = idx > 0 ? order[idx - 1] : null;
   const nextId = idx < order.length - 1 ? order[idx + 1] : null;
   const saveState = onb.saveState[onb.currentId as SectionId] ?? 'idle';
+  const head = STEP_HEADINGS[onb.currentId];
 
   return (
     <div className={styles.wrap}>
-      <header className={styles.head}>
-        <h1 className={styles.title}>{ONB_COPY.title}</h1>
-        <p className={styles.subtitle}>{ONB_COPY.subtitle}</p>
-      </header>
+      <Stepper
+        steps={onb.steps}
+        onSelect={onb.goToStep}
+        note={ONB_COPY.verifyNote}
+        currentId={onb.currentId}
+      />
 
-      <div className={styles.grid}>
-        <Stepper steps={onb.steps} onSelect={onb.goToStep} note={ONB_COPY.verifyNote} />
-        <section className={styles.panel}>
-          {onb.submitted ? (
-            <div className={form.success}>
-              <span className={form.successTitle}>
-                <CheckCircle2 size={22} /> Submitted for verification
-              </span>
-              <p className={form.sub}>
-                Your organizer profile is complete and submitted. Verification is pending — our team
-                typically reviews within 24–48 hours, and you&apos;ll be notified once approved.
-              </p>
-            </div>
-          ) : onb.bootstrapping ? (
-            <p role="status">Setting up your organizer account…</p>
-          ) : onb.bootstrapError ? (
-            <div role="alert">
-              <p>We couldn&apos;t start your registration. {onb.bootstrapError.message}</p>
-              <button type="button" onClick={onb.retryBootstrap}>
-                Try again
-              </button>
-            </div>
-          ) : (
-            <>
-              <div className={form.panelHead}>
-                <h2 className={form.panelTitle}>{current?.title ?? 'Step'}</h2>
-                <div className={form.panelMeta}>
-                  <SaveIndicator state={saveState} />
-                  <span className={form.completion}>{onb.profileCompletion}% complete</span>
-                </div>
+      <section className={styles.panel}>
+        {onb.submitted ? (
+          <div className={form.success}>
+            <span className={form.successTitle}>
+              <CheckCircle2 size={22} /> Profile submitted and live
+            </span>
+            <p className={form.sub}>
+              Your organizer profile is complete and now visible to customers. You can start
+              receiving and responding to quote requests from your dashboard right away.
+            </p>
+            <Btn onClick={() => navigate('/organizer/home')}>Go to your dashboard</Btn>
+          </div>
+        ) : onb.bootstrapping ? (
+          <p className={form.state} role="status">
+            Setting up your organizer account…
+          </p>
+        ) : onb.bootstrapError ? (
+          <div role="alert">
+            <p className={form.state}>
+              We couldn&apos;t start your registration. {onb.bootstrapError.message}
+            </p>
+            <Btn kind="outline" sm onClick={onb.retryBootstrap}>
+              Try again
+            </Btn>
+          </div>
+        ) : (
+          <>
+            <div className={form.panelHead}>
+              <div>
+                <h1 className={form.panelTitle}>{head?.heading ?? current?.title ?? 'Step'}</h1>
+                {head?.blurb && <p className={form.panelBlurb}>{head.blurb}</p>}
               </div>
-              <div className={form.progress}>
-                <div
-                  className={form.progressFill}
-                  style={{ width: `${onb.profileCompletion}%` }}
-                />
+              <div className={form.panelMeta}>
+                <span className={form.completion}>{onb.profileCompletion}% complete</span>
+                <SaveIndicator state={saveState} />
               </div>
+            </div>
+            <div className={form.progress}>
+              <div className={form.progressFill} style={{ width: `${onb.profileCompletion}%` }} />
+            </div>
 
+            <div className={styles.body}>
               <StepBody onb={onb} />
+            </div>
 
-              <div className={form.footer}>
-                <p className={form.formErr} role={onb.formError ? 'alert' : undefined}>
-                  {onb.formError ?? ''}
-                </p>
-                <div className={form.navBtns}>
-                  {prevId && (
-                    <Button type="button" variant="secondary" onClick={() => onb.goToStep(prevId)}>
-                      Back
-                    </Button>
-                  )}
-                  {nextId ? (
-                    <Button type="button" variant="brand" onClick={() => onb.goToStep(nextId)}>
-                      Continue
-                    </Button>
-                  ) : (
-                    <Button
-                      type="button"
-                      variant="brand"
-                      isLoading={onb.isSubmitting}
-                      onClick={onb.submit}
-                    >
-                      Submit for verification
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-        </section>
-      </div>
+            <div className={form.footer}>
+              {prevId && (
+                <Btn kind="outline" sm onClick={() => onb.goToStep(prevId)}>
+                  Back
+                </Btn>
+              )}
+              <p className={form.formErr} role={onb.formError ? 'alert' : undefined}>
+                {onb.formError ?? ''}
+              </p>
+              <span className={form.spacer} />
+              {nextId ? (
+                <Btn sm icon={<ChevronRight size={14} />} onClick={() => onb.goToStep(nextId)}>
+                  Save &amp; Continue
+                </Btn>
+              ) : (
+                <Btn sm icon={<Check size={14} />} disabled={onb.isSubmitting} onClick={onb.submit}>
+                  {onb.isSubmitting ? 'Submitting…' : 'Submit for review'}
+                </Btn>
+              )}
+            </div>
+          </>
+        )}
+      </section>
     </div>
   );
 }

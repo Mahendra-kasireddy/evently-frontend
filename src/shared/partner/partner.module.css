@@ -1,0 +1,430 @@
+/*
+ * Partner design system — the shared visual primitives behind every
+ * organizer / sub-vendor screen. Every value here is sampled from the
+ * reference design (Evently.html, screens P-00..P-15) so the portals read
+ * as one system and individual screens never re-invent a card or a chip.
+ */
+
+/* ---------- surfaces ---------- */
+
+.card {
+  background: #fff;
+  border: 1px solid var(--c-line);
+  border-radius: 12px;
+}
+
+.section {
+  padding: 20px;
+}
+.sectionHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.sectionTitle {
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--c-navy);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.sectionSub {
+  font-size: 12.5px;
+  color: var(--c-muted);
+  margin: 4px 0 0;
+}
+.sectionAction {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-coral);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* ---------- page scaffold ---------- */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.statRow {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.cols {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.colMain {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.colRail {
+  flex: 0 0 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+@media (max-width: 1080px) {
+  .cols {
+    flex-direction: column;
+  }
+  .colRail {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
+/* ---------- stat ---------- */
+
+.stat {
+  padding: 14px 16px;
+  flex: 1 1 0;
+  min-width: 160px;
+}
+.statTop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.statIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  background: var(--c-navy-wash);
+  color: var(--c-navy);
+}
+.statDelta {
+  margin-left: auto;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--c-teal);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.statDeltaDown {
+  color: var(--c-red);
+}
+.statValue {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--c-navy);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+.statValueBig {
+  font-size: 26px;
+}
+.statLabel {
+  font-size: 12.5px;
+  color: var(--c-muted);
+  margin-top: 2px;
+}
+
+/* ---------- button ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 13.5px;
+  line-height: 1;
+  padding: 9px 15px;
+  border-radius: 9px;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.btnSm {
+  font-size: 12.5px;
+  padding: 7px 12px;
+}
+.btnFull {
+  width: 100%;
+}
+.btnPrimary {
+  background: var(--c-coral);
+  color: #fff;
+}
+.btnPrimary:hover:not(:disabled) {
+  background: var(--c-coral-d);
+}
+.btnNavy {
+  background: var(--c-navy);
+  color: #fff;
+}
+.btnNavy:hover:not(:disabled) {
+  background: var(--c-navy2);
+}
+.btnTeal {
+  background: var(--c-teal);
+  color: #fff;
+}
+.btnOutline {
+  background: #fff;
+  color: var(--c-navy);
+  border-color: var(--c-line);
+}
+.btnOutline:hover:not(:disabled) {
+  border-color: #d9dde5;
+  background: #fcfcfb;
+}
+.btnGhost {
+  background: transparent;
+  color: var(--c-navy);
+}
+.btnGhost:hover:not(:disabled) {
+  background: var(--c-line2);
+}
+.btnDanger {
+  background: #fff;
+  color: var(--c-red);
+  border-color: var(--c-line);
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ---------- chips ---------- */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--c-page);
+  color: var(--c-muted);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+  flex: none;
+}
+.statusGreen {
+  color: var(--c-teal);
+  background: var(--c-teal-wash);
+}
+.statusAmber {
+  color: var(--c-amber);
+  background: var(--c-amber-wash);
+}
+.statusRed {
+  color: var(--c-red);
+  background: var(--c-red-wash);
+}
+.statusNavy {
+  color: var(--c-navy);
+  background: var(--c-navy-wash);
+}
+.statusGold {
+  color: var(--c-gold);
+  background: var(--c-gold-wash);
+}
+
+.tier {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 3px 10px 3px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.tierSm {
+  font-size: 10.5px;
+  padding: 2px 7px 2px 6px;
+}
+.tierBronze {
+  background: var(--tier-bronze-bg);
+  color: var(--tier-bronze-fg);
+}
+.tierSilver {
+  background: var(--tier-silver-bg);
+  color: var(--tier-silver-fg);
+}
+.tierGold {
+  background: var(--tier-gold-bg);
+  color: var(--tier-gold-fg);
+}
+.tierPlatinum {
+  background: var(--tier-platinum-bg);
+  color: var(--tier-platinum-fg);
+}
+
+/* ---------- filter pills ---------- */
+
+.pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: none;
+  padding: 8px 15px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--c-muted);
+  background: #fff;
+  border: 1px solid var(--c-line);
+  font-family: inherit;
+}
+.pillActive {
+  color: #fff;
+  background: var(--c-navy);
+  border-color: var(--c-navy);
+}
+.pillCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  background: var(--c-line2);
+  color: var(--c-muted);
+}
+.pillActive .pillCount {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+/* ---------- avatar ---------- */
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  flex: none;
+  overflow: hidden;
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- notice ---------- */
+
+.notice {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 15px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: var(--c-amber-wash);
+  color: var(--c-amber);
+}
+.noticeNavy {
+  background: var(--c-navy-wash);
+  color: var(--c-navy);
+}
+.noticeTeal {
+  background: var(--c-teal-wash);
+  color: var(--c-teal);
+}
+
+/* ---------- misc ---------- */
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+  color: var(--c-muted);
+}
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.progressTrack {
+  height: 7px;
+  border-radius: 999px;
+  background: var(--c-line2);
+  overflow: hidden;
+}
+.progressFill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--c-coral);
+}
+
+.emptyBox {
+  text-align: center;
+  padding: 50px 20px;
+  background: #fff;
+  border: 1px solid var(--c-line);
+  border-radius: 16px;
+}
+.emptyTitle {
+  margin: 12px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-navy);
+}
+.emptyBody {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  color: var(--c-muted);
+}

@@ -1,0 +1,248 @@
+/*
+ * P-08 Sub-vendors. The shell supplies the page title and the 24px gutter.
+ * The roster is a flex "table" rather than a real <table> so the design's
+ * column proportions (2 / 1.3 / 1.3 / 1.2 / 1.3 / 1 / 1 / 80px) survive
+ * horizontal scrolling on narrow screens. Semantics are kept via ARIA roles.
+ */
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--c-navy);
+}
+.headActions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--c-line);
+  border-radius: 9px;
+  padding: 8px 12px;
+  background: #fff;
+  color: var(--c-navy);
+}
+.filter select {
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--c-muted2);
+  outline: none;
+  cursor: pointer;
+}
+
+/* ---------- invite ---------- */
+
+.invitePanel {
+  padding: 12px 14px;
+}
+.inviteForm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.inviteIcon {
+  color: var(--c-muted2);
+  flex: none;
+}
+.inviteInput {
+  flex: 1 1 200px;
+  min-width: 0;
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--c-navy);
+  border: 1px solid var(--c-line);
+  border-radius: 9px;
+  padding: 9px 11px;
+  background: #fff;
+}
+.inviteInput::placeholder {
+  color: var(--c-muted2);
+}
+.inviteInput:focus {
+  outline: none;
+  border-color: var(--c-coral);
+}
+
+/* ---------- roster ---------- */
+
+.tableCard {
+  padding: 0;
+  overflow: hidden;
+}
+.scroll {
+  overflow-x: auto;
+}
+.table {
+  min-width: 900px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--c-line2);
+}
+.row:last-child {
+  border-bottom: none;
+}
+.headRow {
+  padding: 12px 18px;
+  background: var(--c-page);
+  border-bottom: 1px solid var(--c-line);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--c-muted);
+}
+
+.cName { flex: 2; min-width: 0; }
+.cCat { flex: 1.3; min-width: 0; font-size: 13px; color: var(--c-navy); }
+.cArea { flex: 1.3; min-width: 0; font-size: 13px; }
+.cRate { flex: 1.2; min-width: 0; }
+.cPerf { flex: 1.3; min-width: 0; }
+.cEvents { flex: 1; min-width: 0; font-size: 13px; color: var(--c-navy); }
+.cStatus { flex: 1; min-width: 0; }
+.cActions { width: 80px; flex: none; }
+
+.headRow .cCat,
+.headRow .cArea,
+.headRow .cEvents {
+  font-size: 11.5px;
+  color: var(--c-muted);
+}
+
+.who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.whoName {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--c-navy);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.muted {
+  color: var(--c-muted);
+}
+.rate {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-navy);
+}
+
+.perf {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.perfTrack {
+  flex: 1;
+  max-width: 60px;
+  height: 6px;
+  background: var(--c-line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.perfFill {
+  height: 100%;
+  border-radius: 999px;
+}
+.perfValue {
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+.iconBtn {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--c-muted);
+  display: inline-flex;
+}
+.iconBtn:hover:not(:disabled) {
+  color: var(--c-navy);
+}
+.iconBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---------- pending invites ---------- */
+
+.pending {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.pendingTitle {
+  margin: 8px 0 3px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-navy);
+}
+.pendingRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 18px;
+  flex-wrap: wrap;
+}
+.pendingIcon {
+  color: var(--c-muted);
+  flex: none;
+}
+.pendingPhone {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--c-navy);
+}
+.pendingWhen {
+  font-size: 12px;
+  color: var(--c-muted2);
+}
+.pendingActions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.emptyIcon {
+  display: inline-block;
+  color: var(--c-line);
+}
+
+@media (max-width: 560px) {
+  .headActions {
+    margin-left: 0;
+    width: 100%;
+  }
+  .pendingActions {
+    margin-left: 0;
+    width: 100%;
+  }
+}

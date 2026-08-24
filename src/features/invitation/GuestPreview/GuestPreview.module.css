@@ -1,0 +1,172 @@
+/*
+ * What a guest sees. Used by the organizer's builder rail and by the customer's
+ * review screen — both the sticky phone and the full-size preview — so the
+ * dimensions come from the container, never from here.
+ */
+
+.guest {
+  min-height: 100%;
+}
+
+.previewEmpty {
+  margin: 0;
+  padding: 26px 20px;
+  font-size: 12.5px;
+  color: var(--c-muted2);
+  text-align: center;
+}
+
+.gHero {
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 26px 22px 22px;
+  text-align: center;
+  color: #fff;
+}
+
+.gPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.16);
+  padding: 6px 13px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.gHeroBody {
+  width: 100%;
+}
+
+.gEyebrow {
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+  opacity: 0.9;
+  margin-bottom: 12px;
+}
+
+.gNames {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+}
+
+.gName {
+  display: block;
+  font-size: 38px;
+  line-height: 1.05;
+  font-weight: 600;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.3);
+}
+
+.gJoiner {
+  display: block;
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 500;
+  margin: 6px 0;
+}
+
+.gDate {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-top: 16px;
+}
+
+.gVenue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 11.5px;
+  opacity: 0.92;
+  margin-top: 6px;
+}
+
+.gMessage {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-size: 12.5px;
+  font-style: italic;
+  opacity: 0.9;
+  line-height: 1.6;
+  max-width: 240px;
+  margin: 16px auto 0;
+}
+
+.gScroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.gSection,
+.gCountdown {
+  padding: 26px 20px;
+  text-align: center;
+  border-top: 1px solid rgba(26, 46, 90, 0.07);
+}
+
+.gCountdown {
+  background: var(--c-navy);
+  color: #fff;
+  border-top: none;
+}
+
+.gSectionTitle {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.gBody {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: inherit;
+  opacity: 0.85;
+}
+
+.gSection .gBody {
+  color: var(--c-navy);
+}
+
+.gCountRow {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.gCountBox {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 74px;
+  padding: 10px 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.gCountBox strong {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0;
+  opacity: 1;
+}

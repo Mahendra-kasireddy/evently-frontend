@@ -1,4 +1,5 @@
 import { Info } from 'lucide-react';
+import { EmptyState } from '@shared/components';
 import { PlanHero, Stepper, OccasionPicker, EventDetailsForm, IdeasRequests, CategoriesStep, FindOrganizers, ReviewStep, SummarySidebar } from './sections';
 import type { PlanData, PlanDraft, PlanStep } from './types';
 import styles from './styles.module.css';
@@ -50,7 +51,17 @@ export function Component({ data, draft, setOccasion, setField, setStep, setSele
   const guestOptions = data.guestOptions ?? [];
 
   const occasion = occasions.find((o) => o.id === draft.occasionId) ?? occasions[0];
-  if (!occasion) return null;
+  // No occasions means the planner has nothing to offer — say so rather than
+  // rendering a blank page.
+  if (!occasion) {
+    return (
+      <EmptyState
+        icon={Info}
+        title="The planner isn’t available right now"
+        message="We couldn’t load the event types to choose from. Please refresh in a moment — nothing you enter is lost."
+      />
+    );
+  }
 
   // Ensure the Review step exists even if the CMS config hasn't been re-seeded.
   const steps = cmsSteps.some((s) => s.id === 'review') ? cmsSteps : [...cmsSteps, REVIEW_FALLBACK];
@@ -68,7 +79,7 @@ export function Component({ data, draft, setOccasion, setField, setStep, setSele
   const canContinue = !blockReason;
 
   const heroProps = step === 0
-    ? { headingLead: "Let’s bring your ", headingAccent: occasion.label, headingTail: ' to life', trust: data.trust, side: { art: occasion.art, label: occasion.label } }
+    ? { headingLead: "Let’s bring your ", headingAccent: occasion.label, headingTail: ' to life', trust: data.trust ?? [], side: { art: occasion.art, label: occasion.label } }
     : { headingLead: stepInfo?.heading ?? '', trust: [] };
 
   const selectOrganizer = (id: string) => {

@@ -6,6 +6,7 @@ export function Reviews({ reviews, organizerName }: { reviews: ProfileReview[]; 
   return (
     <section className={styles.section}>
       <h2 className={styles.title}>Reviews</h2>
+      {reviews.length === 0 && <p className={styles.empty}>No reviews yet.</p>}
       <ul className={styles.list}>
         {reviews.map((r) => (
           <li key={r.id} className={styles.review}>

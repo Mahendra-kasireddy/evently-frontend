@@ -1,6 +1,10 @@
 .hero { position: relative; overflow: hidden; display: flex; align-items: center; gap: 16px; background: var(--color-navy-deep); border-radius: 18px; padding: 22px 26px; color: #fff; }
 .circle { position: absolute; top: -50px; right: 70px; width: 190px; height: 190px; border-radius: 999px; background: rgba(232,99,58,0.14); }
-.back { position: relative; z-index: 1; flex: 0 0 auto; width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.06); color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.back { position: relative; z-index: 1; flex: 0 0 auto; width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.06); color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; }
+.back:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.3); }
+.back:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+/* Labelled variant — names where back goes, for the My Events sub-pages. */
+.backLabelled { width: auto; height: 36px; padding: 0 14px 0 9px; gap: 5px; border-radius: 999px; font-family: inherit; font-size: 0.82rem; font-weight: 600; white-space: nowrap; }
 .avatar { position: relative; z-index: 1; flex: 0 0 auto; width: 56px; height: 56px; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 1.1rem; }
 .info { position: relative; z-index: 1; }
 .nameRow { display: flex; align-items: center; gap: 9px; }

@@ -2,6 +2,7 @@ import {
   Sparkles, ChevronRight, Clock, Camera, Car, Briefcase, CheckCircle2,
   Heart, MapPin, Play, Shield, Image as ImageIcon,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '@shared/reusable';
 import { ParticleField } from '@shared/components';
 import { SECTION_COPY } from '../../constants';
@@ -42,8 +43,12 @@ export function AfterBooking() {
           </ol>
 
           <div className={styles.ctaRow}>
-            <Button variant="brand" size="lg"><Sparkles size={18} /> Plan Your Event</Button>
-            <Button variant="brandGhost" size="lg">See a live invite <ChevronRight size={16} /></Button>
+            <Link to="/plan">
+              <Button variant="brand" size="lg"><Sparkles size={18} /> Plan Your Event</Button>
+            </Link>
+            <Link to="/discover">
+              <Button variant="brandGhost" size="lg">See a live invite <ChevronRight size={16} /></Button>
+            </Link>
           </div>
         </div>
 

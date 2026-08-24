@@ -1,4 +1,4 @@
-import { type ChangeEvent, useRef } from 'react';
+import { type ChangeEvent, type HTMLInputTypeAttribute, type ReactNode, useId, useRef } from 'react';
 import { Check, Upload, X } from 'lucide-react';
 import type { FileRef, Option } from '../types';
 import type { SaveState } from '../hooks/useOnboarding';
@@ -21,6 +21,139 @@ export function SaveIndicator({ state }: { state: SaveState }) {
   );
 }
 
+/** Shared label + error shell so every control lines up on the same grid. */
+function FieldShell({
+  label,
+  required,
+  error,
+  hint,
+  htmlFor,
+  children,
+}: {
+  label: string;
+  required?: boolean | undefined;
+  error?: string | undefined;
+  hint?: string | undefined;
+  htmlFor?: string | undefined;
+  children: ReactNode;
+}) {
+  return (
+    <div className={styles.field}>
+      <label className={styles.label} htmlFor={htmlFor}>
+        {label}
+        {required && (
+          <span className={styles.req} aria-hidden>
+            {' '}
+            *
+          </span>
+        )}
+      </label>
+      {children}
+      {hint && <span className={styles.hint}>{hint}</span>}
+      {error && (
+        <span className={styles.err} role="alert">
+          {error}
+        </span>
+      )}
+    </div>
+  );
+}
+
+export interface TextFieldProps {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: HTMLInputTypeAttribute;
+  placeholder?: string | undefined;
+  required?: boolean | undefined;
+  error?: string | undefined;
+  hint?: string | undefined;
+  icon?: ReactNode | undefined;
+  prefix?: string | undefined;
+  suffix?: ReactNode | undefined;
+}
+
+/**
+ * The design's text field: 12px/500 navy label over a 1px `--c-line` box with a
+ * 9px radius, `9px 11px` padding and 13.5px text.
+ */
+export function TextField(p: TextFieldProps) {
+  const id = useId();
+  return (
+    <FieldShell
+      label={p.label}
+      required={p.required}
+      error={p.error}
+      hint={p.hint}
+      htmlFor={id}
+    >
+      <span className={`${styles.control} ${p.error ? styles.controlErr : ''}`}>
+        {p.prefix && <span className={styles.prefix}>{p.prefix}</span>}
+        {p.icon && <span className={styles.icon}>{p.icon}</span>}
+        <input
+          id={id}
+          className={styles.input}
+          type={p.type ?? 'text'}
+          value={p.value}
+          placeholder={p.placeholder}
+          required={p.required}
+          aria-required={p.required || undefined}
+          aria-invalid={p.error ? true : undefined}
+          onChange={(e) => p.onChange(e.target.value)}
+        />
+        {p.suffix && <span className={styles.suffix}>{p.suffix}</span>}
+      </span>
+    </FieldShell>
+  );
+}
+
+export interface TextAreaFieldProps {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string | undefined;
+  required?: boolean | undefined;
+  error?: string | undefined;
+}
+export function TextAreaField(p: TextAreaFieldProps) {
+  const id = useId();
+  return (
+    <FieldShell label={p.label} required={p.required} error={p.error} htmlFor={id}>
+      <textarea
+        id={id}
+        className={styles.textarea}
+        value={p.value}
+        placeholder={p.placeholder}
+        required={p.required}
+        onChange={(e) => p.onChange(e.target.value)}
+      />
+    </FieldShell>
+  );
+}
+
+/** Read-only value rendered in the same box as an editable field. */
+export function ReadonlyField({
+  label,
+  value,
+  suffix,
+  icon,
+}: {
+  label: string;
+  value: string;
+  suffix?: ReactNode | undefined;
+  icon?: ReactNode | undefined;
+}) {
+  return (
+    <FieldShell label={label}>
+      <span className={`${styles.control} ${styles.readonly}`}>
+        {icon && <span className={styles.icon}>{icon}</span>}
+        <span className={styles.readonlyValue}>{value}</span>
+        {suffix && <span className={styles.suffix}>{suffix}</span>}
+      </span>
+    </FieldShell>
+  );
+}
+
 export interface SelectFieldProps {
   label: string;
   value: string;
@@ -32,16 +165,16 @@ export interface SelectFieldProps {
   error?: string;
 }
 export function SelectField(p: SelectFieldProps) {
+  const id = useId();
   return (
-    <label className={styles.field}>
-      <span className={styles.label}>
-        {p.label} {p.required && <span className={styles.req}>*</span>}
-      </span>
+    <FieldShell label={p.label} required={p.required} error={p.error} htmlFor={id}>
       <select
-        className={styles.select}
+        id={id}
+        className={`${styles.select} ${p.value ? '' : styles.selectEmpty} ${p.error ? styles.controlErr : ''}`}
         value={p.value}
         onChange={(e) => p.onChange(e.target.value)}
         disabled={p.disabled}
+        aria-invalid={p.error ? true : undefined}
       >
         <option value="">{p.disabled ? 'Loading…' : (p.placeholder ?? 'Select')}</option>
         {p.options.map((o) => (
@@ -50,12 +183,7 @@ export function SelectField(p: SelectFieldProps) {
           </option>
         ))}
       </select>
-      {p.error && (
-        <span className={styles.err} role="alert">
-          {p.error}
-        </span>
-      )}
-    </label>
+    </FieldShell>
   );
 }
 
@@ -71,7 +199,13 @@ export function ChipSelect(p: ChipSelectProps) {
   return (
     <div className={styles.field}>
       <span className={styles.label}>
-        {p.label} {p.required && <span className={styles.req}>*</span>}
+        {p.label}
+        {p.required && (
+          <span className={styles.req} aria-hidden>
+            {' '}
+            *
+          </span>
+        )}
       </span>
       <div className={styles.chips}>
         {p.disabled && <span className={styles.hint}>Loading…</span>}
@@ -85,8 +219,10 @@ export function ChipSelect(p: ChipSelectProps) {
               onClick={() => p.onToggle(o.key)}
               aria-pressed={on}
             >
-              {on && <Check size={13} />}
-              {o.label}
+              <span className={styles.chipLabel}>{o.label}</span>
+              <span className={styles.chipBox} aria-hidden>
+                {on && <Check size={11} strokeWidth={3} />}
+              </span>
             </button>
           );
         })}
@@ -97,7 +233,7 @@ export function ChipSelect(p: ChipSelectProps) {
 
 export function Toggle(p: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
-    <label className={styles.toggle}>
+    <label className={`${styles.toggle} ${p.checked ? styles.toggleOn : ''}`}>
       <input type="checkbox" checked={p.checked} onChange={(e) => p.onChange(e.target.checked)} />
       <span>{p.label}</span>
     </label>
@@ -124,7 +260,13 @@ export function FileField(p: FileFieldProps) {
   return (
     <div className={styles.field}>
       <span className={styles.label}>
-        {p.label} {p.required && <span className={styles.req}>*</span>}
+        {p.label}
+        {p.required && (
+          <span className={styles.req} aria-hidden>
+            {' '}
+            *
+          </span>
+        )}
       </span>
       {p.file ? (
         <div className={styles.fileRow}>
@@ -138,14 +280,17 @@ export function FileField(p: FileFieldProps) {
       ) : (
         <button
           type="button"
-          className={styles.uploadBtn}
+          className={styles.drop}
           onClick={() => ref.current?.click()}
           disabled={p.uploading}
         >
-          <Upload size={15} /> {p.uploading ? 'Uploading…' : 'Upload'}
+          <Upload size={22} />
+          <span className={styles.dropTitle}>
+            {p.uploading ? 'Uploading…' : 'Drag file or click to browse'}
+          </span>
+          <span className={styles.dropHint}>{p.hint ?? 'PDF, JPG or PNG'}</span>
         </button>
       )}
-      {p.hint && <span className={styles.hint}>{p.hint}</span>}
       <input ref={ref} type="file" accept={p.accept} onChange={onFile} hidden />
     </div>
   );
@@ -171,7 +316,13 @@ export function GalleryField(p: GalleryFieldProps) {
   return (
     <div className={styles.field}>
       <span className={styles.label}>
-        {p.label} {p.required && <span className={styles.req}>*</span>}
+        {p.label}
+        {p.required && (
+          <span className={styles.req} aria-hidden>
+            {' '}
+            *
+          </span>
+        )}
       </span>
       <div className={styles.gallery}>
         {p.files.map((f, i) => (
@@ -186,11 +337,11 @@ export function GalleryField(p: GalleryFieldProps) {
         ))}
         <button
           type="button"
-          className={styles.uploadBtn}
+          className={styles.addTile}
           onClick={() => ref.current?.click()}
           disabled={p.uploading}
         >
-          <Upload size={15} /> {p.uploading ? 'Uploading…' : 'Add'}
+          <Upload size={16} /> {p.uploading ? 'Uploading…' : 'Add'}
         </button>
       </div>
       {p.hint && <span className={styles.hint}>{p.hint}</span>}

@@ -1,0 +1,1 @@
+export { useAcademy } from './useAcademy';

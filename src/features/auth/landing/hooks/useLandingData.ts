@@ -5,11 +5,7 @@
  */
 export {
   useGetCategoriesQuery as useCategories,
-  useGetStatisticsQuery as useStatistics,
   useGetStepsQuery as useSteps,
   useGetFeaturesQuery as useFeatures,
-  useGetTestimonialsQuery as useTestimonials,
-  useGetPopularOrganizersQuery as useOrganizers,
   useGetFaqsQuery as useFaqs,
-  useGetFeaturedEventsQuery as useFeaturedEvents,
 } from '../service';

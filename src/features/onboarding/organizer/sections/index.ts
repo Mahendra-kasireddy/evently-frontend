@@ -4,4 +4,3 @@ export { VerificationForm } from './VerificationForm';
 export { BankForm } from './BankForm';
 export { ServicesForm } from './ServicesForm';
 export { PortfolioForm } from './PortfolioForm';
-export { StepPlaceholder } from './StepPlaceholder';

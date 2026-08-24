@@ -106,6 +106,7 @@ export interface OrganizerProfile {
   destinationEvents: boolean;
   internationalEvents: boolean;
   // Step 5
+  tagline: string;
   businessDescription: string;
   yearsOfExperience: number;
   featuredProjects: string[];

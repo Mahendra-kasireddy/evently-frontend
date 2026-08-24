@@ -59,7 +59,16 @@ const STAGE_UI: Record<
   },
 };
 
-/** Resolves the destination route for the stage's primary CTA. */
+/**
+ * Resolves the destination route for the stage's primary CTA.
+ *
+ * "Compare Quotes" goes to My Events rather than straight to a comparison. Home
+ * surfaces one current event, but the customer may have several, and the bare
+ * /quotes screen has to guess which request to open. My Events names every event
+ * and lists the organizers who replied to each, so the customer picks the event
+ * first and the organizers second — and the Compare button there carries the
+ * request id, so nothing is guessed.
+ */
 function hrefFor(data: CurrentEventData): string {
   switch (data.stage) {
     case 'draft':
@@ -67,9 +76,9 @@ function hrefFor(data: CurrentEventData): string {
     case 'submitted':
       return '/workspace';
     case 'quotes_received':
-      return '/quotes';
+      return '/workspace';
     case 'quote_accepted':
-      return data.quotationId ? `/booking/${data.quotationId}` : '/quotes';
+      return data.quotationId ? `/booking/${data.quotationId}` : '/workspace';
     case 'booking_created':
     case 'booking_confirmed':
     case 'in_progress':

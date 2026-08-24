@@ -1,31 +1,34 @@
-import { Link } from 'react-router-dom';
-import { Heart, Sparkles } from 'lucide-react';
-import styles from './styles.module.css';
+import { Navigate } from 'react-router-dom';
+import { LoadingScreen } from '@shared/components';
+import { useGetMyBookingsQuery } from '@features/customer/booking/service';
+import { invitationRoute, MY_EVENTS_ROUTE } from '@features/customer/workspace/routes';
 
-/** Invitation placeholder reached from the header profile menu. */
+/**
+ * `/my-invitation` — an entry point, not a screen.
+ *
+ * An invitation only exists for a booked event, so this resolves which event the
+ * customer means and forwards into My Events, where the invitation is reviewed
+ * in the context of its booking. With one booking that is unambiguous; with
+ * several the hub is the honest answer, since it lists them all.
+ *
+ * The screen this replaced was a hardcoded "No invitation yet" panel that said
+ * the same thing whether or not an invitation existed.
+ */
 export function MyInvitationPage() {
-  return (
-    <main className={styles.page}>
-      <div className={styles.container}>
-        <h1 className={styles.title}>My invitation</h1>
-        <p className={styles.subtitle}>Design and share the invite for your event.</p>
+  const { data: bookings, isLoading } = useGetMyBookingsQuery();
 
-        <div className={styles.empty}>
-          <span className={styles.emptyIcon}>
-            <Heart size={28} />
-          </span>
-          <h2 className={styles.emptyTitle}>No invitation yet</h2>
-          <p className={styles.emptyText}>
-            Once you book an organizer, you can create a beautiful invitation here and share it
-            with your guests in a couple of clicks.
-          </p>
-          <Link to="/plan" className={styles.cta}>
-            <Sparkles size={16} /> Start planning
-          </Link>
-        </div>
-      </div>
-    </main>
-  );
+  if (isLoading) return <LoadingScreen message="Finding your event…" />;
+
+  const only = bookings?.length === 1 ? bookings[0] : undefined;
+  if (only) {
+    // The invitation route handles "not shared yet" itself, so it is safe to
+    // send them straight there without first asking whether one exists.
+    return <Navigate to={invitationRoute(only.id)} replace />;
+  }
+
+  // None, or several — the hub lists them, so let the customer choose rather
+  // than guessing at one.
+  return <Navigate to={MY_EVENTS_ROUTE} replace />;
 }
 
 export default MyInvitationPage;

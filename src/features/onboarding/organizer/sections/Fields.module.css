@@ -1,34 +1,345 @@
-.field { display: flex; flex-direction: column; gap: 8px; }
-.label { font-size: 0.85rem; font-weight: 500; color: var(--color-text); }
-.req { color: #e5484d; }
-.select { height: 44px; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 0 12px; font-size: 0.95rem; color: var(--color-navy); background: #fff; cursor: pointer; }
-.select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-soft); }
-.err { color: #d4453a; font-size: 0.8rem; }
-.hint { font-size: 0.75rem; color: var(--color-text-muted); }
+/*
+ * P-01 form controls. Field metrics come straight off the design: 12px/500
+ * navy label, 1px `--c-line` box, radius 9, `9px 11px` padding, 13.5px text,
+ * `--c-muted2` placeholder.
+ */
 
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { display: inline-flex; align-items: center; gap: 5px; padding: 7px 12px; border: 1px solid var(--color-border); border-radius: 999px; background: #fff; font-size: 0.85rem; font-weight: 600; color: var(--color-navy); cursor: pointer; }
-.chip:hover { border-color: var(--color-primary); }
-.chipOn { background: var(--color-primary-soft); border-color: var(--color-primary); color: var(--color-primary); }
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--c-navy);
+}
+.req {
+  color: var(--c-red);
+}
+.hint {
+  font-size: 11.5px;
+  color: var(--c-muted2);
+}
+.err {
+  font-size: 11.5px;
+  color: var(--c-red);
+}
 
-.toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 600; color: var(--color-navy); cursor: pointer; }
-.toggle input { width: 16px; height: 16px; accent-color: var(--color-primary); }
+/* ---------------- text / readonly ---------------- */
 
-.uploadBtn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: #fff; color: var(--color-navy); font-size: 0.85rem; font-weight: 600; cursor: pointer; width: fit-content; }
-.uploadBtn:hover { border-color: var(--color-primary); color: var(--color-primary); }
-.uploadBtn:disabled { opacity: 0.6; cursor: default; }
+.control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--c-line);
+  border-radius: 9px;
+  padding: 9px 11px;
+  background: #fff;
+  color: var(--c-navy);
+  font-size: 13.5px;
+}
+.control:focus-within {
+  border-color: var(--c-coral);
+}
+.controlErr {
+  border-color: var(--c-red);
+}
+.input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  padding: 0;
+}
+.input::placeholder {
+  color: var(--c-muted2);
+}
+.icon {
+  display: inline-flex;
+  color: var(--c-muted2);
+  flex: none;
+}
+.prefix {
+  color: var(--c-muted);
+  font-weight: 600;
+  flex: none;
+}
+.suffix {
+  color: var(--c-muted2);
+  flex: none;
+}
+.readonly {
+  background: var(--c-page);
+}
+.readonlyValue {
+  flex: 1;
+  min-width: 0;
+  color: var(--c-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-.fileRow { display: inline-flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg); width: fit-content; max-width: 100%; }
-.fileName { font-size: 0.85rem; color: var(--color-primary); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 240px; }
-.remove { display: inline-flex; border: none; background: none; color: var(--color-text-muted); cursor: pointer; padding: 2px; }
-.remove:hover { color: #d4453a; }
+.textarea {
+  border: 1px solid var(--c-line);
+  border-radius: 9px;
+  padding: 10px 11px;
+  background: #fff;
+  color: var(--c-navy);
+  font: inherit;
+  font-size: 13.5px;
+  line-height: 1.5;
+  min-height: 90px;
+  resize: vertical;
+}
+.textarea::placeholder {
+  color: var(--c-muted2);
+}
+.textarea:focus {
+  outline: none;
+  border-color: var(--c-coral);
+}
 
-.gallery { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.thumb { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg); font-size: 0.8rem; }
-.thumb a { color: var(--color-primary); text-decoration: none; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.thumb button { display: inline-flex; border: none; background: none; color: var(--color-text-muted); cursor: pointer; padding: 0; }
-.thumb button:hover { color: #d4453a; }
+/* ---------------- select ---------------- */
 
-.save { display: inline-flex; align-items: center; gap: 5px; font-size: 0.8rem; color: var(--color-text-muted); }
-.saved { color: var(--color-green); }
-.saving { color: var(--color-primary); }
+.select {
+  appearance: none;
+  border: 1px solid var(--c-line);
+  border-radius: 9px;
+  padding: 9px 30px 9px 11px;
+  background: #fff
+    url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239AA1AD' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+    no-repeat right 11px center;
+  color: var(--c-navy);
+  font: inherit;
+  font-size: 13.5px;
+  cursor: pointer;
+}
+.selectEmpty {
+  color: var(--c-muted2);
+}
+.select:focus {
+  outline: none;
+  border-color: var(--c-coral);
+}
+.select:disabled {
+  background-color: var(--c-page);
+  cursor: not-allowed;
+}
+
+/* ---------------- chip select ---------------- */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  border: 1.5px solid var(--c-line);
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-navy);
+  cursor: pointer;
+}
+.chipOn {
+  border-color: var(--c-coral);
+  background: var(--c-coral-wash);
+  font-weight: 600;
+}
+.chipLabel {
+  white-space: nowrap;
+}
+.chipBox {
+  width: 17px;
+  height: 17px;
+  border-radius: 5px;
+  border: 1.5px solid var(--c-line);
+  background: #fff;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.chipOn .chipBox {
+  border-color: var(--c-coral);
+  background: var(--c-coral);
+}
+
+/* ---------------- toggle ---------------- */
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  border: 1.5px solid var(--c-line);
+  background: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-navy);
+  cursor: pointer;
+}
+.toggleOn {
+  border-color: var(--c-coral);
+  background: var(--c-coral-wash);
+  font-weight: 600;
+}
+.toggle input {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--c-coral);
+}
+
+/* ---------------- uploads ---------------- */
+
+.drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1.5px dashed var(--c-line);
+  border-radius: 11px;
+  padding: 22px 16px;
+  background: var(--c-page);
+  color: var(--c-muted2);
+  font: inherit;
+  cursor: pointer;
+  text-align: center;
+}
+.drop svg {
+  color: var(--c-coral);
+}
+.drop:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+.dropTitle {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-navy);
+}
+.dropHint {
+  font-size: 11.5px;
+}
+
+.fileRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  border: 1px solid var(--c-line);
+  border-radius: 9px;
+  background: var(--c-page);
+}
+.fileName {
+  font-size: 13px;
+  color: var(--c-coral);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+.remove {
+  display: inline-flex;
+  border: none;
+  background: none;
+  color: var(--c-muted2);
+  cursor: pointer;
+  padding: 2px;
+  flex: none;
+}
+.remove:hover {
+  color: var(--c-red);
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  align-items: center;
+}
+.thumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border: 1px solid var(--c-line);
+  border-radius: 9px;
+  background: var(--c-page);
+  font-size: 12px;
+  color: var(--c-navy);
+}
+.thumb a {
+  color: var(--c-coral);
+  text-decoration: none;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.thumb button {
+  display: inline-flex;
+  border: none;
+  background: none;
+  color: var(--c-muted2);
+  cursor: pointer;
+  padding: 0;
+}
+.thumb button:hover {
+  color: var(--c-red);
+}
+.addTile {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 12px;
+  border: 1.5px dashed var(--c-line);
+  border-radius: 9px;
+  background: var(--c-page);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-navy);
+  cursor: pointer;
+}
+.addTile svg {
+  color: var(--c-coral);
+}
+.addTile:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+/* ---------------- save indicator ---------------- */
+
+.save {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--c-muted);
+}
+.saved {
+  color: var(--c-teal);
+}
+.saving {
+  color: var(--c-coral);
+}

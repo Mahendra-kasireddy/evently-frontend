@@ -1,0 +1,1 @@
+export { useSubvendors } from './useSubvendors';

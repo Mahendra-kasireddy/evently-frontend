@@ -1,0 +1,249 @@
+/*
+ * P-11 Badges & tiers. The shell supplies the page title and gutter; this file
+ * covers the navy tier hero, the requirements checklist, the Mitra strip and
+ * the two rail cards. Values are sampled from the reference design.
+ */
+
+/* ---------- hero ---------- */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 26px;
+  border-radius: 16px;
+  background: var(--c-navy);
+}
+.heroBlob {
+  position: absolute;
+  top: -20px;
+  right: 40px;
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  opacity: 0.25;
+  pointer-events: none;
+}
+.heroMedal {
+  position: relative;
+  flex: none;
+  width: 90px;
+  height: 90px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: var(--medal, var(--c-navy-wash));
+  box-shadow: 0 10px 30px -8px color-mix(in srgb, var(--medal, #000) 60%, transparent);
+}
+.heroText {
+  position: relative;
+  min-width: 0;
+}
+.heroLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+}
+.heroTier {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #fff;
+}
+.heroSub {
+  margin-top: 4px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ---------- cards ---------- */
+
+.cardTitle {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-navy);
+}
+
+.topTierBody {
+  margin: 0;
+  font-size: 13px;
+  color: var(--c-muted);
+}
+
+/* ---------- requirements ---------- */
+
+.reqList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.reqRow {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--c-line2);
+}
+.reqRow:last-child {
+  border-bottom: none;
+}
+.reqCheck {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--c-page);
+  border: 1.5px solid var(--c-line);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.reqCheckOn {
+  background: var(--c-teal);
+  border-color: var(--c-teal);
+}
+.reqLabel {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--c-navy);
+}
+.reqValue {
+  margin-left: auto;
+  padding-left: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-navy);
+  white-space: nowrap;
+}
+.reqValueOn {
+  color: var(--c-teal);
+}
+
+/* ---------- Mitra strip ---------- */
+
+.mitra {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--c-teal-wash);
+  border: none;
+}
+.mitraIcon {
+  flex: none;
+  color: var(--c-teal);
+  display: flex;
+}
+.mitraTitle {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--c-navy);
+}
+.mitraSub {
+  font-size: 12px;
+  color: var(--c-muted);
+}
+.mitraCta {
+  margin-left: auto;
+  flex: none;
+}
+
+/* ---------- rail: commission rate ---------- */
+
+.rateList {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.rateRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--c-line2);
+}
+.rateRow:last-child {
+  border-bottom: none;
+}
+.rateName {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--c-muted);
+}
+.rateNameOwn {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--c-navy);
+}
+.rateValue {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--c-teal);
+}
+.rateValueOwn {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--c-navy);
+}
+
+/* ---------- rail: perks ---------- */
+
+.perkList {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.perkRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+.perkIcon {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #fff7d6;
+  color: #b8860b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.perkLabel {
+  font-size: 13px;
+  color: var(--c-navy);
+}
+.perkFoot {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  color: var(--c-muted);
+}
+.perkFoot svg {
+  color: var(--c-muted2);
+}
+
+@media (max-width: 640px) {
+  .hero {
+    gap: 16px;
+    padding: 20px;
+  }
+  .heroMedal {
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+  }
+  .heroTier {
+    font-size: 22px;
+  }
+}

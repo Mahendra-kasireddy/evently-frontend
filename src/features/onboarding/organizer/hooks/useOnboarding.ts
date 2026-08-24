@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useAuth } from '@app/auth';
 import { setToken, type NormalizedApiError } from '@lib/api';
 import { ONBOARDING_STEPS } from '../constants';
 import {
@@ -121,6 +122,17 @@ function isStepComplete(id: string, values: ProfileForm, files: ProfileFiles): b
   return true;
 }
 
+/**
+ * Where to reopen the wizard for a returning organizer: the first step still
+ * missing something, so "Save & exit" then coming back continues where they
+ * stopped instead of restarting at step 1. All steps done → the last one, which
+ * is where "Submit for review" lives.
+ */
+function resumeStepId(values: ProfileForm, files: ProfileFiles): string {
+  const incomplete = ONBOARDING_STEPS.find((s) => !isStepComplete(s.id, values, files));
+  return incomplete?.id ?? ONBOARDING_STEPS[ONBOARDING_STEPS.length - 1]?.id ?? 'basic';
+}
+
 export interface UseOnboardingResult {
   ready: boolean;
   bootstrapping: boolean;
@@ -146,11 +158,15 @@ export interface UseOnboardingResult {
   uploadingField: string | null;
   profileCompletion: number;
   submitted: boolean;
+  /** True only when the submission happened in this session — drives the
+   *  confirmation panel. Arriving already-submitted belongs on the dashboard. */
+  justSubmitted: boolean;
   isSubmitting: boolean;
   submit: () => void;
 }
 
 export function useOnboarding(): UseOnboardingResult {
+  const { refreshRolesFromToken } = useAuth();
   const configQuery = useGetOnboardingConfigQuery();
   const servicesQuery = useGetServicesConfigQuery();
   const [register, registerState] = useRegisterOrganizerMutation();
@@ -169,6 +185,7 @@ export function useOnboarding(): UseOnboardingResult {
   const [mobile, setMobile] = useState('');
   const [profileCompletion, setProfileCompletion] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [justSubmitted, setJustSubmitted] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<ScalarField, string>>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<Record<SectionId, SaveState>>({
@@ -195,7 +212,7 @@ export function useOnboarding(): UseOnboardingResult {
   );
 
   const hydrate = useCallback((p: OrganizerProfile) => {
-    setValues({
+    const nextValues: ProfileForm = {
       firstName: p.firstName, lastName: p.lastName, contactEmail: p.contactEmail,
       businessName: p.businessName, displayName: p.displayName, businessType: p.businessType,
       primaryCategory: p.primaryCategory, city: p.city,
@@ -218,28 +235,39 @@ export function useOnboarding(): UseOnboardingResult {
       yearsOfExperience: p.yearsOfExperience ? String(p.yearsOfExperience) : '',
       featuredProjects: p.featuredProjects, instagram: p.instagram, facebook: p.facebook,
       youtube: p.youtube, website: p.website, linkedin: p.linkedin,
-    });
-    setFiles({
+    };
+    const nextFiles: ProfileFiles = {
       profilePhoto: p.profilePhoto, governmentIdFile: p.governmentIdFile, panFile: p.panFile,
       gstFile: p.gstFile, businessRegFile: p.businessRegFile,
       cancelledChequeFile: p.cancelledChequeFile, coverPhoto: p.coverPhoto,
       gallery: p.gallery, videos: p.videos, certificates: p.certificates, awards: p.awards,
-    });
+    };
+    setValues(nextValues);
+    setFiles(nextFiles);
     setMobile(p.mobile);
     setProfileCompletion(p.profileCompletion);
     setSubmitted(p.onboardingStatus === 'submitted' || p.onboardingStatus === 'approved');
+    // Reopen where the organizer left off, not at step 1.
+    setCurrentId(resumeStepId(nextValues, nextFiles));
   }, []);
 
   const bootstrap = useCallback(() => {
     register()
       .unwrap()
       .then((res) => {
-        if (res.token) setToken(res.token);
+        if (res.token) {
+          setToken(res.token);
+          // The backend reissues the token with Role.ORGANIZER added on
+          // register — re-derive roles from it so the store (and any
+          // role-gated route, e.g. the organizer dashboard) reflects the new
+          // role immediately, without requiring a re-login.
+          refreshRolesFromToken();
+        }
         hydrate(res.profile);
         setReady(true);
       })
       .catch(() => {});
-  }, [register, hydrate]);
+  }, [register, hydrate, refreshRolesFromToken]);
 
   useEffect(() => {
     if (didRegister.current) return;
@@ -387,6 +415,7 @@ export function useOnboarding(): UseOnboardingResult {
       .then(() => complete().unwrap())
       .then((p) => {
         setSubmitted(true);
+        setJustSubmitted(true);
         setProfileCompletion(p.profileCompletion);
       })
       .catch((err: NormalizedApiError) => setFormError(err?.message ?? 'Submission failed'));
@@ -433,6 +462,7 @@ export function useOnboarding(): UseOnboardingResult {
     uploadingField,
     profileCompletion,
     submitted,
+    justSubmitted,
     isSubmitting: completeState.isLoading,
     submit,
   };

@@ -38,6 +38,24 @@ export interface BookingOrganizer {
 export interface BookingStep { label: string; done: boolean }
 export interface BookingTimelineEntry { status: string; label: string; note?: string; at?: string }
 
+export type BookingTaskStatus = 'todo' | 'in_progress' | 'done';
+export type TaskAssignmentStatus = 'unassigned' | 'pending' | 'accepted' | 'declined';
+export interface BookingTaskFile { url: string; key: string; originalName: string }
+/** Organizer-authored execution to-do — see backend BookingTask. */
+export interface ApiBookingTask {
+  id: string;
+  title: string;
+  status: BookingTaskStatus;
+  assigneeName: string;
+  subVendorId: string | null;
+  assignmentStatus: TaskAssignmentStatus;
+  amount: number;
+  dueDate: string | null;
+  photoProof: BookingTaskFile | null;
+}
+
+export interface BookingCustomerRef { id: string; name: string }
+
 export interface ApiBooking {
   id: string;
   ref: string;
@@ -52,9 +70,11 @@ export interface ApiBooking {
   balanceAmount: number;
   progress: number;
   steps: BookingStep[];
+  tasks: ApiBookingTask[];
   timeline: BookingTimelineEntry[];
   status: BookingStatus;
   organizer: BookingOrganizer | null;
+  customer: BookingCustomerRef | null;
   quotationId: string | null;
   createdAt?: string;
   updatedAt?: string;

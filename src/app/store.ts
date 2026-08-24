@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { setupListeners } from '@reduxjs/toolkit/query';
 import { baseApi } from '@lib/rtk';
 import { authSlice } from './auth/authSlice';
 import { heroDraftSlice } from '@features/customer/home/service';
@@ -14,6 +15,10 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(baseApi.middleware),
 });
+
+// Wires the focus/reconnect events RTK Query's refetchOnFocus/refetchOnReconnect
+// listen for. Without this they are silently inert.
+setupListeners(store.dispatch);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

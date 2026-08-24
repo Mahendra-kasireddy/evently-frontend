@@ -1,25 +1,139 @@
-.stepper { background: #fff; border: 1px solid var(--color-border); border-radius: 18px; padding: 24px 20px; box-shadow: var(--shadow-sm); align-self: start; }
-.list { list-style: none; margin: 0; padding: 0; }
-.step { position: relative; }
-.step:not(:last-child) .btn::before { content: ''; position: absolute; left: 35px; top: 44px; bottom: -4px; width: 2px; background: var(--color-border); }
-.step.completed:not(:last-child) .btn::before { background: var(--color-green); }
-.btn { position: relative; width: 100%; display: flex; align-items: center; gap: 14px; background: none; border: none; padding: 10px 8px; cursor: pointer; text-align: left; border-radius: 10px; transition: background 0.15s ease; }
-.btn:hover { background: var(--color-bg); }
-.dot { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; }
-.pending .dot { background: var(--color-bg); color: var(--color-text-muted); border: 1px solid var(--color-border); }
-.current .dot { background: var(--color-primary); color: #fff; box-shadow: 0 0 0 4px var(--color-primary-soft); }
-.completed .dot { background: var(--color-green); color: #fff; }
-.text { display: flex; flex-direction: column; }
-.stepTitle { font-size: 0.95rem; font-weight: 600; color: var(--color-navy); }
-.status { font-size: 0.78rem; }
-.pending .status { color: var(--color-text-muted); }
-.current .status { color: var(--color-primary); font-weight: 600; }
-.completed .status { color: var(--color-green); font-weight: 600; }
-.note { display: flex; align-items: flex-start; gap: 8px; margin: 18px 4px 0; padding-top: 16px; border-top: 1px solid var(--color-border); font-size: 0.82rem; line-height: 1.45; color: var(--color-text-muted); }
-.note svg { flex-shrink: 0; margin-top: 1px; }
+/* P-01 left tracker — Card({padding:20}) with the numbered step list. */
 
-.progress { margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border); }
-.progressTop { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; color: var(--color-navy); margin-bottom: 8px; }
-.pct { color: var(--color-primary); }
-.bar { height: 6px; border-radius: 999px; background: var(--color-bg); overflow: hidden; }
-.fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--color-accent-warm), var(--color-primary)); transition: width 0.5s var(--ease-card); }
+.stepper {
+  width: 260px;
+  flex: none;
+  align-self: flex-start;
+  position: sticky;
+  top: 24px;
+  background: #fff;
+  border: 1px solid var(--c-line);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-navy);
+  margin-bottom: 4px;
+}
+.stepOf {
+  font-size: 12px;
+  color: var(--c-muted);
+  margin-bottom: 16px;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.step {
+  position: relative;
+}
+/* Connector bar between the numbered circles. */
+.step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: 36px;
+  bottom: 0;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--c-line);
+}
+.step.completed:not(:last-child)::before {
+  background: var(--c-teal);
+}
+
+.btn {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  padding: 8px 0;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+}
+
+.dot {
+  position: relative;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.pending .dot {
+  background: var(--c-page);
+  color: var(--c-muted2);
+}
+.current .dot {
+  background: var(--c-coral);
+  color: #fff;
+}
+.completed .dot {
+  background: var(--c-teal);
+  color: #fff;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.stepTitle {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--c-muted);
+}
+.current .stepTitle {
+  font-weight: 600;
+  color: var(--c-navy);
+}
+.completed .stepTitle {
+  color: var(--c-navy);
+}
+.active .stepTitle {
+  font-weight: 600;
+  color: var(--c-navy);
+}
+.status {
+  font-size: 11px;
+  color: var(--c-muted2);
+}
+
+.note {
+  margin: 14px 0 0;
+  padding: 11px 13px;
+  background: var(--c-teal-wash);
+  border-radius: 10px;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--c-teal);
+}
+
+@media (max-width: 880px) {
+  .stepper {
+    width: 100%;
+    position: static;
+  }
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .step:not(:last-child)::before {
+    display: none;
+  }
+}

@@ -1,4 +1,5 @@
-import { useRoles, useCities } from './hooks';
+import { useCities } from './hooks';
+import { JOIN_ROLES } from './constants';
 import { Component } from './Component';
 
 interface QueryLike<T> {
@@ -11,9 +12,11 @@ function toSlice<T>(q: QueryLike<T[]>) {
   return { data: q.data ?? [], isLoading: q.isLoading, isError: q.isError };
 }
 
-/** Orchestration: loads roles + cities and passes them to the presentation. */
+/**
+ * Orchestration: loads the real city list (GET /plan/cities) and hands it to
+ * the presentation alongside the static role copy.
+ */
 export function JoinContainer() {
-  const roles = useRoles();
   const cities = useCities();
-  return <Component roles={toSlice(roles)} cities={toSlice(cities)} />;
+  return <Component roles={JOIN_ROLES} cities={toSlice(cities)} />;
 }

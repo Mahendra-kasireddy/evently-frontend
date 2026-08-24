@@ -1,0 +1,24 @@
+/*
+ * Quote builder queue. The shell supplies the title and the 24px gutter, so
+ * this file only handles the screen's own stack. Card/chip/stat visuals come
+ * from the shared partner primitives so the queue reads like the enquiry inbox.
+ */
+
+.subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--c-muted);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Tailwind's preflight sets svg { display: block }, which pushes the empty
+   state's icon to the left edge; recentre it without touching the primitive. */
+.emptyIcon {
+  display: inline-block;
+  color: var(--c-line);
+}

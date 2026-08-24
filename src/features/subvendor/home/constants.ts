@@ -1,4 +1,8 @@
-export const HOME_COPY = {
-  title: 'Sub-vendor home',
-  subtitle: 'Your tasks and payouts.',
+export const TASKS_COPY = {
+  title: 'Tasks',
+  upcomingTitle: 'Upcoming tasks',
+  upcomingEmpty: 'No new assignments right now.',
+  activeTitle: 'Active tasks',
+  activeEmpty: 'Nothing in progress right now.',
+  respondBy: (dueDate: string) => `Respond by ${dueDate}`,
 };

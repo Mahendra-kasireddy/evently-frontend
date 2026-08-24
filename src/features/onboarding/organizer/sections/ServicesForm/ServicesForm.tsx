@@ -1,5 +1,5 @@
-import { Input } from '@shared/reusable';
-import { SelectField, ChipSelect, Toggle } from '../Fields';
+import { MapPin } from 'lucide-react';
+import { ChipSelect, SelectField, TextField, Toggle } from '../Fields';
 import type { UseOnboardingResult } from '../../hooks/useOnboarding';
 import form from '../StepForm.module.css';
 
@@ -72,11 +72,12 @@ export function ServicesForm({ onb }: { onb: UseOnboardingResult }) {
           options={c?.travelOptions ?? []}
           disabled={loading}
         />
-        <Input
+        <TextField
           label="Service radius (km)"
           type="number"
+          icon={<MapPin size={16} />}
           value={values.serviceRadius}
-          onChange={(e) => onb.setField('serviceRadius', e.target.value)}
+          onChange={(v) => onb.setField('serviceRadius', v)}
         />
       </div>
 
@@ -90,18 +91,18 @@ export function ServicesForm({ onb }: { onb: UseOnboardingResult }) {
       />
 
       <div className={form.grid2}>
-        <Input
+        <TextField
           label="Working hours — start"
           type="time"
           value={values.workingHoursStart}
-          onChange={(e) => onb.setField('workingHoursStart', e.target.value)}
+          onChange={(v) => onb.setField('workingHoursStart', v)}
           {...err('workingHoursStart')}
         />
-        <Input
+        <TextField
           label="Working hours — end"
           type="time"
           value={values.workingHoursEnd}
-          onChange={(e) => onb.setField('workingHoursEnd', e.target.value)}
+          onChange={(v) => onb.setField('workingHoursEnd', v)}
           {...err('workingHoursEnd')}
         />
       </div>
@@ -114,31 +115,33 @@ export function ServicesForm({ onb }: { onb: UseOnboardingResult }) {
         disabled={loading}
       />
 
-      <div className={form.grid2}>
-        <Input
-          label="Minimum budget (₹)"
+      <div className={form.grid3}>
+        <TextField
+          label="Minimum budget"
           type="number"
           required
+          prefix="₹"
           value={values.minBudget}
-          onChange={(e) => onb.setField('minBudget', e.target.value)}
+          onChange={(v) => onb.setField('minBudget', v)}
         />
-        <Input
-          label="Maximum budget (₹)"
+        <TextField
+          label="Maximum budget"
           type="number"
           required
+          prefix="₹"
           value={values.maxBudget}
-          onChange={(e) => onb.setField('maxBudget', e.target.value)}
+          onChange={(v) => onb.setField('maxBudget', v)}
+        />
+        <TextField
+          label="Advance payment"
+          type="number"
+          suffix="%"
+          value={values.advancePercentage}
+          onChange={(v) => onb.setField('advancePercentage', v)}
         />
       </div>
 
-      <Input
-        label="Advance payment (%)"
-        type="number"
-        value={values.advancePercentage}
-        onChange={(e) => onb.setField('advancePercentage', e.target.value)}
-      />
-
-      <div className={form.grid2}>
+      <div className={form.grid3}>
         <Toggle
           label="Available for emergencies"
           checked={values.emergencyAvailability}

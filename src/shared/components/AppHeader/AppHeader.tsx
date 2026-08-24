@@ -4,6 +4,7 @@ import {
   MapPin, ChevronDown, Bell, FileText, CheckCircle2, CreditCard,
   Sparkles, Heart, User, Calendar, Settings, LogOut, type LucideIcon,
 } from 'lucide-react';
+import { LocationPicker, readRecentCities } from '../LocationPicker';
 import styles from './AppHeader.module.css';
 
 export interface AppNavItem {
@@ -33,20 +34,30 @@ export interface AppHeaderUser {
   role?: string;
 }
 
+export interface ProfileMenuItem {
+  label: string;
+  to: string;
+  icon: LucideIcon;
+}
+
 export interface AppHeaderProps {
   nav: AppNavItem[];
   user: AppHeaderUser;
+  /** City options for the location menu. Omit to render location as plain text. */
+  cityOptions?: string[];
+  citiesLoading?: boolean;
+  /** Persist a newly chosen city. Omit to render location as plain text. */
+  onSelectCity?: (city: string) => void;
+  isSavingCity?: boolean;
   notifications?: HeaderNotification[];
   hasNotifications?: boolean;
   onSignOut?: () => void;
   onMarkAllRead?: () => void;
   onNotificationClick?: (n: HeaderNotification) => void;
-}
-
-interface ProfileMenuItem {
-  label: string;
-  to: string;
-  icon: LucideIcon;
+  /** Overrides the default customer profile-dropdown links (e.g. for a non-customer role). */
+  profileMenu?: ProfileMenuItem[];
+  /** Overrides the logo's link destination (defaults to "/home"). */
+  homeTo?: string;
 }
 
 /** Profile dropdown links — app-wide, so defined here rather than passed in. */
@@ -92,13 +103,19 @@ function isToday(iso: string): boolean {
 export function AppHeader({
   nav,
   user,
+  cityOptions,
+  citiesLoading,
+  onSelectCity,
+  isSavingCity,
   notifications = [],
   hasNotifications = true,
   onSignOut,
   onMarkAllRead,
   onNotificationClick,
+  profileMenu = PROFILE_MENU,
+  homeTo = '/home',
 }: AppHeaderProps) {
-  const [open, setOpen] = useState<'bell' | 'profile' | null>(null);
+  const [open, setOpen] = useState<'bell' | 'profile' | 'location' | null>(null);
   const actionsRef = useRef<HTMLDivElement>(null);
 
   // Close on outside pointer-down and on Escape.
@@ -118,7 +135,7 @@ export function AppHeader({
     };
   }, [open]);
 
-  const toggle = (m: 'bell' | 'profile') => setOpen((prev) => (prev === m ? null : m));
+  const toggle = (m: 'bell' | 'profile' | 'location') => setOpen((prev) => (prev === m ? null : m));
   const close = () => setOpen(null);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -161,7 +178,7 @@ export function AppHeader({
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
-        <Link to="/home" className={styles.logo}>
+        <Link to={homeTo} className={styles.logo}>
           <span className={styles.logoAccent}>e</span>vently
         </Link>
 
@@ -179,11 +196,43 @@ export function AppHeader({
         </nav>
 
         <div className={styles.actions} ref={actionsRef}>
-          <button type="button" className={styles.location}>
-            <MapPin size={15} className={styles.pin} />
-            <span>{user.location}</span>
-            <ChevronDown size={15} className={styles.caret} />
-          </button>
+          {onSelectCity ? (
+            <div className={styles.menuWrap}>
+              <button
+                type="button"
+                className={styles.location}
+                onClick={() => toggle('location')}
+                aria-haspopup="true"
+                aria-expanded={open === 'location'}
+              >
+                <MapPin size={15} className={styles.pin} />
+                <span>{user.location || 'Select your location'}</span>
+                <ChevronDown size={15} className={styles.caret} />
+              </button>
+              {open === 'location' && (
+                <div className={styles.panel}>
+                  <div className={`${styles.panelCard} ${styles.locationCard}`}>
+                    <LocationPicker
+                      cities={cityOptions ?? []}
+                      citiesLoading={citiesLoading}
+                      recent={readRecentCities()}
+                      selected={user.location || undefined}
+                      busy={isSavingCity}
+                      onSelect={(city) => {
+                        onSelectCity(city);
+                        close();
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <span className={styles.location}>
+              <MapPin size={15} className={styles.pin} />
+              <span>{user.location}</span>
+            </span>
+          )}
 
           {/* Notifications */}
           <div className={styles.menuWrap}>
@@ -273,7 +322,7 @@ export function AppHeader({
                   </div>
 
                   <div className={styles.menuGroup}>
-                    {PROFILE_MENU.map(({ label, to, icon: Ic }) => (
+                    {profileMenu.map(({ label, to, icon: Ic }) => (
                       <Link key={label} to={to} className={styles.menuItem} onClick={close}>
                         <Ic size={17} className={styles.menuIcon} />
                         {label}

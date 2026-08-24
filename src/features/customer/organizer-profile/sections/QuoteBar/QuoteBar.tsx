@@ -10,7 +10,7 @@ export function QuoteBar({ estLabel, estRange }: { estLabel: string; estRange: s
         <small>{estLabel}</small>
         <strong>{estRange}</strong>
       </div>
-      <button type="button" className={styles.cta} onClick={() => navigate('/quotes')}><FileText size={16} /> Request Quote</button>
+      <button type="button" className={styles.cta} onClick={() => navigate('/plan')}><FileText size={16} /> Request Quote</button>
     </div>
   );
 }

@@ -110,9 +110,43 @@ export interface PlanSubmission {
   updatedAt?: string;
 }
 
-export type QuoteRequestStatus = 'open' | 'quoted' | 'closed';
+/**
+ * The five states the backend actually stores (QuoteRequestStatus in
+ * quote-request.schema.ts). `accepted` and `cancelled` were missing here, so a
+ * request in either state rendered a blank status badge in My Events.
+ */
+export type QuoteRequestStatus = 'open' | 'quoted' | 'accepted' | 'cancelled' | 'closed';
 
-/** A quote request the customer has raised (workspace "quote status"). */
+/** Minimal organizer identity attached to a request or one of its responses. */
+export interface QuoteOrganizerRef {
+  id: string;
+  name: string;
+  initials: string;
+  avatarColor: string;
+  tier: string;
+  rating: number;
+}
+
+/**
+ * One organizer's response to a request, as listed on My Events. Thin by
+ * design — the full line-by-line breakdown is only loaded by the comparison
+ * screen, for the single request the customer opens.
+ */
+export interface QuoteResponse {
+  quotationId: string;
+  status: 'sent' | 'updated' | 'accepted' | 'rejected';
+  grandTotal: number;
+  advanceAmount: number;
+  siteVisitSuggested: boolean;
+  sentAt?: string;
+  organizer: QuoteOrganizerRef | null;
+}
+
+/**
+ * A quote request the customer has raised — one event's brief, plus every live
+ * organizer response to it. My Events groups by this: the customer picks the
+ * event first, then compares the organizers who replied to it.
+ */
 export interface PlanQuoteRequest {
   id: string;
   occasion: string;
@@ -121,14 +155,13 @@ export interface PlanQuoteRequest {
   guests: string;
   status: QuoteRequestStatus;
   createdAt?: string;
-  organizer?: {
-    id: string;
-    name: string;
-    initials: string;
-    avatarColor: string;
-    tier: string;
-    rating: number;
-  } | null;
+  /** Set when the request targeted one organizer; null when it was broadcast. */
+  organizer?: QuoteOrganizerRef | null;
+  /** Live responses (drafts and withdrawn excluded), newest first. */
+  responses?: QuoteResponse[];
+  /** = responses.length; kept for callers that only need the count. */
+  quotationCount?: number;
+  lastQuotedAt?: string | null;
 }
 
 /** Payload for saving a draft / submitting a plan. */

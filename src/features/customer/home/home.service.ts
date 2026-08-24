@@ -15,6 +15,8 @@ export interface HomeFeed {
   content: HomeContent;
   packages: PackageItem[];
   topOrganizers: Organizer[];
+  /** 'city' = genuinely in the customer's city; 'all' = widened beyond it. */
+  topOrganizersScope?: 'city' | 'all';
   booking: BookedEventData | null;
   currentEvent: CurrentEventData | null;
   unreadCount: number;

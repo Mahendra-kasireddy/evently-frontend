@@ -86,7 +86,7 @@ export function Hero({ data, initials }: HeroProps) {
   const getQuotes = async () => {
     try {
       await requestQuotes(draft).unwrap();
-      navigate('/quotes');
+      navigate('/workspace');
     } catch {
       // error surfaced by the mutation state; keep the user on the page
     }
@@ -135,7 +135,9 @@ export function Hero({ data, initials }: HeroProps) {
 
         <div className={styles.trust}>
           {data.trust.map((t) => {
-            const TIcon = TRUST_ICON[t.icon];
+            // Fall back like the other data-driven sections do: an icon name
+            // the CMS record doesn't recognise must not take Home down.
+            const TIcon = TRUST_ICON[t.icon] ?? Shield;
             return (
               <span key={t.label} className={styles.trustItem}>
                 <TIcon size={15} /> {t.label}

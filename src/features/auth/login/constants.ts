@@ -17,6 +17,18 @@ export const PROMO = {
   proofLabel: 'families celebrated with Evently',
 } as const;
 
+export const SIGNED_IN = {
+  title: 'You’re already signed in',
+  subtitle: 'This device already has an active session.',
+  subtitleWho: 'You’re signed in as',
+  pick: 'Pick where you’d like to go — no need to verify your number again.',
+  continueCustomer: 'Continue to your events',
+  continueOrganizer: 'Continue as organizer',
+  becomeOrganizer: 'Set up your organizer profile',
+  switchNote: 'Signing in with a different mobile number? Sign out of this session first.',
+  switchCta: 'Use another number',
+} as const;
+
 export const FORM = {
   title: 'Log in or sign up',
   subtitle:

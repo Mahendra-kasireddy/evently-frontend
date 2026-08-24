@@ -13,12 +13,13 @@ export interface PlanHeroProps {
   headingAccent?: string;
   headingTail?: string;
   subtitle: string;
-  trust: PlanTrust[];
+  /** Editorial trust chips; absent when the CMS record has none. */
+  trust?: PlanTrust[] | undefined;
   side?: { art: ArtKey; label: string };
   onBack: () => void;
 }
 
-export function PlanHero({ eyebrow, headingLead, headingAccent, headingTail, subtitle, trust, side, onBack }: PlanHeroProps) {
+export function PlanHero({ eyebrow, headingLead, headingAccent, headingTail, subtitle, trust = [], side, onBack }: PlanHeroProps) {
   return (
     <section className={styles.hero}>
       <span className={styles.decor} aria-hidden><span className={styles.glow} /></span>

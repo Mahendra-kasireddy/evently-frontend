@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { MessageSquare, ShieldCheck } from 'lucide-react';
 import { Input, Button } from '@shared/reusable';
-import { useAuth } from '@app/auth';
+import { useAuth, type Role } from '@app/auth';
 import { type NormalizedApiError } from '@lib/api';
 import { useSendOtpMutation, useVerifyOtpMutation } from '@features/auth/login/service';
 import styles from './AuthGate.module.css';
@@ -55,6 +55,7 @@ export function AuthGate() {
         signIn(
           { id: d.user?.id ?? '', email: d.user?.email ?? '', name: d.user?.name ?? '' },
           d.token,
+          (d.user?.roles as Role[] | undefined) ?? ['customer'],
         );
         // No navigation — the onboarding container re-renders once authenticated.
       })

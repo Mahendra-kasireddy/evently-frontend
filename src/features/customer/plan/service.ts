@@ -49,6 +49,9 @@ export interface PlanQuoteArgs {
   when?: string;
   where?: string;
   guests?: string;
+  budget?: string;
+  categories?: string[];
+  ideas?: string;
 }
 
 export const planApi = baseApi.injectEndpoints({

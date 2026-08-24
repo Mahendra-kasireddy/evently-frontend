@@ -4,6 +4,8 @@ import {
   Calendar, MapPin, Users, Wallet, ListChecks, Sparkles, PartyPopper,
   Pencil, ShieldCheck, AlertCircle, CheckCircle2, Send, Star,
 } from 'lucide-react';
+import { AuthModal } from '@shared/components';
+import { useAuth } from '@app/auth';
 import type { PlanData, PlanDraft } from '../../types';
 import { useGetPlanOrganizersQuery, useCreatePlanMutation, usePlanRequestQuoteMutation } from '../../service';
 import { draftToUpsert } from '../../hooks/usePlan';
@@ -20,6 +22,7 @@ type Phase = 'idle' | 'saving' | 'quoting';
 
 export function ReviewStep({ data, draft, occasionLabel, onEdit }: ReviewStepProps) {
   const navigate = useNavigate();
+  const { status } = useAuth();
 
   // Reuse the cached recommendations to resolve the recommended + selected orgs.
   const { data: organizers = [] } = useGetPlanOrganizersQuery({
@@ -36,6 +39,9 @@ export function ReviewStep({ data, draft, occasionLabel, onEdit }: ReviewStepPro
   const [savedPlanId, setSavedPlanId] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>('idle');
   const [error, setError] = useState<string | null>(null);
+  // Sign-in happens in a dialog over this step, so the wizard's answers stay on
+  // screen and the submit continues by itself once the number is verified.
+  const [authOpen, setAuthOpen] = useState(false);
 
   const busy = phase !== 'idle';
   const planSaved = savedPlanId !== null;
@@ -48,6 +54,16 @@ export function ReviewStep({ data, draft, occasionLabel, onEdit }: ReviewStepPro
     if (e.message) parts.push(e.message);
     if (e.status) parts.push(`(${e.status})`);
     return parts.join(' ');
+  };
+
+  /** Click handler: an anonymous planner verifies their number first. */
+  const onSubmitClick = () => {
+    setError(null);
+    if (status !== 'authenticated') {
+      setAuthOpen(true);
+      return;
+    }
+    void submit();
   };
 
   const submit = async () => {
@@ -81,8 +97,13 @@ export function ReviewStep({ data, draft, occasionLabel, onEdit }: ReviewStepPro
         when: draft.eventDate,
         where: [draft.area, draft.city].filter(Boolean).join(', '),
         guests: draft.guests,
+        budget: draft.budget,
+        categories: catTitles,
+        ideas: draft.ideas,
       }).unwrap();
-      navigate('/quotes');
+      // My Events is the hub: the new request appears there as "waiting for
+      // organizers to reply", and is where the customer returns to compare.
+      navigate('/workspace');
     } catch (err) {
       setPhase('idle');
       const detail = detailOf(err);
@@ -200,7 +221,7 @@ export function ReviewStep({ data, draft, occasionLabel, onEdit }: ReviewStepPro
             </div>
           )}
 
-          <button type="button" className={styles.submit} onClick={submit} disabled={busy || !selected}>
+          <button type="button" className={styles.submit} onClick={onSubmitClick} disabled={busy || !selected}>
             <Send size={17} />
             {phase === 'saving' ? 'Saving your plan…'
               : phase === 'quoting' ? 'Requesting quote…'
@@ -210,6 +231,17 @@ export function ReviewStep({ data, draft, occasionLabel, onEdit }: ReviewStepPro
           <p className={styles.footnote}><ShieldCheck size={13} /> {data.footnote}</p>
         </aside>
       </div>
+
+      <AuthModal
+        open={authOpen}
+        reason="to submit this plan"
+        onClose={() => setAuthOpen(false)}
+        onSuccess={() => {
+          setAuthOpen(false);
+          // Continue the submission the customer already asked for.
+          void submit();
+        }}
+      />
     </div>
   );
 }

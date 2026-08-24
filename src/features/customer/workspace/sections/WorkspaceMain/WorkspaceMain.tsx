@@ -1,5 +1,13 @@
 import { MapPin, Users, Wallet, ListChecks, ChevronRight, FilePlus2, FileText } from 'lucide-react';
 import type { PlanSubmission, PlanStatus } from '../../types';
+/*
+ * One occasion vocabulary for the whole section. This file used to carry its
+ * own map, which rendered "Naming" and "Corporate" where label.ts — the copy
+ * every other card in My Events uses — renders "Naming ceremony" and
+ * "Corporate event". The same stored key therefore read differently on two
+ * cards a section apart.
+ */
+import { occasionLabel } from '../../label';
 import styles from './WorkspaceMain.module.css';
 
 const STATUS_LABEL: Record<PlanStatus, string> = {
@@ -8,15 +16,6 @@ const STATUS_LABEL: Record<PlanStatus, string> = {
 const STATUS_CLASS: Record<PlanStatus, string> = {
   draft: 'draft', submitted: 'submitted', quoted: 'quoted', booked: 'booked', cancelled: 'cancelled',
 };
-
-const OCCASION_LABEL: Record<string, string> = {
-  wedding: 'Wedding', birthday: 'Birthday', housewarming: 'Housewarming',
-  naming: 'Naming', anniversary: 'Anniversary', corporate: 'Corporate',
-};
-
-function occasionLabel(key: string) {
-  return OCCASION_LABEL[key] ?? (key ? key.charAt(0).toUpperCase() + key.slice(1) : 'Event');
-}
 
 function dateLabel(iso?: string) {
   if (!iso) return null;

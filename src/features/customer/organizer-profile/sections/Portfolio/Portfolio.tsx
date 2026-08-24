@@ -7,9 +7,15 @@ export function Portfolio({ tiles }: { tiles: ProfileTile[] }) {
     <section className={styles.section}>
       <h2 className={styles.title}>Portfolio</h2>
       <div className={styles.grid}>
-        {tiles.map((t) => (
-          <div key={t.id} className={styles.tile} style={{ backgroundColor: t.color }}><Camera size={22} /></div>
-        ))}
+        {tiles.map((t) =>
+          t.image ? (
+            <div key={t.id} className={styles.tile}>
+              <img src={t.image} alt="" className={styles.tileImg} />
+            </div>
+          ) : (
+            <div key={t.id} className={styles.tile} style={{ backgroundColor: t.color }}><Camera size={22} /></div>
+          ),
+        )}
       </div>
     </section>
   );

@@ -1,8 +1,16 @@
-.hero { position: relative; overflow: hidden; display: flex; gap: 16px; background: var(--color-navy-deep); border-radius: 18px; padding: 26px 30px; color: #fff; }
+.hero { position: relative; overflow: hidden; display: flex; gap: 16px; background: var(--color-navy-deep); border-radius: 18px; padding: 22px 30px 26px; color: #fff; }
 .circle { position: absolute; top: -50px; right: 90px; width: 200px; height: 200px; border-radius: 999px; background: rgba(232,99,58,0.14); }
 .circle2 { position: absolute; bottom: -70px; right: 10px; width: 180px; height: 180px; border-radius: 999px; background: rgba(29,158,117,0.16); }
-.back { position: relative; z-index: 1; flex: 0 0 auto; width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.06); color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+/* Labelled, not a bare chevron — the destination is named so the control works
+   even when the screen was opened from a notification or a shared link. */
+.back { display: inline-flex; align-items: center; gap: 5px; height: 32px; padding: 0 12px 0 9px; margin-bottom: 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.9); font-family: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; }
+.back:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.3); }
+.back:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 .content { position: relative; z-index: 1; max-width: 640px; }
-.eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; color: rgba(255,255,255,0.62); }
+.eyebrow { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; color: rgba(255,255,255,0.62); }
 .heading { font-size: 1.9rem; font-weight: 800; line-height: 1.1; margin: 8px 0 0; }
 .subtitle { font-size: 0.95rem; line-height: 1.5; color: rgba(255,255,255,0.74); margin: 10px 0 0; }
+@media (max-width: 620px) {
+  .hero { padding: 18px 18px 22px; }
+  .heading { font-size: 1.45rem; }
+}

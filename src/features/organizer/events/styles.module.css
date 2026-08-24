@@ -1,0 +1,9 @@
+.page { min-height: 100vh; background: var(--color-bg); padding: 22px 0 48px; }
+.container { max-width: var(--container-max); margin: 0 auto; padding: 0 44px; display: flex; flex-direction: column; gap: 28px; }
+@media (max-width: 900px) { .container { padding: 0 20px; } }
+
+.header { display: flex; flex-direction: column; gap: 4px; }
+.heading { font-size: 1.6rem; font-weight: 800; color: var(--color-navy); margin: 0; }
+.subtitle { font-size: 0.9rem; color: var(--color-text-muted); margin: 0; }
+
+.list { display: flex; flex-direction: column; gap: 14px; }

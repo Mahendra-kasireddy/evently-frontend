@@ -1,0 +1,223 @@
+/*
+ * P-10 Earnings. Shell supplies the page title and the 24px gutter. Period
+ * pills, stat row, the two chart cards (1.6 / 1 split) and the ledger table
+ * are all sampled from the reference design and use the shared tokens.
+ */
+
+/* ---------- period bar ---------- */
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.periods {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.period {
+  padding: 7px 14px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--c-muted);
+  background: #fff;
+  border: 1px solid var(--c-line);
+  cursor: pointer;
+}
+.periodOn {
+  background: var(--c-navy);
+  border-color: var(--c-navy);
+  color: #fff;
+}
+.download {
+  margin-left: auto;
+}
+
+.rangePanel {
+  padding: 12px 14px;
+}
+.rangeForm {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.rangeField {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.rangeField span {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--c-navy);
+}
+.rangeField input {
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--c-navy);
+  border: 1px solid var(--c-line);
+  border-radius: 9px;
+  padding: 8px 11px;
+  background: #fff;
+}
+.rangeField input:focus {
+  outline: none;
+  border-color: var(--c-coral);
+}
+
+/* ---------- charts ---------- */
+
+.charts {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+}
+.chartWide {
+  flex: 1.6;
+  min-width: 0;
+  padding: 20px;
+}
+.chartNarrow {
+  flex: 1;
+  min-width: 0;
+  padding: 20px;
+}
+.chartTitle {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-navy);
+}
+.chartEmpty {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--c-muted2);
+}
+
+.mixRow {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.mixLegend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.mixLegend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mixDot {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  flex: none;
+}
+.mixName {
+  font-size: 12.5px;
+  color: var(--c-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mixPct {
+  margin-left: auto;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--c-navy);
+}
+
+/* ---------- ledger ---------- */
+
+.tableCard {
+  padding: 0;
+  overflow: hidden;
+}
+.scroll {
+  overflow-x: auto;
+}
+.table {
+  min-width: 860px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--c-line2);
+  font-size: 13px;
+}
+.row:last-child {
+  border-bottom: none;
+}
+.headRow {
+  background: var(--c-page);
+  border-bottom: 1px solid var(--c-line);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--c-muted);
+}
+
+.cRef { flex: 1.2; min-width: 0; }
+.cCust { flex: 1.2; min-width: 0; color: var(--c-navy); }
+.cDate { flex: 1; min-width: 0; }
+.cAmt { flex: 1.2; min-width: 0; }
+.cComm { flex: 1; min-width: 0; }
+.cNet { flex: 1.2; min-width: 0; }
+.cPay { flex: 1; min-width: 0; }
+
+.headRow .cCust,
+.headRow .cRef,
+.headRow .cAmt,
+.headRow .cNet {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--c-muted);
+}
+
+.ref {
+  font-weight: 600;
+  color: var(--c-navy);
+}
+.muted {
+  color: var(--c-muted);
+}
+.amount {
+  color: var(--c-navy);
+  font-weight: 500;
+}
+.net {
+  color: var(--c-navy);
+  font-weight: 600;
+}
+
+.emptyIcon {
+  display: inline-block;
+  color: var(--c-line);
+}
+
+@media (max-width: 1000px) {
+  .charts {
+    flex-direction: column;
+  }
+}
+@media (max-width: 560px) {
+  .download {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+}

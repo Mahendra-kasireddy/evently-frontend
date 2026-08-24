@@ -6,3 +6,5 @@ export { HowItWorks } from './HowItWorks';
 export { TopOrganizers } from './TopOrganizers';
 export { PackagesCarousel } from './PackagesCarousel';
 export { PlanSmarter } from './PlanSmarter';
+export { SectionBoundary, type SectionBoundaryProps } from './SectionBoundary';
+export { HomeSkeleton } from './HomeSkeleton';

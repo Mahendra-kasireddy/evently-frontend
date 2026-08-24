@@ -1,5 +1,5 @@
-import { Input } from '@shared/reusable';
-import { SelectField, FileField } from '../Fields';
+import { Lock } from 'lucide-react';
+import { FileField, SelectField, TextField } from '../Fields';
 import type { UseOnboardingResult } from '../../hooks/useOnboarding';
 import form from '../StepForm.module.css';
 
@@ -12,38 +12,34 @@ export function VerificationForm({ onb }: { onb: UseOnboardingResult }) {
 
   return (
     <div className={form.form}>
-      <p className={form.sub}>
-        Your identity documents are used only for verification and are never shown publicly.
-      </p>
-
       <div className={form.grid2}>
-        <Input
+        <TextField
           label="Aadhaar number"
           required
           value={values.aadhaarNumber}
-          onChange={(e) => onb.setField('aadhaarNumber', e.target.value)}
+          onChange={(v) => onb.setField('aadhaarNumber', v)}
           {...err('aadhaarNumber')}
         />
-        <Input
+        <TextField
           label="PAN number"
           required
           value={values.panNumber}
-          onChange={(e) => onb.setField('panNumber', e.target.value.toUpperCase())}
+          onChange={(v) => onb.setField('panNumber', v.toUpperCase())}
           {...err('panNumber')}
         />
       </div>
 
       <div className={form.grid2}>
-        <Input
+        <TextField
           label="GST number (optional)"
           value={values.gstNumber}
-          onChange={(e) => onb.setField('gstNumber', e.target.value.toUpperCase())}
+          onChange={(v) => onb.setField('gstNumber', v.toUpperCase())}
           {...err('gstNumber')}
         />
-        <Input
+        <TextField
           label="Business registration no. (optional)"
           value={values.businessRegNumber}
-          onChange={(e) => onb.setField('businessRegNumber', e.target.value)}
+          onChange={(v) => onb.setField('businessRegNumber', v)}
         />
       </div>
 
@@ -76,6 +72,7 @@ export function VerificationForm({ onb }: { onb: UseOnboardingResult }) {
           onRemove={() => onb.removeFile('panFile')}
           uploading={onb.uploadingField === 'panFile'}
           accept={DOC_ACCEPT}
+          hint="PDF, JPG or PNG · up to 10MB"
         />
       </div>
 
@@ -87,6 +84,7 @@ export function VerificationForm({ onb }: { onb: UseOnboardingResult }) {
           onRemove={() => onb.removeFile('gstFile')}
           uploading={onb.uploadingField === 'gstFile'}
           accept={DOC_ACCEPT}
+          hint="Shop license, registration or trade certificate"
         />
         <FileField
           label="Business registration upload (optional)"
@@ -95,8 +93,14 @@ export function VerificationForm({ onb }: { onb: UseOnboardingResult }) {
           onRemove={() => onb.removeFile('businessRegFile')}
           uploading={onb.uploadingField === 'businessRegFile'}
           accept={DOC_ACCEPT}
+          hint="Shop license, registration or trade certificate"
         />
       </div>
+
+      <p className={form.noteNavy}>
+        <Lock size={15} />
+        Your identity documents are used only for verification and are never shown publicly.
+      </p>
     </div>
   );
 }

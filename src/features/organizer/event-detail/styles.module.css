@@ -1,0 +1,193 @@
+/*
+ * P-07 Event execution. The shell supplies the page title and the 24px gutter,
+ * so this file only lays out the screen's own stack. Every value is sampled
+ * from the reference design and expressed with the shared partner tokens.
+ */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---------- header ---------- */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  flex-wrap: wrap;
+}
+
+.headerText {
+  min-width: 0;
+}
+.eventName {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--c-navy);
+  letter-spacing: -0.01em;
+}
+.identity {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--c-muted);
+}
+
+.headerRight {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.value {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.25;
+}
+.valueLabel {
+  font-size: 11px;
+  color: var(--c-muted);
+}
+.valueAmount {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--c-navy);
+}
+
+/* ---------- countdown strip ---------- */
+
+.countdown {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: var(--c-navy);
+  border-radius: 12px;
+  color: #fff;
+  flex-wrap: wrap;
+}
+.countdownIcon {
+  color: #ff9270;
+  flex: none;
+}
+.countdownText {
+  font-size: 14px;
+  font-weight: 600;
+}
+.completeBtn {
+  margin-left: auto;
+}
+
+/* ---------- guest invitation entry (→ P-15) ---------- */
+
+.invitation {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border: 1px solid var(--c-line);
+  border-radius: 12px;
+  padding: 14px 18px;
+  text-decoration: none;
+}
+.invitation:hover {
+  border-color: #d9dde5;
+}
+.invitationIcon {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: var(--c-coral-wash);
+  color: var(--c-coral);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.invitationText {
+  flex: 1;
+  min-width: 0;
+}
+.invitationTitle {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--c-navy);
+}
+.invitationSub {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--c-muted);
+}
+.invitationChevron {
+  flex: none;
+  color: var(--c-muted2);
+}
+
+/* ---------- add task ---------- */
+
+.addTask {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid var(--c-line);
+  border-radius: 12px;
+  flex-wrap: wrap;
+}
+.addInput {
+  flex: 1 1 240px;
+  min-width: 0;
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--c-navy);
+  border: 1px solid var(--c-line);
+  border-radius: 9px;
+  padding: 9px 11px;
+  background: #fff;
+}
+.addInput::placeholder {
+  color: var(--c-muted2);
+}
+.addInput:focus,
+.addSelect:focus,
+.addAmount:focus {
+  outline: none;
+  border-color: var(--c-coral);
+}
+.addSelect,
+.addAmount {
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--c-navy);
+  border: 1px solid var(--c-line);
+  border-radius: 9px;
+  padding: 9px 11px;
+  background: #fff;
+}
+.addAmount {
+  width: 110px;
+}
+
+@media (max-width: 720px) {
+  .headerRight {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .completeBtn {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+  .addInput {
+    flex-basis: 100%;
+  }
+}

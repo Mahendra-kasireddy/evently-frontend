@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@app/auth';
+import { useAuth, type Role } from '@app/auth';
 import { type NormalizedApiError } from '@lib/api';
-import { useSendOtpMutation, useVerifyOtpMutation } from '../service';
+import { needsOnboarding, useSendOtpMutation, useVerifyOtpMutation } from '../service';
 import { mobileSchema, otpSchema, type LoginFieldErrors, type MobileFormValues } from '../types';
 
 export type LoginStep = 'mobile' | 'otp';
@@ -82,8 +82,12 @@ export function useLogin(): UseLoginResult {
             name: data.user?.name ?? '',
           },
           data.token,
+          (data.user?.roles as Role[] | undefined) ?? ['customer'],
         );
-        navigate('/home');
+        // New accounts (and ones that never finished) go through the welcome
+        // steps first: Home can neither greet them nor find organizers near
+        // them without a name and a city.
+        navigate(needsOnboarding(data) ? '/welcome' : '/home');
       })
       .catch((e) => {
         setOtpError((e as NormalizedApiError)?.message ?? 'Verification failed');

@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
-import { LoadingScreen, ErrorState } from '@shared/components';
+import { ErrorState } from '@shared/components';
 import { useAppDispatch } from '@app/hooks';
 import { useCustomerHome } from './hooks';
 import { setDraft } from './service';
+import { HomeSkeleton } from './sections';
 import { Component } from './Component';
 
 /**
@@ -25,6 +26,8 @@ export function CustomerHomeContainer() {
       />
     );
   }
-  if (isLoading || !data) return <LoadingScreen message="Loading your celebrations…" />;
+  // A page-shaped skeleton rather than a centred spinner: content lands in
+  // place instead of the layout jumping once the feed resolves.
+  if (isLoading || !data) return <HomeSkeleton />;
   return <Component data={data} />;
 }

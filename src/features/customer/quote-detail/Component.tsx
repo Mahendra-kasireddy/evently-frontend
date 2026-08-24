@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { QuoteDetailHero, ItemizedBreakdown, PaymentSummary } from './sections';
 import type { QuoteDetail } from './types';
 import type { QuotationStatus } from '@features/customer/quotes/types';
@@ -10,16 +9,42 @@ export interface QuoteDetailComponentProps {
   isActing: boolean;
   onAccept: () => { unwrap: () => Promise<unknown> };
   onReject: () => { unwrap: () => Promise<unknown> };
+  /**
+   * Up one level, back to the event. Omitted when the page has a breadcrumb trail
+   * of its own, so the customer sees one back control rather than two.
+   */
+  onBack?: (() => void) | undefined;
+  backLabel?: string | undefined;
+  /** Accepted: on to checkout for this quotation. */
+  onAccepted: () => void;
+  /** Declined: back to the event, where the response now reads "Declined". */
+  onRejected: () => void;
 }
 
-export function Component({ q, rawStatus, isActing, onAccept, onReject }: QuoteDetailComponentProps) {
-  const navigate = useNavigate();
+/**
+ * One organizer's response in full — itemised breakdown and payment summary.
+ *
+ * Route-agnostic: accept and decline outcomes and the back destination all arrive
+ * as callbacks, so the same component serves the My Events response page
+ * (`/workspace/:requestId/:quotationId`) and stays inside that section.
+ */
+export function Component({
+  q,
+  rawStatus,
+  isActing,
+  onAccept,
+  onReject,
+  onBack,
+  backLabel,
+  onAccepted,
+  onRejected,
+}: QuoteDetailComponentProps) {
   const decided = rawStatus === 'accepted' || rawStatus === 'rejected' || rawStatus === 'withdrawn';
 
   const handleAccept = async () => {
     try {
       await onAccept().unwrap();
-      navigate(`/booking/${q.id}`);
+      onAccepted();
     } catch {
       /* mutation error surfaces via state */
     }
@@ -27,7 +52,7 @@ export function Component({ q, rawStatus, isActing, onAccept, onReject }: QuoteD
   const handleReject = async () => {
     try {
       await onReject().unwrap();
-      navigate('/quotes');
+      onRejected();
     } catch {
       /* mutation error surfaces via state */
     }
@@ -36,7 +61,7 @@ export function Component({ q, rawStatus, isActing, onAccept, onReject }: QuoteD
   return (
     <main className={styles.page}>
       <div className={styles.container}>
-        <QuoteDetailHero q={q} onBack={() => navigate(-1)} />
+        <QuoteDetailHero q={q} onBack={onBack} backLabel={backLabel} />
         <div className={styles.grid}>
           <ItemizedBreakdown items={q.items} />
           <PaymentSummary

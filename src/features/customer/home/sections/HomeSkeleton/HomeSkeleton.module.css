@@ -1,0 +1,20 @@
+.page { min-height: 100vh; background: var(--color-bg); padding: 22px 0 48px; }
+.container { max-width: var(--container-max); margin: 0 auto; padding: 0 44px; display: flex; flex-direction: column; gap: 18px; }
+@media (max-width: 900px) { .container { padding: 0 20px; } }
+
+.block {
+  border-radius: 16px;
+  background: linear-gradient(90deg, #eef0f3 25%, #e4e7eb 37%, #eef0f3 63%);
+  background-size: 400% 100%;
+  animation: homeShimmer 1.4s ease-in-out infinite;
+}
+.hero { height: 300px; border-radius: 20px; }
+.rowHead { height: 22px; width: 220px; border-radius: 8px; background: #e9ebee; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.card { height: 168px; }
+@media (max-width: 860px) { .grid { grid-template-columns: 1fr; } .hero { height: 360px; } }
+
+@keyframes homeShimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}

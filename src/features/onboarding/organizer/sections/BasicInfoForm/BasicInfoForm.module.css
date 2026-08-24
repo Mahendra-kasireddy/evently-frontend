@@ -1,38 +1,49 @@
-.form { display: flex; flex-direction: column; gap: 18px; }
-.heading { font-size: 1.3rem; font-weight: 800; color: var(--color-navy); margin: 0; }
-.sub { font-size: 0.92rem; color: var(--color-text-muted); margin: -10px 0 6px; }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.field { display: flex; flex-direction: column; gap: 8px; }
-.label { font-size: 0.85rem; font-weight: 500; color: var(--color-text); }
-.select { height: 44px; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 0 12px; font-size: 0.95rem; color: var(--color-navy); background: #fff; cursor: pointer; }
-.select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-soft); }
-.err { color: #d4453a; font-size: 0.8rem; }
-.formErr { color: #d4453a; font-size: 0.85rem; margin: 0; }
-.actions { display: flex; justify-content: flex-end; margin-top: 6px; }
-@media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
+/* Step 1 — the circular profile-photo uploader from the design. */
 
-.req { color: #e5484d; }
-.legend { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--color-text-muted); margin: 4px 0 0; flex: 1; }
-.secure { color: var(--color-green); }
-.actions { display: flex; align-items: center; gap: 16px; margin-top: 6px; }
-
-/* Profile photo uploader */
-.photoRow { display: flex; align-items: center; gap: 16px; }
-.photoPreview { width: 72px; height: 72px; border-radius: 999px; object-fit: cover; border: 2px solid var(--color-border); background: var(--color-primary-soft); flex: 0 0 auto; }
-.photoPlaceholder { width: 72px; height: 72px; border-radius: 999px; display: flex; align-items: center; justify-content: center; background: var(--color-primary-soft); color: var(--color-primary); border: 2px dashed var(--color-border); flex: 0 0 auto; }
-.photoActions { display: flex; flex-direction: column; gap: 4px; }
-.uploadBtn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: #fff; color: var(--color-navy); font-size: 0.85rem; font-weight: 600; cursor: pointer; width: fit-content; }
-.uploadBtn:hover { border-color: var(--color-primary); color: var(--color-primary); }
-.hint { font-size: 0.75rem; color: var(--color-text-muted); }
-.readonly { height: 44px; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 0 12px; font-size: 0.95rem; color: var(--color-text-muted); background: var(--color-bg); display: flex; align-items: center; }
-
-/* Save state + completion */
-.statusBar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.saveState { font-size: 0.8rem; color: var(--color-text-muted); }
-.saved { color: var(--color-green); }
-.saving { color: var(--color-primary); }
-.completion { font-size: 0.8rem; font-weight: 700; color: var(--color-navy); }
-.progress { height: 6px; border-radius: 999px; background: var(--color-primary-soft); overflow: hidden; }
-.progressFill { height: 100%; background: var(--color-primary); transition: width 0.3s ease; }
-.success { display: flex; flex-direction: column; gap: 8px; padding: 20px; border: 1px solid var(--color-green); background: var(--color-green-soft); border-radius: var(--radius-lg); color: var(--color-navy); }
-.successTitle { font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+.photoRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+.photoPreview {
+  width: 70px;
+  height: 70px;
+  border-radius: 999px;
+  object-fit: cover;
+  background: var(--c-coral-wash);
+  flex: none;
+}
+.photoActions {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.photoLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-navy);
+}
+.photoBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-coral);
+  cursor: pointer;
+  width: fit-content;
+}
+.photoBtn:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+.hint {
+  font-size: 11.5px;
+  color: var(--c-muted2);
+}

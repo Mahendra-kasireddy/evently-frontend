@@ -1,0 +1,56 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  border-radius: 11px;
+  background: var(--c-coral-wash);
+  color: var(--c-coral);
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.text strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-navy);
+}
+.text span {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--c-muted);
+}
+
+.note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding-top: 11px;
+  border-top: 1px solid var(--c-line2);
+  font-size: 12px;
+  font-weight: 600;
+  color: #b5730f;
+}
+
+@media (max-width: 620px) {
+  .row {
+    flex-wrap: wrap;
+  }
+  .text {
+    flex: 1 1 60%;
+  }
+}

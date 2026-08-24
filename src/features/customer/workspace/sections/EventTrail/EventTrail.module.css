@@ -1,0 +1,82 @@
+/*
+ * Sits above a My Events sub-page, matching the page container width so the
+ * trail lines up with the content beneath it.
+ */
+.wrap {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 44px;
+  min-width: 0;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+/* Padded so an ancestor is a real tap target, not a 12px word. */
+.crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 9px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.crumb:hover {
+  background: rgba(26, 46, 90, 0.06);
+  color: var(--color-navy);
+}
+
+.crumb:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+/* Leading chevron on the outermost crumb — this trail is also the way back. */
+.up {
+  color: var(--color-primary);
+  flex: 0 0 auto;
+}
+
+.sep {
+  color: var(--c-muted2);
+  flex: 0 0 auto;
+}
+
+.current {
+  padding: 6px 4px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 920px) {
+  .wrap { padding: 0 20px; }
+}
+
+@media (max-width: 560px) {
+  /* A long organizer name must not push the trail into a horizontal scroll. */
+  .current { white-space: normal; }
+}

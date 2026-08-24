@@ -1,17 +1,40 @@
+import { apiClient } from '@lib/api';
 import { baseApi, toQueryResult } from '@lib/rtk';
 import type { SubvendorDraft } from './types';
 
-/** Mock submit. Swap for apiClient.post('/subvendors/onboard', draft) later. */
-export async function finishSubvendorOnboarding(draft: SubvendorDraft): Promise<{ ok: true }> {
-  await new Promise((r) => setTimeout(r, 600));
-  void draft;
-  return { ok: true };
+export interface OnboardSubvendorResult {
+  profile: {
+    id: string;
+    fullName: string;
+    initials: string;
+    avatarColor: string;
+    category: string;
+    serviceArea: string;
+    baseRate: number;
+    baseRateUnit: string;
+    minOrder: number;
+  };
+  token: string;
+  refreshToken: string;
+}
+
+async function onboardSubvendor(draft: SubvendorDraft): Promise<OnboardSubvendorResult> {
+  const body = {
+    fullName: draft.fullName,
+    categoryId: draft.categoryId,
+    serviceArea: draft.serviceArea,
+    baseRate: draft.baseRate ? Number(draft.baseRate) : undefined,
+    minOrder: draft.minOrder ? Number(draft.minOrder) : undefined,
+    organizerPhone: draft.organizerPhone.replace(/\D/g, '') || undefined,
+  };
+  const { data } = await apiClient.post<OnboardSubvendorResult>('/subvendor/onboard', body);
+  return data;
 }
 
 export const subvendorOnboardingApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    finishSubvendorOnboarding: build.mutation<{ ok: true }, SubvendorDraft>({
-      queryFn: (draft) => toQueryResult(() => finishSubvendorOnboarding(draft)),
+    finishSubvendorOnboarding: build.mutation<OnboardSubvendorResult, SubvendorDraft>({
+      queryFn: (draft) => toQueryResult(() => onboardSubvendor(draft)),
     }),
   }),
 });

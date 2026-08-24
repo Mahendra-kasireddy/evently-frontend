@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { type NormalizedApiError } from '@lib/api';
+import { setToken, type NormalizedApiError } from '@lib/api';
+import { useAuth } from '@app/auth';
 import { SUBVENDOR_STEPS, VENDOR_CATEGORIES, type SubvendorStep } from '../constants';
 import { useFinishSubvendorOnboardingMutation } from '../service';
 import type { SubvendorDraft } from '../types';
@@ -29,6 +30,7 @@ export interface UseSubvendorResult {
 
 export function useSubvendorOnboarding(): UseSubvendorResult {
   const navigate = useNavigate();
+  const { refreshRolesFromToken } = useAuth();
   const [stepIndex, setStepIndex] = useState(0);
   const [draft, setDraft] = useState<SubvendorDraft>(INITIAL);
 
@@ -48,7 +50,11 @@ export function useSubvendorOnboarding(): UseSubvendorResult {
   const finish = () => {
     finishOnboarding(draft)
       .unwrap()
-      .then(() => navigate('/'))
+      .then((res) => {
+        setToken(res.token);
+        refreshRolesFromToken();
+        navigate('/subvendor/home');
+      })
       .catch(() => {
         /* finishState.error drives the UI */
       });
