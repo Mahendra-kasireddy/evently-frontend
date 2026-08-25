@@ -1,4 +1,11 @@
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ClipboardEvent,
+  type FormEvent,
+  type KeyboardEvent,
+} from 'react';
 import { ArrowLeft, ShieldCheck } from 'lucide-react';
 import { Button } from '@shared/reusable';
 import styles from './OtpForm.module.css';
@@ -25,6 +32,23 @@ export function OtpForm({ sentTo, onVerify, onResend, onChangeNumber, isPending,
     return () => clearTimeout(t);
   }, [secs]);
 
+  /*
+   * A rejected code wipes the boxes and sends the caret back to the first one,
+   * so the next attempt starts clean instead of the organizer having to
+   * backspace six times. Adjusting during render rather than in an effect
+   * keeps this out of a cascading-render cycle; the focus call itself lives in
+   * the effect below, since focusing during render is not allowed.
+   */
+  const [lastError, setLastError] = useState(error);
+  if (error !== lastError) {
+    setLastError(error);
+    if (error) setDigits(Array(LENGTH).fill(''));
+  }
+
+  useEffect(() => {
+    if (error) refs.current[0]?.focus();
+  }, [error]);
+
   const code = digits.join('');
 
   const setDigit = (i: number, val: string) => {
@@ -36,7 +60,30 @@ export function OtpForm({ sentTo, onVerify, onResend, onChangeNumber, isPending,
     if (e.key === 'Backspace' && !digits[i] && i > 0) refs.current[i - 1]?.focus();
   };
   const submit = (e: FormEvent<HTMLFormElement>) => { e.preventDefault(); onVerify(code); };
-  const resend = () => { if (secs <= 0) { onResend(); setSecs(30); setDigits(Array(LENGTH).fill('')); } };
+  const resend = () => {
+    if (secs > 0) return;
+    onResend();
+    setSecs(30);
+    setDigits(Array(LENGTH).fill(''));
+    refs.current[0]?.focus();
+  };
+
+  /*
+   * Pasting the whole code is how most people enter one they've copied from a
+   * message. Without this, a six-digit paste lands entirely in whichever box
+   * has focus and gets truncated to one character.
+   */
+  const onPaste = (e: ClipboardEvent<HTMLInputElement>) => {
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, LENGTH);
+    if (!pasted) return;
+    e.preventDefault();
+    const next = Array(LENGTH).fill('');
+    pasted.split('').forEach((c, n) => {
+      next[n] = c;
+    });
+    setDigits(next);
+    refs.current[Math.min(pasted.length, LENGTH - 1)]?.focus();
+  };
 
   return (
     <div className={styles.panel}>
@@ -53,9 +100,16 @@ export function OtpForm({ sentTo, onVerify, onResend, onChangeNumber, isPending,
               key={i}
               ref={(el) => { refs.current[i] = el; }}
               className={styles.box}
-              inputMode="numeric" maxLength={1} value={d}
+              inputMode="numeric"
+              maxLength={1}
+              value={d}
+              // The code box is the only thing to do on this screen, so it takes
+              // the caret on arrival — no click needed before typing.
+              autoFocus={i === 0}
+              autoComplete={i === 0 ? 'one-time-code' : 'off'}
               onChange={(e) => setDigit(i, e.target.value)}
               onKeyDown={(e) => onKey(i, e)}
+              onPaste={onPaste}
               aria-label={`Digit ${i + 1}`}
             />
           ))}
