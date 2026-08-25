@@ -1,14 +1,13 @@
-import { Header } from '@shared/components';
 import { WelcomeContainer } from './container';
 
-/** Post-OTP onboarding: preferred name, then location. */
+/**
+ * Post-OTP onboarding: preferred name, then location.
+ *
+ * No header of its own — this route sits inside CustomerLayout, which renders
+ * the same app header every other customer screen uses.
+ */
 export function WelcomePage() {
-  return (
-    <>
-      <Header variant="auth" authCta={{ prompt: '', label: '', to: '/home' }} />
-      <WelcomeContainer />
-    </>
-  );
+  return <WelcomeContainer />;
 }
 
 export default WelcomePage;

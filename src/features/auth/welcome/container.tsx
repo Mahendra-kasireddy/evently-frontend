@@ -4,9 +4,9 @@ import { Component } from './Component';
 
 export function WelcomeContainer() {
   const w = useWelcome();
-  // /welcome is a standalone route with no shell behind it, so the full-bleed
-  // splash is right here — unlike the screens inside a layout.
-  if (!w.ready) return <LoadingScreen message="Getting things ready…" inline={false} />;
+  // Inside the customer shell now, so the loader fills the content area and
+  // leaves the header in place.
+  if (!w.ready) return <LoadingScreen message="Getting things ready…" />;
   return (
     <Component
       step={w.step}

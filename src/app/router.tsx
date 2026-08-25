@@ -73,7 +73,6 @@ export const router = createBrowserRouter([
   { path: '/', element: lazyRoute(LandingPage, 'landing', 'screen') },
   { path: '/login', element: lazyRoute(LoginPage, 'login', 'screen') },
   { path: '/join', element: lazyRoute(JoinPage, 'join', 'screen') },
-  { path: '/welcome', element: lazyRoute(WelcomePage, 'welcome', 'screen') },
   { path: '/onboarding/organizer', element: lazyRoute(OrganizerOnboardingPage, 'onboarding', 'screen') },
   { path: '/onboarding/subvendor', element: lazyRoute(SubvendorOnboardingPage, 'onboarding', 'screen') },
 
@@ -82,6 +81,12 @@ export const router = createBrowserRouter([
   {
     element: <CustomerLayout />,
     children: [
+      /*
+       * Post-OTP profile step. It lives inside this shell so it carries the
+       * same header as every other customer screen — one header, wired once,
+       * instead of a second copy of the profile/notification/city plumbing.
+       */
+      { path: '/welcome', element: lazyRoute(WelcomePage, 'welcome') },
       { path: '/home', element: lazyRoute(CustomerHomePage, 'home') },
       { path: '/plan', element: lazyRoute(PlanPage, 'plan') },
       { path: '/organizer/:id', element: lazyRoute(OrganizerProfilePage, 'organizer-profile') },
