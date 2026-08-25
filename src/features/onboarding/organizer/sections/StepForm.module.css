@@ -155,3 +155,28 @@
   color: var(--c-muted);
   margin: 0 0 10px;
 }
+
+/* ---------------- admin review states ---------------- */
+
+/*
+ * Shown above the wizard when an admin sent the profile back for edits, so the
+ * reason is visible while the organizer is actually editing the fields.
+ */
+.reviewBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--c-amber, #e8c48a);
+  border-radius: 10px;
+  background: var(--c-amber-wash, #fdf6e9);
+  color: var(--c-navy);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.reviewBanner svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  color: var(--c-amber-ink, #a8730f);
+}

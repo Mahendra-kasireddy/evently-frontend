@@ -51,12 +51,30 @@ export interface ServicesConfig {
   serviceCategories: Option[];
 }
 
+/**
+ * The organizer lifecycle, mirroring the backend's OnboardingStatus enum.
+ * `pending_review` and `changes_requested` are admin gates: the API refuses
+ * onboarding writes in the first, and asks for edits in the second.
+ */
+export type OnboardingStatusValue =
+  | 'pending_review'
+  | 'draft'
+  | 'in_progress'
+  | 'submitted'
+  | 'changes_requested'
+  | 'approved'
+  | 'rejected';
+
 /** The full organizer profile view returned by the backend (all 5 steps). */
 export interface OrganizerProfile {
   id: string;
-  onboardingStatus: 'draft' | 'in_progress' | 'submitted' | 'approved' | 'rejected';
+  onboardingStatus: OnboardingStatusValue;
   profileCompletion: number;
   submittedAt: string | null;
+  /** Whether the API will currently accept this organizer's onboarding writes. */
+  canEdit: boolean;
+  /** Outstanding admin reason for a rejection or a changes request. */
+  reviewNote: string;
   // Step 1
   firstName: string;
   lastName: string;

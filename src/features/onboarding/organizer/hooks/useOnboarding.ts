@@ -20,6 +20,7 @@ import {
   FILE_PURPOSE,
   RE,
   type OnboardingConfig,
+  type OnboardingStatusValue,
   type OnboardingStep,
   type OrganizerProfile,
   type ProfileFiles,
@@ -157,6 +158,12 @@ export interface UseOnboardingResult {
   removeFile: (field: SingleFileField | MultiFileField, index?: number) => void;
   uploadingField: string | null;
   profileCompletion: number;
+  /** Raw lifecycle state from the backend — drives which screen is shown. */
+  status: OnboardingStatusValue;
+  /** False while an admin gate is closed; the wizard is not rendered then. */
+  canEdit: boolean;
+  /** Admin's reason when the profile was rejected or sent back for changes. */
+  reviewNote: string;
   submitted: boolean;
   /** True only when the submission happened in this session — drives the
    *  confirmation panel. Arriving already-submitted belongs on the dashboard. */
@@ -184,6 +191,9 @@ export function useOnboarding(): UseOnboardingResult {
   const [files, setFiles] = useState<ProfileFiles>(EMPTY_FILES);
   const [mobile, setMobile] = useState('');
   const [profileCompletion, setProfileCompletion] = useState(0);
+  const [status, setStatus] = useState<OnboardingStatusValue>('draft');
+  const [canEdit, setCanEdit] = useState(true);
+  const [reviewNote, setReviewNote] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [justSubmitted, setJustSubmitted] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<ScalarField, string>>>({});
@@ -246,6 +256,9 @@ export function useOnboarding(): UseOnboardingResult {
     setFiles(nextFiles);
     setMobile(p.mobile);
     setProfileCompletion(p.profileCompletion);
+    setStatus(p.onboardingStatus);
+    setCanEdit(p.canEdit);
+    setReviewNote(p.reviewNote ?? '');
     setSubmitted(p.onboardingStatus === 'submitted' || p.onboardingStatus === 'approved');
     // Reopen where the organizer left off, not at step 1.
     setCurrentId(resumeStepId(nextValues, nextFiles));
@@ -461,6 +474,9 @@ export function useOnboarding(): UseOnboardingResult {
     removeFile,
     uploadingField,
     profileCompletion,
+    status,
+    canEdit,
+    reviewNote,
     submitted,
     justSubmitted,
     isSubmitting: completeState.isLoading,

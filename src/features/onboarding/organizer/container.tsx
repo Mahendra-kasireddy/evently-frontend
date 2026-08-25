@@ -9,13 +9,16 @@ function OnboardingInner() {
   const onb = useOnboarding();
 
   /*
-   * An organizer who has already submitted their profile does not belong in the
-   * wizard. "Log in as Organizer" points at this route, so without this they
-   * land back on onboarding on every sign-in and have to click through to reach
-   * their dashboard. The exception is a submission made in this session, which
-   * shows the confirmation panel first.
+   * An approved organizer does not belong in the wizard. "Log in as Organizer"
+   * points at this route, so without this they land back on onboarding on every
+   * sign-in and have to click through to reach their dashboard.
+   *
+   * Only `approved` redirects. `submitted` now means "waiting on an admin",
+   * which is a state worth showing rather than hiding behind the dashboard —
+   * except for a submission made in this session, which shows its confirmation
+   * panel first.
    */
-  if (onb.submitted && !onb.justSubmitted) {
+  if (onb.status === 'approved' && !onb.justSubmitted) {
     return <Navigate to="/organizer/home" replace />;
   }
 

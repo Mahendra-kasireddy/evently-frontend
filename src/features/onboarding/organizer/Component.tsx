@@ -1,4 +1,4 @@
-import { Check, CheckCircle2, ChevronRight } from 'lucide-react';
+import { AlertTriangle, Check, CheckCircle2, ChevronRight, Clock, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Btn } from '@shared/partner';
 import {
@@ -37,8 +37,64 @@ function StepBody({ onb }: { onb: UseOnboardingResult }) {
   }
 }
 
-export function Component({ onb }: OnboardingComponentProps) {
+/**
+ * What the organizer sees while an admin gate is closed.
+ *
+ * The backend refuses onboarding writes in these states, so rendering the
+ * wizard would only produce 403s on every autosave. Navigating straight to
+ * this URL lands here too — the state comes from the API, not the router.
+ */
+function ReviewGate({ onb }: OnboardingComponentProps) {
   const navigate = useNavigate();
+
+  if (onb.status === 'pending_review') {
+    return (
+      <div className={form.success}>
+        <span className={form.successTitle}>
+          <Clock size={22} /> Registration received
+        </span>
+        <p className={form.sub}>
+          Thanks for registering. Our team is reviewing your registration — you&apos;ll be able to
+          complete your onboarding as soon as it&apos;s approved. We&apos;ll notify you on this
+          number.
+        </p>
+      </div>
+    );
+  }
+
+  if (onb.status === 'rejected') {
+    return (
+      <div className={form.success} role="alert">
+        <span className={form.successTitle}>
+          <XCircle size={22} /> Registration not approved
+        </span>
+        <p className={form.sub}>
+          {onb.reviewNote
+            ? onb.reviewNote
+            : 'Your organizer registration was not approved. Contact Evently support if you think this is a mistake.'}
+        </p>
+      </div>
+    );
+  }
+
+  // submitted — waiting on the second gate
+  return (
+    <div className={form.success}>
+      <span className={form.successTitle}>
+        <CheckCircle2 size={22} /> Profile submitted for review
+      </span>
+      <p className={form.sub}>
+        Your profile is complete and with our team. Once it&apos;s approved it becomes visible to
+        customers looking for organizers, and you can start receiving quote requests.
+      </p>
+      <Btn kind="outline" onClick={() => navigate('/organizer/home')}>
+        Go to your dashboard
+      </Btn>
+    </div>
+  );
+}
+
+export function Component({ onb }: OnboardingComponentProps) {
   const current = onb.steps.find((s) => s.id === onb.currentId);
   const order = onb.steps.map((s) => s.id);
   const idx = order.indexOf(onb.currentId);
@@ -57,18 +113,7 @@ export function Component({ onb }: OnboardingComponentProps) {
       />
 
       <section className={styles.panel}>
-        {onb.submitted ? (
-          <div className={form.success}>
-            <span className={form.successTitle}>
-              <CheckCircle2 size={22} /> Profile submitted and live
-            </span>
-            <p className={form.sub}>
-              Your organizer profile is complete and now visible to customers. You can start
-              receiving and responding to quote requests from your dashboard right away.
-            </p>
-            <Btn onClick={() => navigate('/organizer/home')}>Go to your dashboard</Btn>
-          </div>
-        ) : onb.bootstrapping ? (
+        {onb.bootstrapping ? (
           <p className={form.state} role="status">
             Setting up your organizer account…
           </p>
@@ -81,8 +126,19 @@ export function Component({ onb }: OnboardingComponentProps) {
               Try again
             </Btn>
           </div>
+        ) : !onb.canEdit ? (
+          <ReviewGate onb={onb} />
         ) : (
           <>
+            {onb.status === 'changes_requested' && (
+              <div className={form.reviewBanner} role="alert">
+                <AlertTriangle size={16} />
+                <span>
+                  <strong>Changes requested.</strong>{' '}
+                  {onb.reviewNote || 'Please update your details and submit again.'}
+                </span>
+              </div>
+            )}
             <div className={form.panelHead}>
               <div>
                 <h1 className={form.panelTitle}>{head?.heading ?? current?.title ?? 'Step'}</h1>
