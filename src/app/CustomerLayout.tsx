@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { AppHeader, Footer, Header, type AppNavItem } from '@shared/components';
 import { useGetProfileSummaryQuery } from '@features/customer/home/profile.service';
@@ -12,6 +13,7 @@ import {
   useSaveProfileBasicsMutation,
 } from '@features/auth/welcome/service';
 import { useAuth } from './auth';
+import { prefetchRoute, warmRoutes } from './prefetch';
 
 /** Primary customer nav (app chrome). Active item derived from the URL. */
 const NAV: AppNavItem[] = [
@@ -28,6 +30,14 @@ const NAV: AppNavItem[] = [
  */
 export function CustomerLayout() {
   const { pathname } = useLocation();
+
+  /*
+   * Download the four nav destinations once the browser is idle. Each feature
+   * is its own chunk, so without this the first click on Plan event or Discover
+   * has to fetch JS before it can render anything — which looked like the whole
+   * page reloading. By the time anyone clicks, the chunk is already there.
+   */
+  useEffect(() => warmRoutes(NAV.map((item) => item.to)), []);
   const navigate = useNavigate();
   const { status, user: sessionUser, signOut } = useAuth();
   // Screens in this shell are open to anonymous visitors (the planner, a public
@@ -75,6 +85,8 @@ export function CustomerLayout() {
         <AppHeader
           nav={nav}
           user={user}
+          // Hover or keyboard focus starts the download before the click.
+          onNavIntent={prefetchRoute}
           cityOptions={cityOptions}
           citiesLoading={citiesLoading}
           onSelectCity={selectCity}

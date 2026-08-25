@@ -10,6 +10,10 @@ import { SubVendorLayout } from './SubVendorLayout';
 import { RequireRole } from './RequireRole';
 
 /**
+ * Top-level features are code-split. Routes inside a layout use the inline
+ * Suspense fallback so the shell stays put while a chunk loads; the six
+ * full-bleed routes below pass 'screen' because they have no shell to keep.
+ *
  * Top-level features are code-split. The landing and login pages are full-bleed
  * and carry their own chrome; the authenticated sections each have a layout
  * shell below (CustomerLayout / OrganizerLayout / SubVendorLayout), and role
@@ -66,12 +70,12 @@ const SubvendorPaymentsPage = lazy(() => import('@features/subvendor/payments/pa
 const SubvendorProfilePage = lazy(() => import('@features/subvendor/profile/page'));
 
 export const router = createBrowserRouter([
-  { path: '/', element: lazyRoute(LandingPage, 'landing') },
-  { path: '/login', element: lazyRoute(LoginPage, 'login') },
-  { path: '/join', element: lazyRoute(JoinPage, 'join') },
-  { path: '/welcome', element: lazyRoute(WelcomePage, 'welcome') },
-  { path: '/onboarding/organizer', element: lazyRoute(OrganizerOnboardingPage, 'onboarding') },
-  { path: '/onboarding/subvendor', element: lazyRoute(SubvendorOnboardingPage, 'onboarding') },
+  { path: '/', element: lazyRoute(LandingPage, 'landing', 'screen') },
+  { path: '/login', element: lazyRoute(LoginPage, 'login', 'screen') },
+  { path: '/join', element: lazyRoute(JoinPage, 'join', 'screen') },
+  { path: '/welcome', element: lazyRoute(WelcomePage, 'welcome', 'screen') },
+  { path: '/onboarding/organizer', element: lazyRoute(OrganizerOnboardingPage, 'onboarding', 'screen') },
+  { path: '/onboarding/subvendor', element: lazyRoute(SubvendorOnboardingPage, 'onboarding', 'screen') },
 
   // Authenticated customer screens share one persistent shell (header + footer).
   // Only the <Outlet/> content changes on navigation — no full-page re-render.

@@ -49,6 +49,13 @@ export interface AppHeaderProps {
   /** Persist a newly chosen city. Omit to render location as plain text. */
   onSelectCity?: (city: string) => void;
   isSavingCity?: boolean;
+  /**
+   * Fired when the pointer or keyboard focus lands on a nav destination,
+   * before any click. The app uses it to start downloading that route's chunk
+   * so the click itself has nothing to wait for. Optional — the header works
+   * exactly as before without it.
+   */
+  onNavIntent?: (to: string) => void;
   notifications?: HeaderNotification[];
   hasNotifications?: boolean;
   onSignOut?: () => void;
@@ -112,6 +119,7 @@ export function AppHeader({
   onSignOut,
   onMarkAllRead,
   onNotificationClick,
+  onNavIntent,
   profileMenu = PROFILE_MENU,
   homeTo = '/home',
 }: AppHeaderProps) {
@@ -188,6 +196,11 @@ export function AppHeader({
               key={item.label}
               to={item.to}
               className={`${styles.navLink} ${item.active ? styles.navActive : ''}`}
+              onMouseEnter={() => onNavIntent?.(item.to)}
+              onFocus={() => onNavIntent?.(item.to)}
+              // Touch has no hover; the touch-start still lands a beat before
+              // the click completes, which is enough to start the download.
+              onTouchStart={() => onNavIntent?.(item.to)}
               {...(item.active ? { 'aria-current': 'page' } : {})}
             >
               {item.label}

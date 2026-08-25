@@ -13,6 +13,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { prefetchRoute, warmRoutes } from './prefetch';
 import {
   useGetMyNotificationsQuery,
   useGetUnreadCountQuery,
@@ -57,6 +58,9 @@ function timeAgo(iso: string): string {
 /** Persistent shell for authenticated sub-vendor screens — mirrors OrganizerLayout's shape/CSS. */
 export function SubVendorLayout() {
   const { pathname } = useLocation();
+
+  // Warm the section chunks on idle so the first click never waits on JS.
+  useEffect(() => warmRoutes(NAV.map((item) => item.to)), []);
   const navigate = useNavigate();
   const { user: sessionUser, signOut } = useAuth();
   const { data: unread = 0 } = useGetUnreadCountQuery();
@@ -128,6 +132,9 @@ export function SubVendorLayout() {
                 key={item.label}
                 to={item.to}
                 className={`${styles.navItem} ${active ? styles.navActive : ''}`}
+                onMouseEnter={() => prefetchRoute(item.to)}
+                onFocus={() => prefetchRoute(item.to)}
+                onTouchStart={() => prefetchRoute(item.to)}
               >
                 <item.icon size={17} />
                 {item.label}

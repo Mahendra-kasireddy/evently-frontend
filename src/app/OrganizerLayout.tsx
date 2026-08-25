@@ -19,6 +19,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { prefetchRoute, warmRoutes } from './prefetch';
 import {
   useGetMyNotificationsQuery,
   useGetUnreadCountQuery,
@@ -154,6 +155,10 @@ function timeAgo(iso: string): string {
  */
 export function OrganizerLayout() {
   const { pathname, state } = useLocation();
+
+  // Same reason as CustomerLayout: each section is its own chunk, so warm them
+  // once the browser is idle and the first click has nothing to download.
+  useEffect(() => warmRoutes(NAV.map((item) => item.to)), []);
   const navigate = useNavigate();
   const activeId = activeNavId(pathname, (state as { nav?: string } | null)?.nav);
   const { user: sessionUser, signOut } = useAuth();
@@ -248,6 +253,9 @@ export function OrganizerLayout() {
                 state={item.state ?? null}
                 aria-current={active ? 'page' : undefined}
                 className={`${styles.navItem} ${active ? styles.navActive : ''}`}
+                onMouseEnter={() => prefetchRoute(item.to)}
+                onFocus={() => prefetchRoute(item.to)}
+                onTouchStart={() => prefetchRoute(item.to)}
               >
                 <item.icon size={17} />
                 {item.label}
