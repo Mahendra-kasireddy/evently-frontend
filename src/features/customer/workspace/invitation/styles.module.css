@@ -267,11 +267,39 @@
 /* ---------------------------------------------------------------- rows */
 .rows {
   list-style: none;
-  margin: 0;
-  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
+
+  /*
+   * The section list scrolls in its own pane, so the controls above it —
+   * Approve, Request changes, Preview — and the guest preview beside it stay
+   * on screen while the customer works down the sections. Sized against the
+   * viewport rather than a fixed height so it follows the window.
+   *
+   * The padding/negative-margin pair gives the rows' shadows room instead of
+   * letting the scroll edge clip them, while keeping them flush with the
+   * banner above.
+   *
+   * The scrollbar itself is hidden — the rows are the only content and a track
+   * running down the middle of the page reads as a defect. Scrolling still
+   * works by wheel, trackpad, touch and keyboard, and the three vendor rules
+   * are all needed: WebKit/Blink honour ::-webkit-scrollbar, Firefox needs
+   * scrollbar-width, older Edge needs -ms-overflow-style.
+   */
+  max-height: calc(100vh - 320px);
+  min-height: 240px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 4px 6px;
+  margin: 0 -6px;
+}
+
+.rows::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 .row {
@@ -633,6 +661,17 @@
 
 /* ---------------------------------------------------------------- responsive */
 @media (max-width: 1020px) {
+  /*
+   * Below the breakpoint the rail stacks under the list and the whole page
+   * scrolls, so a nested pane would just fight the page scroll.
+   */
+  .rows {
+    max-height: none;
+    min-height: 0;
+    overflow-y: visible;
+    padding: 0;
+    margin: 0;
+  }
   .body {
     flex-wrap: wrap;
   }
