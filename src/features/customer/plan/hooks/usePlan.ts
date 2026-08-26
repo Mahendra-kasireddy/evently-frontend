@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@app/hooks';
 import { selectAuth } from '@app/auth/authSlice';
 import {
@@ -44,6 +45,27 @@ export function usePlan() {
   const { status } = useAppSelector(selectAuth);
   const isAuthed = status === 'authenticated';
 
+  /*
+   * A category tapped on Home arrives as `?occasion=<id>`. Applied once, and
+   * validated against the occasions the API actually serves so a hand-edited
+   * URL cannot put the planner into a state no step can render.
+   *
+   * It outranks a resumed draft on purpose: the tap is what the person wants
+   * now, and silently reinstating last week's occasion is exactly the bug this
+   * fixes.
+   */
+  const [searchParams] = useSearchParams();
+  const requestedOccasion = searchParams.get('occasion') ?? '';
+  const urlOccasionRef = useRef('');
+
+  useEffect(() => {
+    if (!requestedOccasion || !data) return;
+    if (urlOccasionRef.current === requestedOccasion) return;
+    if (!data.occasions.some((o) => o.id === requestedOccasion)) return;
+    urlOccasionRef.current = requestedOccasion;
+    dispatch(setOccasion(requestedOccasion));
+  }, [requestedOccasion, data, dispatch]);
+
   // Resume a saved draft once, for signed-in customers.
   const { data: savedDraft } = useGetMyDraftQuery(undefined, { skip: !isAuthed });
   const hydratedRef = useRef(false);
@@ -51,7 +73,8 @@ export function usePlan() {
     if (hydratedRef.current || !savedDraft) return;
     hydratedRef.current = true;
     const patch: Partial<PlanDraft> = {};
-    if (savedDraft.occasion) patch.occasionId = savedDraft.occasion;
+    // Skipped when Home named one: whichever effect runs second, the tap wins.
+    if (savedDraft.occasion && !urlOccasionRef.current) patch.occasionId = savedDraft.occasion;
     if (savedDraft.eventDate) patch.eventDate = savedDraft.eventDate.slice(0, 10);
     if (savedDraft.city) patch.city = savedDraft.city;
     if (savedDraft.area) patch.area = savedDraft.area;

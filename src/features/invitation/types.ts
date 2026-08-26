@@ -37,6 +37,10 @@ export interface InvitationDetails {
   eventDate: string;
   /** `HH:mm`. */
   eventTime: string;
+  /** IANA zone the two fields above are expressed in, e.g. `Asia/Kolkata`. */
+  timezone: string;
+  /** Replaces the countdown once the event has started. */
+  postEventMessage: string;
   venueName: string;
   venueAddress: string;
   message: string;
@@ -44,6 +48,47 @@ export interface InvitationDetails {
   /** `yyyy-mm-dd`. */
   rsvpDeadline: string;
   rsvpPlusOnes: boolean;
+}
+
+/**
+ * Who a Save-the-Date card is shown to.
+ *
+ * Two values only, mirroring the server enum. Targeting a card at named
+ * invitees needs an invitee record, and the platform has none yet — no guest
+ * list, no share link, no guest identity — so that value waits for the guest
+ * surface rather than existing as a state nothing can honour.
+ */
+export type SubEventVisibility = 'all' | 'hidden';
+
+/** One sub-event of the celebration, and one Save-the-Date card. */
+export interface InvitationSubEvent {
+  /** Server-assigned; stable across reorders, unlike an array index. */
+  id: string;
+  name: string;
+  /** `yyyy-mm-dd`. */
+  eventDate: string;
+  /** `HH:mm`. */
+  eventTime: string;
+  /** `HH:mm`; blank means the default duration in the calendar entry. */
+  endTime: string;
+  timezone: string;
+  venueName: string;
+  venueAddress: string;
+  dressCode: string;
+  note: string;
+  /** A `cardPalette` id, or '' to follow the invitation template. */
+  colour: string;
+  visibility: SubEventVisibility;
+}
+
+/** A card colour served by the API — a closed palette, not free-form hex. */
+export interface CardColour {
+  id: string;
+  label: string;
+  /** Card background. */
+  wash: string;
+  /** Text and rule colour legible on that wash. */
+  ink: string;
 }
 
 /** A visual treatment for the guest invitation, served by the API. */
@@ -89,6 +134,12 @@ export interface Invitation {
   approvedAt: string | null;
   details: InvitationDetails;
   blocks: InvitationBlock[];
+  /** The Save-the-Date cards, in the order the organizer arranged them. */
+  subEvents: InvitationSubEvent[];
   templates: InvitationTemplate[];
+  /** Colours a card may be given. Server-owned, like `templates`. */
+  cardPalette: CardColour[];
+  /** Minutes a calendar entry runs for when a card has no end time. */
+  defaultSubEventMinutes: number;
   changeRequests: InvitationChangeRequest[];
 }

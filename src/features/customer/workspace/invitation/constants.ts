@@ -50,6 +50,7 @@ export const INVITATION_COPY = {
   save: 'Save changes',
   saving: 'Saving…',
   cancel: 'Cancel',
+  close: 'Close',
 
   // Request-change dialog
   requestTitle: 'Ask your organizer for a change',
@@ -74,4 +75,40 @@ export const INVITATION_COPY = {
   preparingAction: 'Back to your event',
   approvedNote: 'You approved this invitation — the guest link is live.',
   awaitingNote: 'Nothing is live yet. Approve to publish the guest link.',
+  // --- guest sharing ---
+  share: 'Share',
+  shareAll: 'Share invitation',
+  shareEyebrow: 'SEND TO GUESTS',
+  shareSectionTitle: (section: string) => `Share ${section}`,
+  shareAllTitle: 'Share the complete invitation',
+  shareIntro: 'Pick who to send it to, or add someone new. Guests need no account.',
+  shareLoading: 'Loading your guest list…',
+  shareNoGuests: 'No guests yet — add the first one below.',
+  shareAddGuest: 'Add a guest',
+  shareDiscardGuest: 'Don’t add anyone new',
+  shareGuestName: 'Guest name',
+  shareGuestPhone: 'WhatsApp number',
+  sharePhoneHint: 'Indian mobiles need no country code; for anywhere else start with +.',
+  shareNeedName: 'Enter the guest’s name.',
+  shareNeedGuest: 'Choose at least one guest, or add a new one.',
+  shareAlreadyExists: (name: string) => `${name} already has that number — tick them above instead.`,
+  shareAlreadySelected: (name: string) => `That is ${name}’s number, and they are already selected.`,
+  shareAlreadySent: 'Already sent',
+  shareNewGuest: 'New',
+  shareContinue: 'Continue',
+  shareConfirmIntro: 'Sending to:',
+  shareConfirmSection: (section: string) => `They will get the ${section.toLowerCase()} section, and can open the rest of the invitation from there.`,
+  shareConfirmAll: 'They will get the complete invitation.',
+  shareWhatsappCaveat:
+    'We cannot check whether a number has WhatsApp — if it does not, the message will not arrive.',
+  shareSend: 'Send on WhatsApp',
+  shareSending: 'Sending…',
+  shareSent: 'Sent',
+  shareOpenWhatsapp: 'Open WhatsApp to send',
+  shareHandoffNote:
+    'WhatsApp opens with the message ready — press send there to deliver it. Nothing has been sent yet.',
+  shareFailed: 'That could not be sent.',
+  shareDone: 'Done',
+  shareNotApproved: 'Approve the invitation first — then you can send it to guests.',
+
 } as const;

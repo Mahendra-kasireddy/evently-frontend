@@ -2,14 +2,13 @@ import { CalendarPlus, FileText, FilePlus2, MessageSquareQuote } from 'lucide-re
 import styles from './WorkspaceHero.module.css';
 
 export interface WorkspaceHeroProps {
-  total: number;
   draftCount: number;
   submittedCount: number;
   quoteCount: number;
   onStartPlan: () => void;
 }
 
-export function WorkspaceHero({ total, draftCount, submittedCount, quoteCount, onStartPlan }: WorkspaceHeroProps) {
+export function WorkspaceHero({ draftCount, submittedCount, quoteCount, onStartPlan }: WorkspaceHeroProps) {
   const stats = [
     { Icon: FilePlus2, label: 'Drafts', value: draftCount },
     { Icon: FileText, label: 'Submitted', value: submittedCount },
@@ -21,10 +20,8 @@ export function WorkspaceHero({ total, draftCount, submittedCount, quoteCount, o
       <span className={styles.circle} />
       <div className={styles.head}>
         <span className={styles.eyebrow}>YOUR WORKSPACE</span>
-        <h1 className={styles.heading}>
-          {total > 0 ? `You're planning ${total} ${total === 1 ? 'event' : 'events'}` : 'Your events live here'}
-        </h1>
-        <p className={styles.sub}>Track every plan, resume drafts, and follow your quote requests in one place.</p>
+        <h1 className={styles.heading}>My Events</h1>
+        <p className={styles.sub}>Manage your events and invitations in one place.</p>
       </div>
 
       <div className={styles.stats}>

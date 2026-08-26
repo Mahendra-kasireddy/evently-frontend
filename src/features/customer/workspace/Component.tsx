@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { CalendarPlus } from 'lucide-react';
 import { EmptyState } from '@shared/components';
 import { WorkspaceHero, WorkspaceMain, WorkspaceResponses, WorkspaceBookings } from './sections';
-import { bookedWorkspaceRoute, eventRoute, responseRoute } from './routes';
+import { bookedWorkspaceRoute, eventRoute, invitationRoute, responseRoute } from './routes';
 import type { PlanSubmission, PlanQuoteRequest, ApiBooking } from './types';
 import styles from './styles.module.css';
 
@@ -29,6 +29,26 @@ export interface WorkspaceComponentProps {
 export function Component({ plans, quotes, bookings }: WorkspaceComponentProps) {
   const navigate = useNavigate();
 
+  /*
+   * Nearest event first, finished and cancelled ones last.
+   *
+   * Sorted on `daysToGo`, the value the API already computes for each booking,
+   * rather than re-deriving a distance from `eventDate` here — one source for
+   * "how far away is this" keeps this list and the booked-event workspace in
+   * agreement. A booking with no usable date sinks below the dated ones instead
+   * of jumping to the top on a NaN comparison.
+   */
+  const orderedBookings = [...bookings].sort((a, b) => {
+    const over = (x: typeof a) =>
+      x.status === 'completed' || x.status === 'cancelled' || x.status === 'rejected';
+    if (over(a) !== over(b)) return over(a) ? 1 : -1;
+    const days = (x: typeof a) =>
+      typeof x.daysToGo === 'number' && !Number.isNaN(x.daysToGo)
+        ? x.daysToGo
+        : Number.POSITIVE_INFINITY;
+    return days(a) - days(b);
+  });
+
   const draftCount = plans.filter((p) => p.status === 'draft').length;
   const submittedCount = plans.length - draftCount;
   const isEmpty = plans.length === 0 && quotes.length === 0 && bookings.length === 0;
@@ -43,7 +63,6 @@ export function Component({ plans, quotes, bookings }: WorkspaceComponentProps) 
     <main className={styles.page}>
       <div className={styles.container}>
         <WorkspaceHero
-          total={plans.length}
           draftCount={draftCount}
           submittedCount={submittedCount}
           quoteCount={quotes.length}
@@ -62,7 +81,11 @@ export function Component({ plans, quotes, bookings }: WorkspaceComponentProps) 
           <>
             {/* A booked event opens its workspace inside My Events, rather than
                 the standalone booking-details screen outside the section. */}
-            <WorkspaceBookings bookings={bookings} onOpen={(id) => navigate(bookedWorkspaceRoute(id))} />
+            <WorkspaceBookings
+              bookings={orderedBookings}
+              onOpen={(id) => navigate(bookedWorkspaceRoute(id))}
+              onOpenInvitation={(id) => navigate(invitationRoute(id))}
+            />
             <WorkspaceResponses
               requests={quotes}
               onOpenEvent={openEvent}

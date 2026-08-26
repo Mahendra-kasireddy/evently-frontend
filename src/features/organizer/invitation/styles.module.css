@@ -451,3 +451,160 @@
   line-height: 1.5;
   color: var(--c-muted);
 }
+
+/*
+ * One-line explanation under a field, for settings whose effect is not obvious
+ * from the label alone — the timezone drives the guests' countdown, and the
+ * post-event message only ever appears after the start time passes.
+ */
+.hint {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--c-muted);
+}
+
+/* ----- Save the date card editor (F4) ----------------------------------- */
+
+.subEvents {
+  display: grid;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.subEmpty {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--c-ink-3, #6b7080);
+}
+
+.subList {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.subRow {
+  border: 1px solid rgba(20, 22, 34, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.subHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+}
+
+.subSwatch {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 5px;
+  border: 1px solid;
+}
+
+.subTitleBtn {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.subName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-ink-1, #191c28);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subMeta {
+  font-size: 11.5px;
+  color: var(--c-ink-3, #6b7080);
+}
+
+.subIconBtn {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(20, 22, 34, 0.1);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--c-ink-2, #3a3f52);
+  cursor: pointer;
+}
+
+.subIconBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.subBody {
+  display: grid;
+  gap: 10px;
+  padding: 4px 10px 12px;
+  border-top: 1px solid rgba(20, 22, 34, 0.07);
+}
+
+.fieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-ink-2, #3a3f52);
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.swatch {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border: 1px solid;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.swatchOn {
+  box-shadow: 0 0 0 2px rgba(20, 22, 34, 0.35);
+}
+
+.swatchLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: #4a4f60;
+}
+
+.subAddBtn {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 7px 13px;
+  border: 1px dashed rgba(20, 22, 34, 0.28);
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--c-ink-2, #3a3f52);
+  cursor: pointer;
+}

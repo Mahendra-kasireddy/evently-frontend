@@ -1,7 +1,13 @@
 import { useEffect } from 'react';
 import { X } from 'lucide-react';
 import { GuestPreview } from '@features/invitation';
-import type { InvitationBlock, InvitationDetails, InvitationTemplate } from '@features/invitation';
+import type {
+  CardColour,
+  InvitationBlock,
+  InvitationDetails,
+  InvitationSubEvent,
+  InvitationTemplate,
+} from '@features/invitation';
 import { INVITATION_COPY as COPY } from '../constants';
 import styles from '../styles.module.css';
 
@@ -9,6 +15,9 @@ export interface PreviewOverlayProps {
   details: InvitationDetails;
   blocks: InvitationBlock[];
   templates: InvitationTemplate[];
+  subEvents: InvitationSubEvent[];
+  cardPalette: CardColour[];
+  defaultSubEventMinutes: number;
   fallbackName: string;
   onClose: () => void;
 }
@@ -24,6 +33,9 @@ export function PreviewOverlay({
   details,
   blocks,
   templates,
+  subEvents,
+  cardPalette,
+  defaultSubEventMinutes,
   fallbackName,
   onClose,
 }: PreviewOverlayProps) {
@@ -63,6 +75,9 @@ export function PreviewOverlay({
             details={details}
             blocks={blocks}
             templates={templates}
+            subEvents={subEvents}
+            cardPalette={cardPalette}
+            defaultSubEventMinutes={defaultSubEventMinutes}
             fallbackName={fallbackName}
           />
         </div>

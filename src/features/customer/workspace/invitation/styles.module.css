@@ -724,3 +724,257 @@
     width: 100%;
   }
 }
+
+/* ---------------------------------------------------------------- sharing */
+
+/* The Share control on a section row and beside Preview. Sized to sit in the
+   same row as .ghostBtn / .outlineBtn without changing their height. */
+.shareBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  font-family: inherit;
+  font-size: 0.79rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.shareBtn:hover {
+  border-color: var(--border-card-hover);
+}
+.shareBtn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.shareBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* One scroll region for the dialog's changing middle, so the header and the
+   actions stay put as the guest list grows. */
+.shareBody {
+  margin-top: 18px;
+  max-height: min(52vh, 420px);
+  overflow-y: auto;
+  /* Room for the focus ring on the last row rather than clipping it. */
+  padding: 2px;
+  margin-left: -2px;
+  margin-right: -2px;
+}
+
+.shareEmpty {
+  margin: 0;
+  padding: 14px 12px;
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+  font-size: 0.79rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.guestList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.guestRow {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 13px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.guestRow:hover {
+  border-color: var(--border-card-hover);
+}
+.guestRow input {
+  flex: 0 0 auto;
+  width: 17px;
+  height: 17px;
+  accent-color: var(--color-primary);
+}
+
+.guestText {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.guestName {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.guestPhone {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.guestFlag {
+  flex: 0 0 auto;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--color-surface-muted, rgba(16, 24, 42, 0.06));
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+}
+
+.newGuest {
+  margin-top: 12px;
+  padding: 15px 15px 13px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface-muted, rgba(16, 24, 42, 0.02));
+}
+
+/* The last field in a group carries no bottom margin — the container's own
+   padding is the gap, so the box does not end with a hole. */
+.fieldLast {
+  display: block;
+  margin-bottom: 0;
+}
+
+.linkBtn {
+  margin-top: 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.linkBtn:hover {
+  color: var(--color-navy);
+}
+
+.addGuestBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  min-height: 36px;
+  padding: 0 15px;
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+  background: none;
+  font-family: inherit;
+  font-size: 0.79rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  cursor: pointer;
+}
+.addGuestBtn:hover {
+  border-color: var(--color-primary);
+}
+
+.confirmList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.confirmRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  padding: 11px 13px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.shareWhat {
+  margin: 14px 0 0;
+  font-size: 0.79rem;
+  line-height: 1.55;
+  color: var(--color-navy);
+}
+
+.shareCaveat {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 11px 13px;
+  border-radius: 10px;
+  background: rgba(214, 145, 24, 0.1);
+  font-size: 0.76rem;
+  line-height: 1.55;
+  color: #7a5410;
+}
+.shareCaveat svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.shareError {
+  margin: 14px 0 0;
+  padding: 11px 13px;
+  border-radius: 10px;
+  background: rgba(190, 40, 50, 0.08);
+  font-size: 0.79rem;
+  line-height: 1.5;
+  color: #8d1f2a;
+}
+
+.outcomeOk,
+.outcomeBad,
+.outcomeLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+.outcomeOk {
+  color: #1c6b3f;
+}
+.outcomeBad {
+  color: #8d1f2a;
+}
+.outcomeLink {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* On a phone the dialog is nearly full-height, so the list gets more room and
+   the actions stack the way the other dialogs here already do. */
+@media (max-width: 560px) {
+  .shareBody {
+    max-height: 46vh;
+  }
+  .guestFlag {
+    order: 3;
+    margin-left: 28px;
+  }
+}

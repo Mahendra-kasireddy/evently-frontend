@@ -11,4 +11,25 @@
 .statLabel { font-size: 0.72rem; color: rgba(255,255,255,0.68); }
 .cta { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 20px; border: none; border-radius: 12px; background: var(--color-primary); color: #fff; font-size: 0.92rem; font-weight: 700; cursor: pointer; transition: background 0.15s ease; }
 .cta:hover { background: var(--color-primary-hover); }
-@media (max-width: 720px) { .hero { flex-direction: column; align-items: flex-start; } .stats { flex-wrap: wrap; } }
+@media (max-width: 720px) {
+  .hero { flex-direction: column; align-items: stretch; gap: 18px; padding: 20px 18px; }
+  /*
+   * `flex: 1 1 260px` is a width basis, but once the hero stacks it becomes a
+   * height one — the header grew to fill the box and left a large empty band
+   * above the stats. Stacked, the header takes only the room it needs.
+   */
+  .head { flex: 0 0 auto; }
+  .heading { font-size: 1.4rem; }
+  /* Three chips read better as an even grid than as a 2 + 1 wrap. */
+  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .stat { min-width: 0; padding: 10px 11px; }
+  .statValue { font-size: 1.25rem; }
+  .statLabel { font-size: 0.66rem; }
+  .cta { width: 100%; justify-content: center; }
+  .circle { right: -40px; }
+}
+
+@media (max-width: 380px) {
+  /* Below this the three labels start to break mid-word. */
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

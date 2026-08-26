@@ -1,8 +1,17 @@
 import { useEffect, useId, useState } from 'react';
 import { X } from 'lucide-react';
 import { Btn } from '@shared/partner';
+import { SAVE_THE_DATE_BLOCK } from '@features/invitation';
 import { INVITATION_COPY as COPY, HEADER_BLOCK } from '../constants';
-import type { InvitationBlock, InvitationDetails, InvitationTemplate } from '../types';
+import { DEFAULT_TIMEZONE, TIMEZONES } from '../timezones';
+import { SubEventEditor } from './SubEventEditor';
+import type {
+  CardColour,
+  InvitationBlock,
+  InvitationDetails,
+  InvitationSubEvent,
+  InvitationTemplate,
+} from '../types';
 import type { SaveBlockPatch } from '../hooks';
 import styles from '../styles.module.css';
 
@@ -11,6 +20,9 @@ export interface EditorDialogProps {
   block: InvitationBlock | undefined;
   details: InvitationDetails;
   templates: InvitationTemplate[];
+  /** The Save-the-Date cards, edited when that section is the one open. */
+  subEvents: InvitationSubEvent[];
+  cardPalette: CardColour[];
   isSaving: boolean;
   onSave: (patch: SaveBlockPatch) => void;
   onRemove: ((key: string) => void) | undefined;
@@ -18,14 +30,20 @@ export interface EditorDialogProps {
 }
 
 /**
- * The section editor. The header section additionally exposes the event-level
- * fields the whole invitation draws from (names, date, venue, message), which
- * is where the guest hero gets its content.
+ * The section editor.
+ *
+ * Two sections carry more than their own text. The header exposes the
+ * event-level fields the whole invitation draws from (names, date, venue,
+ * message), and Save the date owns the per-event cards — in both cases because
+ * that is the section whose guest-facing output the fields produce, so an
+ * organizer edits them where they can see what they affect.
  */
 export function EditorDialog({
   block,
   details,
   templates,
+  subEvents,
+  cardPalette,
   isSaving,
   onSave,
   onRemove,
@@ -33,6 +51,7 @@ export function EditorDialog({
 }: EditorDialogProps) {
   const id = useId();
   const isHeader = block?.key === HEADER_BLOCK;
+  const isSaveTheDate = block?.key === SAVE_THE_DATE_BLOCK;
 
   // Mounted fresh per open (keyed by section in `Component`), so the initial
   // state below is always the section the organizer just clicked.
@@ -40,6 +59,8 @@ export function EditorDialog({
   const [heading, setHeading] = useState(block?.heading ?? '');
   const [body, setBody] = useState(block?.body ?? '');
   const [draft, setDraft] = useState<InvitationDetails>(details);
+  const [cards, setCards] = useState<InvitationSubEvent[]>(subEvents);
+  const [openCard, setOpenCard] = useState<number | null>(null);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -59,6 +80,9 @@ export function EditorDialog({
       heading,
       body,
       ...(isHeader ? { details: draft } : {}),
+      // Only sent from the section that owns them, so saving any other section
+      // cannot touch the cards.
+      ...(isSaveTheDate ? { subEvents: cards } : {}),
     });
   };
 
@@ -106,6 +130,17 @@ export function EditorDialog({
             <span>{COPY.fieldBody}</span>
             <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={3} maxLength={600} />
           </label>
+
+          {isSaveTheDate && (
+            <SubEventEditor
+              cards={cards}
+              palette={cardPalette}
+              fallbackTimezone={details.timezone}
+              openIndex={openCard}
+              onOpenChange={setOpenCard}
+              onChange={setCards}
+            />
+          )}
 
           {isHeader && (
             <>
@@ -172,6 +207,35 @@ export function EditorDialog({
                   />
                 </label>
               </div>
+              {/*
+                The date and time above carry no zone of their own, so the
+                countdown needs this to be correct for a guest anywhere.
+              */}
+              <label className={styles.field}>
+                <span>{COPY.timezone}</span>
+                <select
+                  value={draft.timezone || DEFAULT_TIMEZONE}
+                  onChange={(e) => set('timezone', e.target.value)}
+                >
+                  {TIMEZONES.map((zone) => (
+                    <option key={zone} value={zone}>
+                      {zone.replace(/_/g, ' ')}
+                    </option>
+                  ))}
+                </select>
+                <small className={styles.hint}>{COPY.timezoneHint}</small>
+              </label>
+              <label className={styles.field}>
+                <span>{COPY.postEventMessage}</span>
+                <textarea
+                  value={draft.postEventMessage}
+                  onChange={(e) => set('postEventMessage', e.target.value)}
+                  rows={2}
+                  maxLength={400}
+                  placeholder="Thank you for celebrating with us."
+                />
+                <small className={styles.hint}>{COPY.postEventHint}</small>
+              </label>
               <label className={styles.field}>
                 <span>{COPY.venueName}</span>
                 <input

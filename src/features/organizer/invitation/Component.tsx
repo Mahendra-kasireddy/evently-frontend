@@ -248,6 +248,9 @@ export function Component({
                   details={details}
                   blocks={blocks}
                   templates={templates}
+                  subEvents={invitation.subEvents}
+                  cardPalette={invitation.cardPalette}
+                  defaultSubEventMinutes={invitation.defaultSubEventMinutes}
                   fallbackName={invitation.bookingTitle}
                 />
               </div>
@@ -262,6 +265,8 @@ export function Component({
           block={editingBlock}
           details={details}
           templates={templates}
+          subEvents={invitation.subEvents}
+          cardPalette={invitation.cardPalette}
           isSaving={isSaving}
           onSave={(patch) => void saveBlock(patch)}
           onRemove={editingBlock ? (key) => void removeBlock(key) : undefined}

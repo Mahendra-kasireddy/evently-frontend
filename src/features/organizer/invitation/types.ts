@@ -6,14 +6,22 @@
  */
 export type {
   BlockOwner,
+  CardColour,
   InvitationBlock,
   InvitationChangeRequest,
   InvitationDetails,
   InvitationStatus,
+  InvitationSubEvent,
   InvitationTemplate,
+  SubEventVisibility,
 } from '@features/invitation';
 
-import type { Invitation, InvitationBlock, InvitationDetails } from '@features/invitation';
+import type {
+  Invitation,
+  InvitationBlock,
+  InvitationDetails,
+  InvitationSubEvent,
+} from '@features/invitation';
 
 /** `GET /invitation/organizer/:bookingId`. */
 export type OrganizerInvitation = Invitation;
@@ -22,6 +30,8 @@ export type OrganizerInvitation = Invitation;
 export interface UpdateInvitationBody {
   details?: Partial<InvitationDetails>;
   blocks?: InvitationBlock[];
+  /** Replaces the whole list; array order is the guest-facing order. */
+  subEvents?: InvitationSubEvent[];
 }
 
 /** Which editor dialog is open: an existing section, a brand-new one, or none. */

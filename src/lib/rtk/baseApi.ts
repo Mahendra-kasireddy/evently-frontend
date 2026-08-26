@@ -32,6 +32,7 @@ export const baseApi = createApi({
     'SubVendorLinks',
     'Academy',
     'Invitation',
+    'InvitationGuests',
     'Ideas',
   ],
   endpoints: () => ({}),

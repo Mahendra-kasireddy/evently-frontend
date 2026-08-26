@@ -9,6 +9,7 @@ import type {
   EditorTarget,
   InvitationBlock,
   InvitationDetails,
+  InvitationSubEvent,
   OrganizerInvitation,
 } from '../types';
 
@@ -18,6 +19,11 @@ export interface SaveBlockPatch {
   body: string;
   /** Event-level fields the section's editor also exposes (header, dates…). */
   details?: Partial<InvitationDetails>;
+  /**
+   * The Save-the-Date cards, when the section being saved is the one that owns
+   * them. Absent means "leave them alone" — sending `[]` would delete them.
+   */
+  subEvents?: InvitationSubEvent[];
 }
 
 export interface UseInvitationResult {
@@ -73,11 +79,22 @@ export function useInvitation(bookingId: string): UseInvitationResult {
   );
 
   const writeBlocks = useCallback(
-    async (next: InvitationBlock[], details?: Partial<InvitationDetails>) => {
+    async (
+      next: InvitationBlock[],
+      details?: Partial<InvitationDetails>,
+      subEvents?: InvitationSubEvent[],
+    ) => {
       if (!bookingId) return;
+      // Each key is included only when the caller supplied it: the API replaces
+      // whichever arrays it receives, so sending an absent one as `[]` would
+      // wipe it.
       await update({
         bookingId,
-        body: details ? { blocks: next, details } : { blocks: next },
+        body: {
+          blocks: next,
+          ...(details ? { details } : {}),
+          ...(subEvents ? { subEvents } : {}),
+        },
       }).unwrap();
     },
     [bookingId, update],
@@ -120,14 +137,14 @@ export function useInvitation(bookingId: string): UseInvitationResult {
             body: patch.body,
           },
         ];
-        await writeBlocks(next, patch.details);
+        await writeBlocks(next, patch.details, patch.subEvents);
       } else if (editor?.kind === 'block') {
         const next = blocks.map((b) =>
           b.key === editor.key
             ? { ...b, title: title || b.title, heading: patch.heading, body: patch.body }
             : b,
         );
-        await writeBlocks(next, patch.details);
+        await writeBlocks(next, patch.details, patch.subEvents);
       }
       setEditor(null);
     },

@@ -68,6 +68,7 @@ const SubvendorHomePage = lazy(() => import('@features/subvendor/home/page'));
 const SubvendorTaskDetailPage = lazy(() => import('@features/subvendor/task-detail/page'));
 const SubvendorPaymentsPage = lazy(() => import('@features/subvendor/payments/page'));
 const SubvendorProfilePage = lazy(() => import('@features/subvendor/profile/page'));
+const GuestInvitationPage = lazy(() => import('@features/guest/page'));
 
 export const router = createBrowserRouter([
   { path: '/', element: lazyRoute(LandingPage, 'landing', 'screen') },
@@ -75,6 +76,14 @@ export const router = createBrowserRouter([
   { path: '/join', element: lazyRoute(JoinPage, 'join', 'screen') },
   { path: '/onboarding/organizer', element: lazyRoute(OrganizerOnboardingPage, 'onboarding', 'screen') },
   { path: '/onboarding/subvendor', element: lazyRoute(SubvendorOnboardingPage, 'onboarding', 'screen') },
+
+  /*
+   * The guest invitation. Outside every layout on purpose: a guest has no
+   * account, so the customer header, the footer and the auth-aware nav would
+   * all be offering them things they cannot use. The token in the path is the
+   * only credential, and the API is what enforces it.
+   */
+  { path: '/i/:token', element: lazyRoute(GuestInvitationPage, 'guest-invitation', 'screen') },
 
   // Authenticated customer screens share one persistent shell (header + footer).
   // Only the <Outlet/> content changes on navigation — no full-page re-render.

@@ -1,4 +1,4 @@
-import { Check, EyeOff, Lock, Pencil } from 'lucide-react';
+import { Check, EyeOff, Lock, Pencil, Share2 } from 'lucide-react';
 import { BLOCK_ICON, FALLBACK_BLOCK_ICON } from '@features/invitation';
 import type { InvitationBlock } from '@features/invitation';
 import { INVITATION_COPY as COPY, OWNER_BADGE } from '../constants';
@@ -8,8 +8,15 @@ export interface SectionRowProps {
   block: InvitationBlock;
   /** How many of this section's asks are still open with the organizer. */
   pendingRequests: number;
+  /**
+   * Sharing only appears once the customer has approved: before that the
+   * wording is still being argued over, and a guest link would publish
+   * something nobody has signed off.
+   */
+  canShare: boolean;
   onPersonalize: () => void;
   onRequestChange: () => void;
+  onShare: () => void;
 }
 
 /**
@@ -22,8 +29,10 @@ export interface SectionRowProps {
 export function SectionRow({
   block,
   pendingRequests,
+  canShare,
   onPersonalize,
   onRequestChange,
+  onShare,
 }: SectionRowProps) {
   const Icon = BLOCK_ICON[block.icon] ?? FALLBACK_BLOCK_ICON;
   const isOrg = block.owner === 'organizer';
@@ -50,6 +59,21 @@ export function SectionRow({
           <span className={styles.rowPending}>{COPY.requestPending(pendingRequests)}</span>
         )}
       </span>
+
+      {/*
+        A hidden section has nothing to show a guest, so it cannot be shared —
+        the same rule the guest view enforces server-side.
+      */}
+      {canShare && !block.hidden && (
+        <button
+          type="button"
+          className={styles.shareBtn}
+          onClick={onShare}
+          aria-label={`${COPY.share}: ${block.title}`}
+        >
+          <Share2 size={14} /> {COPY.share}
+        </button>
+      )}
 
       {isOrg ? (
         <button

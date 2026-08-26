@@ -11,6 +11,8 @@ import {
   usePersonalizeInvitationBlockMutation,
   useRequestInvitationChangeMutation,
 } from './service';
+import { useGetInvitationGuestsQuery, useShareInvitationMutation } from './guestService';
+import type { ShareResult } from './guestService';
 import styles from './styles.module.css';
 
 /** A 404 here means "not shared yet", which is a state — not a failure. */
@@ -36,6 +38,15 @@ export function InvitationContainer({ bookingId }: { bookingId: string }) {
   const [approve, approveState] = useApproveMyInvitationMutation();
   const [personalize, personalizeState] = usePersonalizeInvitationBlockMutation();
   const [requestChange, requestState] = useRequestInvitationChangeMutation();
+
+  /*
+   * Guests exist only once the invitation is approved — the endpoint 400s
+   * before that — so the query waits rather than firing a request the server
+   * is bound to refuse.
+   */
+  const approved = invitation.data?.status === 'approved';
+  const guests = useGetInvitationGuestsQuery(bookingId, { skip: !bookingId || !approved });
+  const [shareInvitation, shareState] = useShareInvitationMutation();
 
   if (booking.isLoading || invitation.isLoading) {
     return <LoadingScreen message={COPY.loading} />;
@@ -127,6 +138,23 @@ export function InvitationContainer({ bookingId }: { bookingId: string }) {
       }}
       onRequestChange={(note, blockKey) => {
         void requestChange(blockKey ? { bookingId, blockKey, note } : { bookingId, note });
+      }}
+      guests={guests.data ?? []}
+      isLoadingGuests={guests.isLoading}
+      isSharing={shareState.isLoading}
+      onShare={async (section, guestIds, newGuest): Promise<ShareResult | null> => {
+        try {
+          return await shareInvitation({
+            bookingId,
+            ...(section ? { section } : {}),
+            ...(guestIds.length > 0 ? { guestIds } : {}),
+            ...(newGuest ? { newGuests: [newGuest] } : {}),
+          }).unwrap();
+        } catch {
+          // The dialog turns a null into its own error line; the mutation's
+          // own error state is not enough because it does not say which guest.
+          return null;
+        }
       }}
       onBack={backToEvent}
     />

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Check, ChevronLeft, Eye, Pencil, Sparkles } from 'lucide-react';
+import { Check, ChevronLeft, Eye, Pencil, Share2, Sparkles } from 'lucide-react';
 import { GuestPreview } from '@features/invitation';
 import type { InvitationBlock } from '@features/invitation';
 import { INVITATION_COPY as COPY } from './constants';
@@ -7,6 +7,8 @@ import { PersonalizeDialog } from './sections/PersonalizeDialog';
 import { PreviewOverlay } from './sections/PreviewOverlay';
 import { RequestChangeDialog } from './sections/RequestChangeDialog';
 import { SectionRow } from './sections/SectionRow';
+import { ShareDialog } from './sections/ShareDialog';
+import type { Guest, ShareResult } from './guestService';
 import type { CustomerInvitation } from './service';
 import styles from './styles.module.css';
 
@@ -15,6 +17,8 @@ type Dialog =
   | { kind: 'personalize'; key: string }
   | { kind: 'request'; key?: string }
   | { kind: 'preview' }
+  /** `key` absent means the complete invitation — one dialog serves both. */
+  | { kind: 'share'; key?: string }
   | null;
 
 export interface InvitationComponentProps {
@@ -27,6 +31,15 @@ export interface InvitationComponentProps {
   onApprove: () => void;
   onPersonalize: (blockKey: string, patch: { heading: string; body: string; hidden: boolean }) => void;
   onRequestChange: (note: string, blockKey?: string) => void;
+  /** Guests already on this invitation's list, for reuse in the share dialog. */
+  guests: Guest[];
+  isLoadingGuests: boolean;
+  isSharing: boolean;
+  onShare: (
+    section: string | undefined,
+    guestIds: string[],
+    newGuest: { name: string; phone: string } | null,
+  ) => Promise<ShareResult | null>;
   onBack: () => void;
 }
 
@@ -48,6 +61,10 @@ export function Component({
   onApprove,
   onPersonalize,
   onRequestChange,
+  guests,
+  isLoadingGuests,
+  isSharing,
+  onShare,
   onBack,
 }: InvitationComponentProps) {
   const [dialog, setDialog] = useState<Dialog>(null);
@@ -129,6 +146,20 @@ export function Component({
             >
               <Eye size={15} /> {COPY.preview}
             </button>
+
+            {/*
+              One action for the whole invitation, so a customer sending
+              everything never has to repeat a guest's details per section.
+            */}
+            {approved && (
+              <button
+                type="button"
+                className={styles.shareBtn}
+                onClick={() => setDialog({ kind: 'share' })}
+              >
+                <Share2 size={15} /> {COPY.shareAll}
+              </button>
+            )}
           </div>
 
           {/* Sections are marked by owner, so the banner explains what that means. */}
@@ -152,8 +183,10 @@ export function Component({
                 key={block.key}
                 block={block}
                 pendingRequests={pendingByBlock.get(block.key) ?? 0}
+                canShare={approved}
                 onPersonalize={() => setDialog({ kind: 'personalize', key: block.key })}
                 onRequestChange={() => setDialog({ kind: 'request', key: block.key })}
+                onShare={() => setDialog({ kind: 'share', key: block.key })}
               />
             ))}
           </ul>
@@ -173,6 +206,9 @@ export function Component({
                   details={details}
                   blocks={blocks}
                   templates={templates}
+                  subEvents={invitation.subEvents}
+                  cardPalette={invitation.cardPalette}
+                  defaultSubEventMinutes={invitation.defaultSubEventMinutes}
                   fallbackName={invitation.bookingTitle}
                 />
               </div>
@@ -212,7 +248,22 @@ export function Component({
           details={details}
           blocks={blocks}
           templates={templates}
+          subEvents={invitation.subEvents}
+          cardPalette={invitation.cardPalette}
+          defaultSubEventMinutes={invitation.defaultSubEventMinutes}
           fallbackName={invitation.bookingTitle}
+          onClose={() => setDialog(null)}
+        />
+      )}
+
+      {dialog?.kind === 'share' && (
+        <ShareDialog
+          sectionKey={dialog.key}
+          sectionTitle={blocks.find((b) => b.key === dialog.key)?.title ?? ''}
+          guests={guests}
+          isLoadingGuests={isLoadingGuests}
+          isSending={isSharing}
+          onShare={(guestIds, newGuest) => onShare(dialog.key, guestIds, newGuest)}
           onClose={() => setDialog(null)}
         />
       )}

@@ -76,4 +76,12 @@ export const GUEST_COPY = {
   youreInvited: 'YOU’RE INVITED',
   scroll: 'SCROLL',
   previewEmpty: 'Every section is hidden — turn one back on to show guests something.',
+  /** Shown when the countdown reaches zero and no post-event message was set. */
+  eventStarted: 'The celebration has begun.',
+  addToCalendar: 'Add to Calendar',
+  addToGoogle: 'Google Calendar instead',
+  dressCode: 'Dress code',
+  getDirections: 'Get directions',
+  /** The Save-the-date section with no cards yet — the organizer has not added any. */
+  noSubEvents: 'The schedule is still being finalised.',
 } as const;
