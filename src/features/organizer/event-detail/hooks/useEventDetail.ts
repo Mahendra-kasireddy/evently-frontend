@@ -21,6 +21,7 @@ export function useEventDetail(bookingId: string) {
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskSubVendorId, setNewTaskSubVendorId] = useState('');
   const [newTaskAmount, setNewTaskAmount] = useState('');
+  const [declineReason, setDeclineReason] = useState('');
 
   const subvendors = subvendorLinks
     .filter((l) => l.status === 'active' && l.subVendor)
@@ -66,6 +67,25 @@ export function useEventDetail(bookingId: string) {
     void updateStatusMutation({ id: bookingId, status: 'completed' });
   };
 
+  /*
+   * The two actions the booking lifecycle was missing entirely: until now a
+   * booking entered "awaiting organizer" and nothing in the product could move
+   * it on, so every booking sat there until someone edited the database.
+   */
+  const acceptBooking = () => {
+    void updateStatusMutation({ id: bookingId, status: 'confirmed' });
+  };
+
+  const declineBooking = async () => {
+    const reason = declineReason.trim();
+    await updateStatusMutation({
+      id: bookingId,
+      status: 'rejected',
+      ...(reason ? { note: reason } : {}),
+    }).unwrap();
+    setDeclineReason('');
+  };
+
   return {
     booking,
     isLoading,
@@ -86,5 +106,10 @@ export function useEventDetail(bookingId: string) {
     uploadProofForTask,
     markCompleted,
     isCompleting: statusState.isLoading,
+    declineReason,
+    setDeclineReason,
+    acceptBooking,
+    declineBooking,
+    isResponding: statusState.isLoading,
   };
 }

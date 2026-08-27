@@ -30,8 +30,28 @@ export interface RequestChangeArgs {
   note: string;
 }
 
+/** One row per invitation the customer can see — enough to badge a card. */
+export interface InvitationSummary {
+  bookingId: string;
+  status: 'sent' | 'approved';
+}
+
 export const customerInvitationApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
+    /*
+     * Every invitation shared with the customer, in one request. My Events
+     * needs this before it can sort events into tabs — an invitation waiting
+     * on the customer's approval is the customer's move, and one query for the
+     * list beats one per card.
+     */
+    getMyInvitations: build.query<InvitationSummary[], void>({
+      queryFn: () =>
+        toQueryResult(
+          async () => (await apiClient.get<InvitationSummary[]>('/invitation/mine')).data,
+        ),
+      providesTags: ['Invitation'],
+    }),
+
     getMyInvitation: build.query<CustomerInvitation, string>({
       queryFn: (bookingId) =>
         toQueryResult(
@@ -84,6 +104,7 @@ export const customerInvitationApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetMyInvitationsQuery,
   useGetMyInvitationQuery,
   useApproveMyInvitationMutation,
   usePersonalizeInvitationBlockMutation,

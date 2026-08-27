@@ -10,3 +10,5 @@
 .amount { margin-left: auto; font-weight: 800; color: var(--color-navy); font-size: 0.95rem; }
 
 .detail { display: inline-flex; align-items: center; gap: 3px; margin-top: 12px; font-size: 0.82rem; font-weight: 600; color: var(--color-primary); }
+
+.statusAwaiting { background: #fdf0dc; color: #b5730f; }

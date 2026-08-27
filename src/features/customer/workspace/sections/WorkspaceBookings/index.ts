@@ -1,1 +1,0 @@
-export { WorkspaceBookings } from './WorkspaceBookings';

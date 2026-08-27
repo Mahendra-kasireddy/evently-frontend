@@ -38,10 +38,12 @@ export const CALENDAR_VIEWS: readonly CalendarView[] = ['Month', 'Week'];
 export const MAX_RANGE_DAYS = 62;
 
 export const BOOKING_STATUS_LABEL: Record<BookingStatus, string> = {
-  pending: 'Awaiting confirmation',
+  pending: 'Booking placed',
+  awaiting_organizer: 'Needs your confirmation',
   confirmed: 'Confirmed',
   in_progress: 'In progress',
   completed: 'Completed',
   cancelled: 'Cancelled',
   rejected: 'Declined',
+  expired: 'Expired — no response',
 };

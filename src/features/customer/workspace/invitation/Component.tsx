@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Check, ChevronLeft, Eye, Pencil, Share2, Sparkles } from 'lucide-react';
+import { Check, Eye, Pencil, Share2, Sparkles } from 'lucide-react';
 import { GuestPreview } from '@features/invitation';
 import type { InvitationBlock } from '@features/invitation';
 import { INVITATION_COPY as COPY } from './constants';
@@ -40,7 +40,6 @@ export interface InvitationComponentProps {
     guestIds: string[],
     newGuest: { name: string; phone: string } | null,
   ) => Promise<ShareResult | null>;
-  onBack: () => void;
 }
 
 /**
@@ -65,7 +64,6 @@ export function Component({
   isLoadingGuests,
   isSharing,
   onShare,
-  onBack,
 }: InvitationComponentProps) {
   const [dialog, setDialog] = useState<Dialog>(null);
   const { blocks, details, templates, changeRequests } = invitation;
@@ -95,9 +93,6 @@ export function Component({
         <section className={styles.hero}>
           <span className={styles.blob} aria-hidden />
           <span className={styles.blob2} aria-hidden />
-          <button type="button" className={styles.back} onClick={onBack} aria-label={COPY.back}>
-            <ChevronLeft size={18} />
-          </button>
           <div className={styles.heroText}>
             <span className={styles.eyebrow}>
               {COPY.eyebrowLead} · PREPARED BY {organizerName.toUpperCase()}

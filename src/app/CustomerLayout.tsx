@@ -24,6 +24,22 @@ const NAV: AppNavItem[] = [
 ];
 
 /**
+ * Routes that belong to a nav section but do not live under its path. Checkout,
+ * the payment receipt and the booking detail are all reached from My Events and
+ * are part of that journey, so the tab has to stay lit while the customer is on
+ * them — otherwise the chrome says they have left a section they are still in.
+ */
+const NAV_ALIASES: Record<string, string[]> = {
+  '/workspace': ['/booking', '/booking-details', '/payment-success', '/quotes', '/quote', '/my-invitation'],
+};
+
+/** True when `pathname` is this nav item's own path or one of its aliases. */
+function isNavActive(pathname: string, to: string): boolean {
+  const inSection = (base: string) => pathname === base || pathname.startsWith(`${base}/`);
+  return inSection(to) || (NAV_ALIASES[to] ?? []).some(inSection);
+}
+
+/**
  * Persistent shell for authenticated customer screens. The header + footer
  * mount once here; only the routed <Outlet/> content changes on navigation —
  * so clicking a nav item swaps the content without re-rendering the whole page.
@@ -65,7 +81,7 @@ export function CustomerLayout() {
       });
   };
 
-  const nav = NAV.map((item) => ({ ...item, active: pathname.startsWith(item.to) }));
+  const nav = NAV.map((item) => ({ ...item, active: isNavActive(pathname, item.to) }));
   const user = {
     initials: profile?.initials ?? 'U',
     location: profile?.location ?? '',

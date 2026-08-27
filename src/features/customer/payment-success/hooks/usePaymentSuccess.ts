@@ -12,10 +12,15 @@ export function usePaymentSuccess(id: string) {
 
   const data: PaymentSuccessData | undefined = booking
     ? {
-        title: 'Booking confirmed!',
-        subtitle: `Your ${booking.occasion || 'event'} with ${booking.organizer?.name ?? 'your organizer'} is booked${
-          booking.eventDate ? ` for ${eventDateLabel(booking.eventDate)}` : ''
-        }.`,
+        /*
+         * Payment succeeding is not the organizer confirming. Saying "Booking
+         * confirmed!" here is what made the detail screen's "Pending" badge read
+         * as a bug — the two screens were describing different things.
+         */
+        title: 'Advance paid',
+        subtitle: `We've sent your ${booking.occasion || 'event'}${
+          booking.eventDate ? ` on ${eventDateLabel(booking.eventDate)}` : ''
+        } to ${booking.organizer?.name ?? 'your organizer'} to confirm.`,
         bookingId: booking.ref,
         whatsappNote: 'Confirmation sent to your notifications',
         whatNext: WHAT_NEXT,

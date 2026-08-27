@@ -31,6 +31,11 @@ export function EventDetailContainer({ bookingId }: EventDetailContainerProps) {
     uploadProofForTask,
     markCompleted,
     isCompleting,
+    declineReason,
+    setDeclineReason,
+    acceptBooking,
+    declineBooking,
+    isResponding,
   } = useEventDetail(bookingId);
   // Same cache entry the board screen uses, so replying there updates these.
   const { data: ideaBoard } = useGetOrganizerIdeasQuery(bookingId, { skip: !bookingId });
@@ -75,6 +80,11 @@ export function EventDetailContainer({ bookingId }: EventDetailContainerProps) {
       onUploadProof={(taskId, file) => void uploadProofForTask(taskId, file)}
       onMarkCompleted={markCompleted}
       isCompleting={isCompleting}
+      declineReason={declineReason}
+      setDeclineReason={setDeclineReason}
+      onAcceptBooking={acceptBooking}
+      onDeclineBooking={() => void declineBooking()}
+      isResponding={isResponding}
     />
   );
 }

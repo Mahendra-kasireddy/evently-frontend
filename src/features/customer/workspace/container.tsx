@@ -3,16 +3,16 @@ import { useWorkspace } from './hooks';
 import { Component } from './Component';
 
 export function WorkspaceContainer() {
-  const { plans, quotes, bookings, isLoading, isError, refetch } = useWorkspace();
+  const { events, isLoading, isError, refetch } = useWorkspace();
 
-  if (isLoading) return <LoadingScreen message="Opening your workspace…" />;
+  if (isLoading) return <LoadingScreen message="Opening your events…" />;
   if (isError) {
     return (
       <ErrorState
-        message="We couldn't load your workspace. Please check your connection and try again."
+        message="We couldn't load your events. Please check your connection and try again."
         onRetry={refetch}
       />
     );
   }
-  return <Component plans={plans} quotes={quotes} bookings={bookings} />;
+  return <Component events={events} />;
 }

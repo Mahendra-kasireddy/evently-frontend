@@ -7,11 +7,20 @@ import {
 import { AuthModal } from '@shared/components';
 import { useAuth } from '@app/auth';
 import type { PlanData, PlanDraft } from '../../types';
-import { useGetPlanOrganizersQuery, useCreatePlanMutation, usePlanRequestQuoteMutation } from '../../service';
+import {
+  useGetPlanOrganizersQuery,
+  useCreatePlanMutation,
+  usePlanRequestQuoteMutation,
+  useSavePlanDraftMutation,
+  useUpdatePlanMutation,
+} from '../../service';
 import { draftToUpsert } from '../../hooks/usePlan';
+import { composeWhere } from '../../where';
 import styles from './ReviewStep.module.css';
 
 export interface ReviewStepProps {
+  /** Set when correcting an already-submitted plan rather than starting one. */
+  editingPlanId: string;
   data: PlanData;
   draft: PlanDraft;
   occasionLabel: string;
@@ -20,7 +29,7 @@ export interface ReviewStepProps {
 
 type Phase = 'idle' | 'saving' | 'quoting';
 
-export function ReviewStep({ data, draft, occasionLabel, onEdit }: ReviewStepProps) {
+export function ReviewStep({ data, draft, editingPlanId, occasionLabel, onEdit }: ReviewStepProps) {
   const navigate = useNavigate();
   const { status } = useAuth();
 
@@ -32,11 +41,13 @@ export function ReviewStep({ data, draft, occasionLabel, onEdit }: ReviewStepPro
   const selected = organizers.find((o) => o.id === draft.selectedOrganizerId);
 
   const [createPlan] = useCreatePlanMutation();
+  const [saveDraft] = useSavePlanDraftMutation();
+  const [updatePlan] = useUpdatePlanMutation();
   const [requestQuote] = usePlanRequestQuoteMutation();
 
-  // Once the plan is persisted we keep its id so a retry after a failed quote
-  // request never creates a duplicate plan — the customer keeps their data.
-  const [savedPlanId, setSavedPlanId] = useState<string | null>(null);
+  // Set once the quote request has actually reached an organizer, so a retry
+  // after a later failure never sends a second request.
+  const [quotedPlanId, setQuotedPlanId] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>('idle');
   const [error, setError] = useState<string | null>(null);
   // Sign-in happens in a dialog over this step, so the wizard's answers stay on
@@ -44,7 +55,7 @@ export function ReviewStep({ data, draft, occasionLabel, onEdit }: ReviewStepPro
   const [authOpen, setAuthOpen] = useState(false);
 
   const busy = phase !== 'idle';
-  const planSaved = savedPlanId !== null;
+  const planSaved = quotedPlanId !== null;
 
   /** Pull the real server detail out of a normalized API error for the UI. */
   const detailOf = (err: unknown): string => {
@@ -66,51 +77,101 @@ export function ReviewStep({ data, draft, occasionLabel, onEdit }: ReviewStepPro
     void submit();
   };
 
+  /**
+   * Save, request, then submit — in that order.
+   *
+   * The order is the whole point. This used to call `createPlan` first, which
+   * stamps the plan SUBMITTED with a plan code; when the quote request then
+   * failed the customer was left with a plan reading "Submitted" that no
+   * organizer had ever received, and every retry after a page reload minted
+   * another one. Persisting as a draft first means nothing is lost, and
+   * promoting only after the request lands means "Submitted" always says
+   * something true.
+   */
   const submit = async () => {
     setError(null);
-    // Priority 1 — plan must persist before any quote is created.
-    let planId = savedPlanId;
-    if (!planId) {
-      try {
-        setPhase('saving');
-        const plan = await createPlan(draftToUpsert(draft)).unwrap();
-        planId = plan.id;
-        setSavedPlanId(plan.id);
-      } catch (err) {
-        setPhase('idle');
-        const detail = detailOf(err);
-        setError(
-          detail
-            ? `Couldn’t save your plan: ${detail}. Nothing was submitted.`
-            : 'We couldn’t save your plan. Nothing was submitted — please try again.',
-        );
-        return; // Do NOT continue to the quote request.
-      }
-    }
 
-    // Plan is saved. Now request the quote; on failure the plan is preserved.
+    /*
+     * 1. Persist. Correcting an existing plan writes back to that record;
+     *    otherwise this upserts the customer's single live draft. Either way it
+     *    cannot accumulate records however many times it is retried, which is
+     *    what produced two identical "Submitted" plans before.
+     */
+    /*
+     * The saved plan's id is carried into the quote request below, so the
+     * request knows which plan it answers. `submit` promotes this same draft
+     * rather than minting a second record, so the id stays valid afterwards.
+     */
+    let planId = editingPlanId ?? '';
     try {
-      setPhase('quoting');
-      await requestQuote({
-        organizerId: draft.selectedOrganizerId,
-        occasion: occasionLabel,
-        when: draft.eventDate,
-        where: [draft.area, draft.city].filter(Boolean).join(', '),
-        guests: draft.guests,
-        budget: draft.budget,
-        categories: catTitles,
-        ideas: draft.ideas,
-      }).unwrap();
-      // My Events is the hub: the new request appears there as "waiting for
-      // organizers to reply", and is where the customer returns to compare.
-      navigate('/workspace');
+      setPhase('saving');
+      if (editingPlanId) {
+        await updatePlan({ id: editingPlanId, body: draftToUpsert(draft) }).unwrap();
+      } else {
+        const saved = await saveDraft(draftToUpsert(draft)).unwrap();
+        planId = saved.id;
+      }
     } catch (err) {
       setPhase('idle');
       const detail = detailOf(err);
       setError(
         detail
-          ? `Your plan is saved, but the quote request failed: ${detail}. You can retry.`
-          : 'Your plan is saved, but the quote request didn’t go through. You can retry without losing anything.',
+          ? `Couldn’t save your plan: ${detail}. Nothing was submitted.`
+          : 'We couldn’t save your plan. Nothing was submitted — please try again.',
+      );
+      return; // Do NOT continue to the quote request.
+    }
+
+    // 2. Reach the organizer. A failure here leaves the plan a draft, which is
+    //    honest — and it stays editable from My Events.
+    if (!quotedPlanId) {
+      try {
+        setPhase('quoting');
+        await requestQuote({
+          organizerId: draft.selectedOrganizerId,
+          ...(planId ? { planId } : {}),
+          occasion: occasionLabel,
+          when: draft.eventDate,
+          where: composeWhere(draft.area, draft.city),
+          guests: draft.guests,
+          budget: draft.budget,
+          categories: catTitles,
+          ideas: draft.ideas,
+        }).unwrap();
+      } catch (err) {
+        setPhase('idle');
+        const detail = detailOf(err);
+        setError(
+          detail
+            ? `Your plan is saved as a draft, but the request didn’t reach the organizer: ${detail}. You can retry.`
+            : 'Your plan is saved as a draft, but the request didn’t reach the organizer. You can retry without losing anything.',
+        );
+        return;
+      }
+    }
+
+    // 3. Only now is it genuinely submitted. An edited plan is already a
+    //    record of its own and was updated in step 1, so it needs no promotion.
+    try {
+      if (editingPlanId) {
+        setQuotedPlanId(editingPlanId);
+        navigate('/workspace');
+        return;
+      }
+      const plan = await createPlan(draftToUpsert(draft)).unwrap();
+      setQuotedPlanId(plan.id);
+      // My Events is the hub: the new request appears there as "waiting for
+      // organizers to reply", and is where the customer returns to compare.
+      navigate('/workspace');
+    } catch (err) {
+      setPhase('idle');
+      // The organizer has the request; only the status stamp failed. Said
+      // plainly, because the customer must not send it a second time.
+      const detail = detailOf(err);
+      setError(
+        `Your request reached the organizer, but we couldn’t mark the plan submitted${
+          detail ? `: ${detail}` : ''
+        }. Don’t resend — check My Events in a moment.`,
       );
     }
   };

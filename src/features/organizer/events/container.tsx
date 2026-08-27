@@ -4,7 +4,7 @@ import { useEvents } from './hooks';
 import { Component } from './Component';
 
 export function EventsContainer() {
-  const { bookings, isLoading, isError, refetch } = useEvents();
+  const { bookings, awaiting, isLoading, isError, refetch } = useEvents();
 
   if (isLoading) return <LoadingScreen message="Loading your events…" />;
   if (isError) {
@@ -15,7 +15,7 @@ export function EventsContainer() {
       />
     );
   }
-  if (bookings.length === 0) {
+  if (bookings.length === 0 && awaiting.length === 0) {
     return (
       <div style={{ maxWidth: 640, margin: '80px auto', padding: '0 20px' }}>
         <EmptyState
@@ -27,5 +27,5 @@ export function EventsContainer() {
     );
   }
 
-  return <Component bookings={bookings} />;
+  return <Component bookings={bookings} awaiting={awaiting} />;
 }

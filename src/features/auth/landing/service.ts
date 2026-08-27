@@ -18,6 +18,7 @@
  * Each remaining function keeps the matching apiClient call commented above it,
  * for when this copy becomes CMS-driven.
  */
+import { apiClient } from '@lib/api';
 import { baseApi, toQueryResult } from '@lib/rtk';
 import type { Category, FaqItem, Feature, HowItWorksStep } from './types';
 
@@ -99,12 +100,37 @@ const wrapQuery =
   () =>
     toQueryResult(fn);
 
+/**
+ * Platform statistics for the hero.
+ *
+ * This is the endpoint the note at the top of this file was waiting for. Every
+ * figure is counted server-side from real bookings and organizers, and any that
+ * has nothing behind it arrives as null so the hero can leave that card out
+ * rather than print a zero that reads as a claim.
+ */
+export interface PlatformStatistics {
+  celebrationsPlanned: number | null;
+  averageRating: number | null;
+  ratingCount: number | null;
+  verifiedShare: number | null;
+  familiesServed: number | null;
+}
+
 export const landingApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getCategories: build.query<Category[], void>({ queryFn: wrapQuery(getCategories) }),
     getSteps: build.query<HowItWorksStep[], void>({ queryFn: wrapQuery(getSteps) }),
     getFeatures: build.query<Feature[], void>({ queryFn: wrapQuery(getFeatures) }),
     getFaqs: build.query<FaqItem[], void>({ queryFn: wrapQuery(getFaqs) }),
+
+    /** The one landing endpoint that is real data rather than static copy. */
+    getPlatformStatistics: build.query<PlatformStatistics, void>({
+      queryFn: () =>
+        toQueryResult(
+          async () =>
+            (await apiClient.get<PlatformStatistics>('/content/getPlatformStatistics')).data,
+        ),
+    }),
   }),
 });
 
@@ -113,4 +139,5 @@ export const {
   useGetStepsQuery,
   useGetFeaturesQuery,
   useGetFaqsQuery,
+  useGetPlatformStatisticsQuery,
 } = landingApi;

@@ -46,6 +46,11 @@ async function fetchPlanOrganizers(args: RecommendationArgs): Promise<PlanOrgani
 export interface PlanQuoteArgs {
   organizerId: string;
   occasion: string;
+  /**
+   * The plan this request came from. My Events joins plan → request → booking
+   * on it so one celebration is one card, not three unrelated ones.
+   */
+  planId?: string;
   when?: string;
   where?: string;
   guests?: string;
@@ -99,10 +104,41 @@ export const planApi = baseApi.injectEndpoints({
         toQueryResult(async () => (await apiClient.put<PlanSubmission>('/plan/saveDraft', body)).data),
       invalidatesTags: ['Plans'],
     }),
-    /** Submit (persist) the plan — returns the created record + plan code. */
+    /**
+     * Promotes the live draft to SUBMITTED and stamps a plan code.
+     *
+     * Called only once the quote request has actually reached an organizer —
+     * see ReviewStep. Calling it earlier is what left plans reading "Submitted"
+     * with no request behind them.
+     */
     createPlan: build.mutation<PlanSubmission, PlanUpsert>({
       queryFn: (body) =>
         toQueryResult(async () => (await apiClient.post<PlanSubmission>('/plan/createPlan', body)).data),
+      invalidatesTags: ['Plans'],
+    }),
+
+    /** One plan by id, for editing an existing one in the wizard. */
+    getPlan: build.query<PlanSubmission, string>({
+      queryFn: (id) =>
+        toQueryResult(
+          async () =>
+            (await apiClient.get<PlanSubmission>(`/plan/getPlan/${encodeURIComponent(id)}`)).data,
+        ),
+      providesTags: ['Plans'],
+    }),
+
+    /** Edits an existing plan in place, rather than creating a second one. */
+    updatePlan: build.mutation<PlanSubmission, { id: string; body: PlanUpsert }>({
+      queryFn: ({ id, body }) =>
+        toQueryResult(
+          async () =>
+            (
+              await apiClient.patch<PlanSubmission>(
+                `/plan/updatePlan/${encodeURIComponent(id)}`,
+                body,
+              )
+            ).data,
+        ),
       invalidatesTags: ['Plans'],
     }),
   }),
@@ -116,6 +152,8 @@ export const {
   useGetMyQuotesQuery,
   useSavePlanDraftMutation,
   useCreatePlanMutation,
+  useGetPlanQuery,
+  useUpdatePlanMutation,
 } = planApi;
 
 /** Editable event draft (client state) for the plan wizard. Date defaults to today. */

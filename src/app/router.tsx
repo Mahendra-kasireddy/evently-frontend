@@ -44,6 +44,7 @@ const BookingDetailPage = lazy(() => import('@features/customer/booking-detail/p
 const WorkspacePage = lazy(() => import('@features/customer/workspace/page'));
 const PaymentSuccessPage = lazy(() => import('@features/customer/payment-success/page'));
 const DiscoverPage = lazy(() => import('@features/customer/discover/page'));
+const ContactPage = lazy(() => import('@features/customer/contact/page'));
 const ProfilePage = lazy(() => import('@features/customer/profile/page'));
 const SettingsPage = lazy(() => import('@features/customer/settings/page'));
 const WorkspaceInvitationPage = lazy(
@@ -132,6 +133,12 @@ export const router = createBrowserRouter([
       },
       { path: '/payment-success/:id', element: lazyRoute(PaymentSuccessPage, 'payment-success') },
       { path: '/discover', element: lazyRoute(DiscoverPage, 'discover') },
+      /*
+       * Contact Us sits inside CustomerLayout, which serves both signed-in and
+       * anonymous visitors — so the page carries the normal Evently header and
+       * footer either way, and no guard stands between someone and support.
+       */
+      { path: '/contact', element: lazyRoute(ContactPage, 'contact') },
       { path: '/profile', element: lazyRoute(ProfilePage, 'profile') },
       { path: '/settings', element: lazyRoute(SettingsPage, 'settings') },
       // Kept as an entry point only: the invitation itself lives under the

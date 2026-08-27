@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { CalendarSearch, ChevronLeft, Clock } from 'lucide-react';
+import { CalendarSearch, Clock } from 'lucide-react';
 import { LoadingScreen, ErrorState, EmptyState } from '@shared/components';
 import { useGetBookingQuery } from '@features/customer/booking/service';
+import { EventTrail } from '../sections';
 import { bookedWorkspaceRoute, MY_EVENTS_ROUTE } from '../routes';
 import { Component } from './Component';
 import { INVITATION_COPY as COPY } from './constants';
@@ -75,17 +76,16 @@ export function InvitationContainer({ bookingId }: { bookingId: string }) {
     return (
       <main className={styles.page}>
         <div className={styles.container}>
+          <EventTrail
+            crumbs={[
+              { label: 'My Events', to: MY_EVENTS_ROUTE },
+              { label: booking.data.title || 'Event', to: bookedWorkspaceRoute(bookingId) },
+            ]}
+            current="Guest invitation"
+          />
           <section className={styles.hero}>
             <span className={styles.blob} aria-hidden />
             <span className={styles.blob2} aria-hidden />
-            <button
-              type="button"
-              className={styles.back}
-              onClick={backToEvent}
-              aria-label={COPY.back}
-            >
-              <ChevronLeft size={18} />
-            </button>
             <div className={styles.heroText}>
               <span className={styles.eyebrow}>{COPY.eyebrowLead}</span>
               <h1 className={styles.heading}>{COPY.heading}</h1>
@@ -124,7 +124,19 @@ export function InvitationContainer({ bookingId }: { bookingId: string }) {
   }
 
   return (
-    <Component
+    <>
+      {/* Two levels below the hub, so the full trail: the invitation only makes
+          sense in the context of the event it belongs to. */}
+      <div className={styles.trail}>
+        <EventTrail
+          crumbs={[
+            { label: 'My Events', to: MY_EVENTS_ROUTE },
+            { label: booking.data.title || 'Event', to: bookedWorkspaceRoute(bookingId) },
+          ]}
+          current="Guest invitation"
+        />
+      </div>
+      <Component
       invitation={invitation.data}
       organizerName={booking.data.organizer?.name ?? 'your organizer'}
       isApproving={approveState.isLoading}
@@ -156,7 +168,7 @@ export function InvitationContainer({ bookingId }: { bookingId: string }) {
           return null;
         }
       }}
-      onBack={backToEvent}
-    />
+      />
+    </>
   );
 }

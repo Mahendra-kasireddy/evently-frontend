@@ -1,5 +1,4 @@
 import {
-  ChevronLeft,
   ChevronRight,
   Heart,
   Sparkles,
@@ -10,6 +9,8 @@ import {
   UserCheck,
 } from 'lucide-react';
 import type { ApiBooking, ApiBookingTask } from '@features/customer/booking/types';
+import { BackPill } from '../sections';
+import { MY_EVENTS_ROUTE } from '../routes';
 import type { CustomerInvitation } from '../invitation/service';
 import type { IdeaCounts } from '../ideas/service';
 import styles from './styles.module.css';
@@ -71,7 +72,6 @@ export interface BookedWorkspaceComponentProps {
   onOpenIdeas: () => void;
   /** Opens the invitation screen; approving happens there, not here. */
   onOpenInvitation: () => void;
-  onBack: () => void;
 }
 
 /**
@@ -91,7 +91,6 @@ export function Component({
   ideaCounts,
   onOpenIdeas,
   onOpenInvitation,
-  onBack,
 }: BookedWorkspaceComponentProps) {
   const progress = Math.min(100, Math.max(0, b.progress ?? 0));
   const offset = CIRC * (1 - progress / 100);
@@ -103,9 +102,7 @@ export function Component({
   return (
     <main className={styles.page}>
       <div className={styles.container}>
-        <button type="button" className={styles.back} onClick={onBack}>
-          <ChevronLeft size={16} /> My Events
-        </button>
+        <BackPill to={MY_EVENTS_ROUTE} label="My Events" />
 
         {/* ------------------------------------------------------- hero */}
         <section className={styles.hero}>

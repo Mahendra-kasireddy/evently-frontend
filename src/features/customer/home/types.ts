@@ -66,11 +66,13 @@ export type CurrentEventStage =
 
 export type BookingStatusValue =
   | 'pending'
+  | 'awaiting_organizer'
   | 'confirmed'
   | 'in_progress'
   | 'completed'
   | 'cancelled'
-  | 'rejected';
+  | 'rejected'
+  | 'expired';
 
 export interface CurrentEventOrganizer {
   id: string;

@@ -3,7 +3,7 @@ import { usePlan } from './hooks';
 import { Component } from './Component';
 
 export function PlanContainer() {
-  const { data, isLoading, isError, refetch, draft, setOccasion, setField, setStep, setSelectedOrganizer, toggleCategory } = usePlan();
+  const { data, isLoading, isError, refetch, draft, editingPlanId, setOccasion, setField, setStep, setSelectedOrganizer, toggleCategory } = usePlan();
   if (isError && !data) {
     return (
       <ErrorState
@@ -17,6 +17,7 @@ export function PlanContainer() {
     <Component
       data={data}
       draft={draft}
+      editingPlanId={editingPlanId}
       setOccasion={setOccasion}
       setField={setField}
       setStep={setStep}

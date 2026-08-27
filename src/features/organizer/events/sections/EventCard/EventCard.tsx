@@ -8,9 +8,13 @@ export interface EventCardProps {
   booking: ApiBooking;
 }
 
+/** Bookings the organizer still owes an answer on. */
+const AWAITING = new Set<ApiBooking['status']>(['pending', 'awaiting_organizer']);
+
 export function EventCard({ booking }: EventCardProps) {
   const navigate = useNavigate();
   const doneTasks = booking.tasks.filter((t) => t.status === 'done').length;
+  const awaiting = AWAITING.has(booking.status);
 
   return (
     <button type="button" className={styles.card} onClick={() => navigate(`/organizer/events/${booking.id}`)}>
@@ -21,7 +25,9 @@ export function EventCard({ booking }: EventCardProps) {
             {[dateLabel(booking.eventDate), booking.location].filter(Boolean).join(' · ')}
           </small>
         </div>
-        <span className={styles.status}>{bookingStatusLabel(booking.status)}</span>
+        <span className={`${styles.status} ${awaiting ? styles.statusAwaiting : ''}`}>
+          {bookingStatusLabel(booking.status)}
+        </span>
       </div>
 
       <div className={styles.foot}>
@@ -33,7 +39,7 @@ export function EventCard({ booking }: EventCardProps) {
       </div>
 
       <span className={styles.detail}>
-        Open execution board <ChevronRight size={13} />
+        {awaiting ? 'Review & respond' : 'Open execution board'} <ChevronRight size={13} />
       </span>
     </button>
   );

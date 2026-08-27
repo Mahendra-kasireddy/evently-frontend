@@ -1,0 +1,19 @@
+.back {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 34px;
+  padding: 0 14px 0 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface, #fff);
+  color: var(--color-navy);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: border-color 0.15s ease;
+}
+.back:hover { border-color: var(--border-card-hover); }
+.back:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }

@@ -55,7 +55,6 @@ export function BookedWorkspaceContainer({ bookingId }: { bookingId: string }) {
       ideaCounts={board?.counts ?? { shared: 0, planned: 0, awaitingApproval: 0 }}
       onOpenIdeas={() => navigate(ideasRoute(bookingId))}
       onOpenInvitation={() => navigate(invitationRoute(bookingId))}
-      onBack={() => navigate(MY_EVENTS_ROUTE)}
     />
   );
 }

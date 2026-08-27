@@ -1,2 +1,1 @@
-export { EventTrail } from './EventTrail';
-export type { TrailCrumb } from './EventTrail';
+export { EventTrail, type EventTrailProps, type TrailCrumb } from './EventTrail';

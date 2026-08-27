@@ -7,3 +7,19 @@
 .subtitle { font-size: 0.9rem; color: var(--color-text-muted); margin: 0; }
 
 .list { display: flex; flex-direction: column; gap: 14px; }
+
+.section { display: flex; flex-direction: column; gap: 16px; }
+.urgent { display: inline-flex; align-items: center; gap: 10px; }
+.count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: var(--radius-pill);
+  background: #fdf0dc;
+  color: #b5730f;
+  font-size: 0.85rem;
+  font-weight: 800;
+}

@@ -33,6 +33,8 @@ function blockReasonFor(step: number, draft: PlanDraft): string | undefined {
 export interface PlanComponentProps {
   data: PlanData;
   draft: PlanDraft;
+  /** Set when correcting an already-submitted plan rather than starting one. */
+  editingPlanId: string;
   setOccasion: (id: string) => void;
   setField: (field: keyof PlanDraft, value: string) => void;
   setStep: (n: number) => void;
@@ -40,7 +42,7 @@ export interface PlanComponentProps {
   toggleCategory: (id: string) => void;
 }
 
-export function Component({ data, draft, setOccasion, setField, setStep, setSelectedOrganizer, toggleCategory }: PlanComponentProps) {
+export function Component({ data, draft, editingPlanId, setOccasion, setField, setStep, setSelectedOrganizer, toggleCategory }: PlanComponentProps) {
   // Defensive defaults — never crash if the API omits an array (e.g. an older
   // backend without budgetOptions, or config not yet re-seeded).
   const occasions = data.occasions ?? [];
@@ -97,7 +99,7 @@ export function Component({ data, draft, setOccasion, setField, setStep, setSele
           {step === organizersIndex ? (
             <FindOrganizers filters={data.filters} draft={draft} occasionLabel={occasion.label} onSelectOrganizer={selectOrganizer} />
           ) : step === reviewIndex ? (
-            <ReviewStep data={data} draft={draft} occasionLabel={occasion.label} onEdit={setStep} />
+            <ReviewStep data={data} draft={draft} editingPlanId={editingPlanId} occasionLabel={occasion.label} onEdit={setStep} />
           ) : (
             <div className={styles.grid}>
               <div className={styles.col}>

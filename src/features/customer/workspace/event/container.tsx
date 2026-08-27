@@ -3,9 +3,10 @@ import { CalendarSearch } from 'lucide-react';
 import { LoadingScreen, ErrorState, EmptyState } from '@shared/components';
 import { useQuotes } from '@features/customer/quotes/hooks';
 import { Component as CompareComponent } from '@features/customer/quotes/Component';
-import { EventTrail } from '../sections/EventTrail';
+import { BackPill } from '../sections';
 import { MY_EVENTS_ROUTE, responseRoute } from '../routes';
 import { eventLabel } from '../label';
+import styles from './styles.module.css';
 
 /**
  * My Events → one event: compare the organizer responses to it.
@@ -48,7 +49,12 @@ export function WorkspaceEventContainer({ requestId }: { requestId: string }) {
 
   return (
     <>
-      <EventTrail crumbs={[{ label: 'My Events', to: MY_EVENTS_ROUTE }]} current={eventLabel(detail)} />
+      {/* One level below the hub, so a pill — a breadcrumb with a single
+          ancestor was just a back button that took two lines to say so. */}
+      <div className={styles.nav}>
+        <BackPill to={MY_EVENTS_ROUTE} label="My Events" />
+        <span className={styles.here}>{eventLabel(detail)}</span>
+      </div>
       <CompareComponent
         detail={detail}
         /* The hub is the event picker; a second picker here is what made the

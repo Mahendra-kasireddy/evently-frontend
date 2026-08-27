@@ -1,9 +1,15 @@
 import { Link } from 'react-router-dom';
-import { Check, ChevronRight, Clock, Heart, MessageSquare, Plus } from 'lucide-react';
+import { Check, ChevronRight, Clock, Heart, MessageSquare, Plus, ShieldCheck, X } from 'lucide-react';
 import { Avatar, Btn, Card, formatInr } from '@shared/partner';
 import { dateLabel } from '@features/organizer/bookings/transform';
 import { TaskBoard, IdeaSummary } from './sections';
-import { COMPLETABLE_STATUSES, EVENT_DETAIL_COPY as COPY, countdownLabel } from './constants';
+import {
+  COMPLETABLE_STATUSES,
+  RESPONDABLE_STATUSES,
+  CONFIRM_COPY,
+  EVENT_DETAIL_COPY as COPY,
+  countdownLabel,
+} from './constants';
 import type { ApiBooking, BookingTaskStatus } from './types';
 import type { IdeaCounts } from '@features/board';
 import styles from './styles.module.css';
@@ -25,6 +31,11 @@ export interface EventDetailComponentProps {
   onUploadProof: (taskId: string, file: File) => void;
   onMarkCompleted: () => void;
   isCompleting: boolean;
+  declineReason: string;
+  setDeclineReason: (v: string) => void;
+  onAcceptBooking: () => void;
+  onDeclineBooking: () => void;
+  isResponding: boolean;
   /** Real counts from the ideas board; the feed itself has its own screen. */
   ideaCounts: IdeaCounts;
   onOpenIdeaBoard: () => void;
@@ -47,6 +58,11 @@ export function Component({
   onUploadProof,
   onMarkCompleted,
   isCompleting,
+  declineReason,
+  setDeclineReason,
+  onAcceptBooking,
+  onDeclineBooking,
+  isResponding,
   ideaCounts,
   onOpenIdeaBoard,
 }: EventDetailComponentProps) {
@@ -57,6 +73,7 @@ export function Component({
     .filter(Boolean)
     .join(' · ');
   const canComplete = COMPLETABLE_STATUSES.has(booking.status);
+  const mustRespond = RESPONDABLE_STATUSES.has(booking.status);
 
   return (
     <div className={styles.page}>
@@ -76,6 +93,53 @@ export function Component({
           </Btn>
         </div>
       </Card>
+
+      {/* The accept/decline gate. Without it a paid booking had no way to
+          leave "awaiting organizer" anywhere in the product. */}
+      {mustRespond && (
+        <section className={styles.confirm}>
+          <div className={styles.confirmHead}>
+            <span className={styles.confirmIcon}>
+              <ShieldCheck size={18} />
+            </span>
+            <div className={styles.confirmText}>
+              <strong>{CONFIRM_COPY.title}</strong>
+              <span>{CONFIRM_COPY.body}</span>
+              {booking.organizerRespondBy && (
+                <em className={styles.confirmDeadline}>
+                  {CONFIRM_COPY.deadline(booking.organizerRespondBy)}
+                </em>
+              )}
+            </div>
+          </div>
+          <div className={styles.confirmActions}>
+            <input
+              type="text"
+              className={styles.confirmReason}
+              placeholder={CONFIRM_COPY.reasonPlaceholder}
+              value={declineReason}
+              onChange={(e) => setDeclineReason(e.target.value)}
+              maxLength={500}
+            />
+            <Btn
+              kind="outline"
+              icon={<X size={14} />}
+              onClick={onDeclineBooking}
+              disabled={isResponding}
+            >
+              {isResponding ? CONFIRM_COPY.declining : CONFIRM_COPY.decline}
+            </Btn>
+            <Btn
+              kind="teal"
+              icon={<Check size={15} />}
+              onClick={onAcceptBooking}
+              disabled={isResponding}
+            >
+              {isResponding ? CONFIRM_COPY.accepting : CONFIRM_COPY.accept}
+            </Btn>
+          </div>
+        </section>
+      )}
 
       <div className={styles.countdown}>
         <Clock size={18} className={styles.countdownIcon} />

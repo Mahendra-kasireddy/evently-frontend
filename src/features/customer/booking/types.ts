@@ -19,13 +19,24 @@ export interface BookingData {
 }
 
 // ---- Booking API shapes (MongoDB-backed) ----
+/**
+ * The booking axis. Separate from `PaymentStatus` on purpose: a booking sits at
+ * `awaiting_organizer` with the advance already paid, and collapsing the two
+ * into one value is what made the detail screen say "Pending" to a customer who
+ * had just been charged.
+ */
 export type BookingStatus =
   | 'pending'
+  | 'awaiting_organizer'
   | 'confirmed'
   | 'in_progress'
   | 'completed'
   | 'cancelled'
-  | 'rejected';
+  | 'rejected'
+  | 'expired';
+
+/** What the customer has actually settled. */
+export type PaymentStatus = 'unpaid' | 'advance_paid' | 'paid_in_full';
 
 export interface BookingOrganizer {
   id: string;
@@ -67,7 +78,14 @@ export interface ApiBooking {
   daysToGo: number;
   amount: number;
   advanceAmount: number;
+  advancePercentage: number;
   balanceAmount: number;
+  paymentStatus: PaymentStatus;
+  amountPaid: number;
+  advancePaidAt: string | null;
+  /** Deadline for the organizer to accept/decline; null once answered. */
+  organizerRespondBy: string | null;
+  declineReason: string;
   progress: number;
   steps: BookingStep[];
   tasks: ApiBookingTask[];
@@ -76,6 +94,8 @@ export interface ApiBooking {
   organizer: BookingOrganizer | null;
   customer: BookingCustomerRef | null;
   quotationId: string | null;
+  /** The quote request this booking came from — used to group My Events. */
+  requestId: string | null;
   createdAt?: string;
   updatedAt?: string;
 }

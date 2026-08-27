@@ -1,4 +1,3 @@
-export { WorkspaceHero } from './WorkspaceHero';
-export { WorkspaceMain } from './WorkspaceMain';
-export { WorkspaceResponses } from './WorkspaceResponses';
-export { WorkspaceBookings } from './WorkspaceBookings';
+export { EventCard, type EventCardProps } from './EventCard';
+export { EventTrail, type EventTrailProps, type TrailCrumb } from './EventTrail';
+export { BackPill, type BackPillProps } from './BackPill';

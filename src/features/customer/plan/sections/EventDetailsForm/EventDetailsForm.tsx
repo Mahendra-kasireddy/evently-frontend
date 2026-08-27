@@ -11,6 +11,15 @@ export interface EventDetailsFormProps {
   onField: (field: keyof PlanDraft, value: string) => void;
 }
 
+/*
+ * The quote request carries these two joined as "Area, City", and the API caps
+ * that at 120 characters. Capping the inputs here stops the customer while they
+ * are typing rather than after their plan has already been saved, which is
+ * where this used to surface. 70 + ', ' + 40 = 112, comfortably inside.
+ */
+const AREA_MAX = 70;
+const CITY_MAX = 40;
+
 export function EventDetailsForm({ draft, cityOptions, guestOptions, budgetOptions = [], onField }: EventDetailsFormProps) {
   const today = new Date().toISOString().slice(0, 10);
 
@@ -48,6 +57,7 @@ export function EventDetailsForm({ draft, cityOptions, guestOptions, budgetOptio
               list="plan-cities"
               value={draft.city}
               placeholder="Enter your city"
+              maxLength={CITY_MAX}
               onChange={(e) => onField('city', e.target.value)}
             />
             <datalist id="plan-cities">
@@ -66,6 +76,7 @@ export function EventDetailsForm({ draft, cityOptions, guestOptions, budgetOptio
           className={styles.input}
           value={draft.area}
           placeholder="e.g. Banjara Hills"
+          maxLength={AREA_MAX}
           onChange={(e) => onField('area', e.target.value)}
         />
       </div>

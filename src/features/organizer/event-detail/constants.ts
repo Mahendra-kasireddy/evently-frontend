@@ -17,6 +17,28 @@ export const EVENT_DETAIL_COPY = {
   invitationSub: 'Build the digital invite & send to the customer for approval',
 } as const;
 
+/**
+ * Statuses where the booking is waiting on this organizer to accept or decline.
+ * The customer has already paid their advance by this point.
+ */
+export const RESPONDABLE_STATUSES: ReadonlySet<BookingStatus> = new Set<BookingStatus>([
+  'pending',
+  'awaiting_organizer',
+]);
+
+export const CONFIRM_COPY = {
+  title: 'This booking needs your confirmation',
+  body: 'The customer has paid their advance. Accept to lock the date, or decline so their advance can be refunded.',
+  accept: 'Accept booking',
+  accepting: 'Accepting…',
+  decline: 'Decline',
+  declining: 'Declining…',
+  reasonPlaceholder: 'Reason for declining (shared with the customer)',
+  deadline: (iso: string) => `Respond by ${new Date(iso).toLocaleString('en-GB', {
+    weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit',
+  })}`,
+} as const;
+
 /** Statuses from which an organizer may still close the event out. */
 export const COMPLETABLE_STATUSES: ReadonlySet<BookingStatus> = new Set<BookingStatus>([
   'confirmed',
@@ -44,6 +66,10 @@ export const COLUMN_ACCENT: Record<BookingTaskStatus, string> = {
 export function countdownLabel(daysToGo: number, status: BookingStatus): string {
   if (status === 'completed') return 'Event completed';
   if (status === 'cancelled' || status === 'rejected') return 'Event cancelled';
+  if (status === 'expired') return 'Booking expired — you did not respond in time';
+  if (status === 'pending' || status === 'awaiting_organizer') {
+    return 'Awaiting your confirmation';
+  }
   if (daysToGo > 1) return `${daysToGo} days until event day`;
   if (daysToGo === 1) return 'Tomorrow is event day';
   if (daysToGo === 0) return 'Today is event day';

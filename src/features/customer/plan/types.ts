@@ -149,6 +149,8 @@ export interface QuoteResponse {
  */
 export interface PlanQuoteRequest {
   id: string;
+  /** The plan submission this request was raised from, when there is one. */
+  planId: string | null;
   occasion: string;
   when: string;
   where: string;

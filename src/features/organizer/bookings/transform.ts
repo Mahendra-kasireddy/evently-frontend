@@ -4,12 +4,14 @@ import type { BookingStatus, BookingTaskStatus } from './types';
 export { formatINR };
 
 const STATUS_LABEL: Record<BookingStatus, string> = {
-  pending: 'Awaiting confirmation',
+  pending: 'Booking placed',
+  awaiting_organizer: 'Needs your confirmation',
   confirmed: 'Confirmed',
   in_progress: 'In progress',
   completed: 'Completed',
   cancelled: 'Cancelled',
   rejected: 'Declined',
+  expired: 'Expired — no response',
 };
 
 export function bookingStatusLabel(status: BookingStatus): string {

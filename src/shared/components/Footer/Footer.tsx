@@ -1,9 +1,19 @@
+import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Linkedin } from 'lucide-react';
 import styles from './Footer.module.css';
 
-/** App-wide footer / bottom bar. Shared across pages. Self-contained config. */
-const COMPANY_LINKS = [
-  'Contact Us', 'Privacy Policy', 'Refund Policy', 'Terms & Conditions', 'Blog', 'Resources',
+/**
+ * App-wide footer / bottom bar. Shared across pages. Self-contained config.
+ *
+ * `to` is set for the links that lead somewhere real; the rest stay inert
+ * rather than routing to a page that does not exist yet.
+ */
+const COMPANY_LINKS: Array<{ label: string; to?: string }> = [
+  { label: 'Contact Us', to: '/contact' },
+  { label: 'Privacy Policy' },
+  { label: 'Refund Policy' },
+  { label: 'Terms & Conditions' },
+  { label: 'Blog' },
 ];
 const CONTACT_EMAIL = 'support@evently.com';
 const COPYRIGHT = '© 2026 Evently Technologies Pvt. Ltd. · Made in Hyderabad, India';
@@ -27,7 +37,13 @@ export function Footer() {
           <h2 className={styles.colTitle}>Company</h2>
           <ul className={styles.linkList}>
             {COMPANY_LINKS.map((l) => (
-              <li key={l}><a href="#" className={styles.link}>{l}</a></li>
+              <li key={l.label}>
+                {l.to ? (
+                  <Link to={l.to} className={styles.link}>{l.label}</Link>
+                ) : (
+                  <a href="#" className={styles.link}>{l.label}</a>
+                )}
+              </li>
             ))}
           </ul>
         </nav>

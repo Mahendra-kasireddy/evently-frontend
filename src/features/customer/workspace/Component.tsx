@@ -1,75 +1,74 @@
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CalendarPlus } from 'lucide-react';
+import { CalendarPlus, Inbox } from 'lucide-react';
 import { EmptyState } from '@shared/components';
-import { WorkspaceHero, WorkspaceMain, WorkspaceResponses, WorkspaceBookings } from './sections';
-import { bookedWorkspaceRoute, eventRoute, invitationRoute, responseRoute } from './routes';
-import type { PlanSubmission, PlanQuoteRequest, ApiBooking } from './types';
+import { EventCard } from './sections';
+import { tabFor, type EventTab, type WorkspaceEvent } from './event-model';
 import styles from './styles.module.css';
 
 export interface WorkspaceComponentProps {
-  plans: PlanSubmission[];
-  quotes: PlanQuoteRequest[];
-  bookings: ApiBooking[];
+  events: WorkspaceEvent[];
 }
 
+const TABS: Array<{ id: EventTab; label: string; empty: string }> = [
+  {
+    id: 'needs-you',
+    label: 'Needs you',
+    empty: 'Nothing is waiting on you right now.',
+  },
+  {
+    id: 'upcoming',
+    label: 'Upcoming',
+    empty: 'No events in progress. Plan one to get started.',
+  },
+  {
+    id: 'past',
+    label: 'Past',
+    empty: 'Finished and cancelled events will appear here.',
+  },
+];
+
 /**
- * My Events — the customer's central workspace, ordered by how much each block
- * is waiting on them:
+ * My Events — one list, one card per event.
  *
- *   1. Booked events        — already committed, needs managing
- *   2. Organizer responses  — a decision is outstanding
- *   3. Plans & history      — drafts to resume, past submissions
+ * This screen used to stack four sections (bookings, organizer responses, draft
+ * plans, submitted plans) that each held a different record of the *same*
+ * events, so one celebration appeared up to three times under two names. Now a
+ * plan, its quote request and its booking are folded into a single card that
+ * carries the event from draft to delivered, and the only division is by whose
+ * move it is:
  *
- * Organizer responses sits full width (it was previously a cramped right-rail
- * "Quote status" list) because choosing between organizers is the decision this
- * screen exists to support. Its per-event action carries the request id, so
- * "Compare" always opens the comparison for the event the customer was looking
- * at rather than whichever request a default heuristic picked.
+ *   Needs you  — a draft to finish, quotes to compare, an invitation to approve
+ *   Upcoming   — live, but waiting on an organizer
+ *   Past       — delivered, cancelled or expired
  */
-export function Component({ plans, quotes, bookings }: WorkspaceComponentProps) {
+export function Component({ events }: WorkspaceComponentProps) {
   const navigate = useNavigate();
 
-  /*
-   * Nearest event first, finished and cancelled ones last.
-   *
-   * Sorted on `daysToGo`, the value the API already computes for each booking,
-   * rather than re-deriving a distance from `eventDate` here — one source for
-   * "how far away is this" keeps this list and the booked-event workspace in
-   * agreement. A booking with no usable date sinks below the dated ones instead
-   * of jumping to the top on a NaN comparison.
-   */
-  const orderedBookings = [...bookings].sort((a, b) => {
-    const over = (x: typeof a) =>
-      x.status === 'completed' || x.status === 'cancelled' || x.status === 'rejected';
-    if (over(a) !== over(b)) return over(a) ? 1 : -1;
-    const days = (x: typeof a) =>
-      typeof x.daysToGo === 'number' && !Number.isNaN(x.daysToGo)
-        ? x.daysToGo
-        : Number.POSITIVE_INFINITY;
-    return days(a) - days(b);
-  });
+  const grouped = useMemo(() => {
+    const map: Record<EventTab, WorkspaceEvent[]> = {
+      'needs-you': [],
+      upcoming: [],
+      past: [],
+    };
+    for (const e of events) map[tabFor(e)].push(e);
+    return map;
+  }, [events]);
 
-  const draftCount = plans.filter((p) => p.status === 'draft').length;
-  const submittedCount = plans.length - draftCount;
-  const isEmpty = plans.length === 0 && quotes.length === 0 && bookings.length === 0;
+  // Open on whichever tab has something to act on — the customer came here to
+  // find out what they owe, and landing on an empty tab hides that.
+  const [tab, setTab] = useState<EventTab>(() =>
+    grouped['needs-you'].length > 0 ? 'needs-you' : 'upcoming',
+  );
 
-  // Both steps stay under /workspace, so the nav item stays on My Events and the
-  // URL keeps telling the customer which section — and which event — they are in.
-  const openEvent = (requestId: string) => navigate(eventRoute(requestId));
-  const openResponse = (requestId: string, quotationId: string) =>
-    navigate(responseRoute(requestId, quotationId));
+  const active = TABS.find((t) => t.id === tab) ?? TABS[1]!;
+  const shown = grouped[tab];
 
-  return (
-    <main className={styles.page}>
-      <div className={styles.container}>
-        <WorkspaceHero
-          draftCount={draftCount}
-          submittedCount={submittedCount}
-          quoteCount={quotes.length}
-          onStartPlan={() => navigate('/plan')}
-        />
-
-        {isEmpty ? (
+  if (events.length === 0) {
+    return (
+      <main className={styles.page}>
+        <div className={styles.container}>
+          <Header onStartPlan={() => navigate('/plan')} />
           <EmptyState
             icon={CalendarPlus}
             title="No events yet"
@@ -77,28 +76,68 @@ export function Component({ plans, quotes, bookings }: WorkspaceComponentProps) 
             actionLabel="Plan an event"
             onAction={() => navigate('/plan')}
           />
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className={styles.page}>
+      <div className={styles.container}>
+        <Header onStartPlan={() => navigate('/plan')} />
+
+        <div className={styles.tabs} role="tablist" aria-label="Filter events">
+          {TABS.map((t) => {
+            const count = grouped[t.id].length;
+            const selected = t.id === tab;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                className={`${styles.tab} ${selected ? styles.tabActive : ''}`}
+                onClick={() => setTab(t.id)}
+              >
+                {t.label}
+                <span
+                  className={`${styles.tabCount} ${
+                    t.id === 'needs-you' && count > 0 ? styles.tabCountAlert : ''
+                  }`}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {shown.length === 0 ? (
+          <p className={styles.emptyLine}>
+            <Inbox size={16} /> {active.empty}
+          </p>
         ) : (
-          <>
-            {/* A booked event opens its workspace inside My Events, rather than
-                the standalone booking-details screen outside the section. */}
-            <WorkspaceBookings
-              bookings={orderedBookings}
-              onOpen={(id) => navigate(bookedWorkspaceRoute(id))}
-              onOpenInvitation={(id) => navigate(invitationRoute(id))}
-            />
-            <WorkspaceResponses
-              requests={quotes}
-              onOpenEvent={openEvent}
-              onOpenResponse={openResponse}
-            />
-            <WorkspaceMain
-              plans={plans}
-              onResume={() => navigate('/plan')}
-              onStartPlan={() => navigate('/plan')}
-            />
-          </>
+          <div className={styles.list}>
+            {shown.map((e) => (
+              <EventCard key={e.id} event={e} />
+            ))}
+          </div>
         )}
       </div>
     </main>
+  );
+}
+
+function Header({ onStartPlan }: { onStartPlan: () => void }) {
+  return (
+    <header className={styles.header}>
+      <div className={styles.headerText}>
+        <h1 className={styles.heading}>My Events</h1>
+        <p className={styles.sub}>Every event you're planning, from first draft to event day.</p>
+      </div>
+      <button type="button" className={styles.cta} onClick={onStartPlan}>
+        <CalendarPlus size={16} /> Plan a new event
+      </button>
+    </header>
   );
 }
