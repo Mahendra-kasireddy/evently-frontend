@@ -82,4 +82,15 @@
 .createWrap { font-size: 0.92rem; color: var(--color-text-muted); white-space: nowrap; }
 .createLink { color: var(--color-primary); font-weight: 700; text-decoration: none; margin-left: 4px; }
 .createLink:hover { text-decoration: underline; }
-@media (max-width: 560px) { .helpLink span, .createWrap { display: none; } }
+.createPrompt { margin-right: 4px; }
+/*
+ * Phones: drop the two labels that are only context, keep every control. The
+ * old rule hid `.createWrap` outright, which on organizer onboarding removed
+ * "Save & exit" — the only exit from the wizard.
+ */
+@media (max-width: 560px) {
+  .helpLink span,
+  .createPrompt { display: none; }
+  .actions { gap: 10px; }
+  .createLink { margin-left: 0; white-space: nowrap; }
+}

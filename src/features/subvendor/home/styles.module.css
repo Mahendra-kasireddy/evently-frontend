@@ -31,3 +31,23 @@
 
 .footer { display: flex; align-items: center; gap: 8px; background: #e7f4ee; color: #1d9e75; border-radius: 12px; padding: 12px 16px; font-size: 0.85rem; font-weight: 600; }
 .footerDot { opacity: 0.5; }
+
+/* ------------------------------------------------------- completed work */
+
+.doneIcon { color: var(--color-green); display: inline-flex; flex: 0 0 auto; }
+.doneAmount { font-size: 0.85rem; font-weight: 800; color: var(--color-navy); white-space: nowrap; }
+
+.moreNote { margin: 10px 0 0; font-size: 0.78rem; color: var(--color-text-muted); }
+
+.errBanner {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 4px;
+  padding: 10px 12px;
+  border: 1px solid #f2c9c9;
+  border-radius: 10px;
+  background: #fdf4f4;
+  font-size: 0.83rem;
+  color: #8f3232;
+}

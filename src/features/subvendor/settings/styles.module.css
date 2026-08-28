@@ -1,0 +1,193 @@
+.page { min-height: 100vh; background: var(--color-bg); padding: 22px 0 48px; }
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+@media (max-width: 700px) { .container { padding: 0 20px; } }
+
+.head { display: flex; flex-direction: column; gap: 4px; }
+.title { margin: 0; font-size: 1.6rem; font-weight: 800; color: var(--color-navy); }
+.subtitle { margin: 0; font-size: 0.9rem; color: var(--color-text-muted); }
+
+.panel {
+  background: #fff;
+  border: 1.5px solid var(--color-border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.panelHead { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.panelTitle { margin: 0; font-size: 1rem; font-weight: 800; color: var(--color-navy); }
+.panelNote { margin: 2px 0 0; font-size: 0.82rem; line-height: 1.45; color: var(--color-text-muted); }
+
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+}
+.rowLabel { flex: 0 0 auto; }
+.rowRight { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; min-width: 0; }
+.rowValue { color: var(--color-navy); font-weight: 700; word-break: break-word; text-align: right; }
+.rowNote { font-size: 0.72rem; color: var(--color-text-muted); }
+
+.editBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 13px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  cursor: pointer;
+  flex: 0 0 auto;
+  transition: border-color 0.15s ease;
+}
+.editBtn:hover { border-color: var(--border-card-hover); }
+
+.form { display: flex; flex-direction: column; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.label { font-size: 0.82rem; font-weight: 700; color: var(--color-navy); }
+
+.input {
+  height: 44px;
+  padding: 0 13px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--color-navy);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.input:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+.inputBad { border-color: #e05656; }
+.err { margin: 0; font-size: 0.78rem; color: #b23b3b; }
+
+.formActions { display: flex; gap: 10px; justify-content: flex-end; }
+.cancelBtn,
+.saveBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 11px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.cancelBtn { border: 1px solid var(--color-border); background: #fff; color: var(--color-text-muted); }
+.cancelBtn:hover:not(:disabled) { border-color: var(--border-card-hover); color: var(--color-navy); }
+.saveBtn { border: none; background: var(--color-primary); color: #fff; }
+.saveBtn:hover:not(:disabled) { background: var(--color-primary-hover); }
+.cancelBtn:disabled, .saveBtn:disabled { opacity: 0.65; cursor: not-allowed; }
+
+.savedNote {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-green);
+}
+
+.errBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0;
+  padding: 11px 13px;
+  border: 1px solid #f2c9c9;
+  border-radius: 11px;
+  background: #fdf4f4;
+  font-size: 0.83rem;
+  line-height: 1.45;
+  color: #8f3232;
+}
+
+/* Availability — same switch as the profile screen. */
+.availability { flex-direction: row; align-items: center; gap: 16px; }
+.availText { flex: 1; min-width: 0; }
+
+.switch {
+  position: relative;
+  flex: 0 0 auto;
+  width: 52px;
+  height: 30px;
+  border: none;
+  border-radius: 999px;
+  background: #d5d9e0;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.18s ease;
+}
+.switch:disabled { opacity: 0.6; cursor: not-allowed; }
+.switch:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.switchOn { background: var(--color-green); }
+.knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(14, 26, 51, 0.3);
+  transition: transform 0.18s ease;
+}
+.switchOn .knob { transform: translateX(22px); }
+
+/* Says what actually happens, in place of switches that would do nothing. */
+.infoBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 11px;
+  background: var(--color-bg);
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.signOut {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 44px;
+  padding: 0 18px;
+  margin-top: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 11px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.signOut:hover { border-color: #e05656; color: #b23b3b; }

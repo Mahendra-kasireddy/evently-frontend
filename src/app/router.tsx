@@ -69,6 +69,7 @@ const SubvendorHomePage = lazy(() => import('@features/subvendor/home/page'));
 const SubvendorTaskDetailPage = lazy(() => import('@features/subvendor/task-detail/page'));
 const SubvendorPaymentsPage = lazy(() => import('@features/subvendor/payments/page'));
 const SubvendorProfilePage = lazy(() => import('@features/subvendor/profile/page'));
+const SubvendorSettingsPage = lazy(() => import('@features/subvendor/settings/page'));
 const GuestInvitationPage = lazy(() => import('@features/guest/page'));
 
 export const router = createBrowserRouter([
@@ -203,6 +204,13 @@ export const router = createBrowserRouter([
           },
           { path: '/subvendor/payments', element: lazyRoute(SubvendorPaymentsPage, 'subvendor-payments') },
           { path: '/subvendor/profile', element: lazyRoute(SubvendorProfilePage, 'subvendor-profile') },
+          /*
+           * Sub-vendors get their own settings inside their own shell. The
+           * sidebar used to link to `/settings`, the customer page, which
+           * renders in CustomerLayout — clicking it threw a sub-vendor out of
+           * their portal into the customer header and footer.
+           */
+          { path: '/subvendor/settings', element: lazyRoute(SubvendorSettingsPage, 'subvendor-settings') },
         ],
       },
     ],

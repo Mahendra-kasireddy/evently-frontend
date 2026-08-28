@@ -1,0 +1,199 @@
+/*
+ * One stylesheet for all three wizard steps. Each step used to carry its own
+ * near-identical copy of the same field/label/input rules, which is how they
+ * drifted to different input heights and focus treatments.
+ */
+.step { display: flex; flex-direction: column; }
+
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  color: var(--color-primary);
+  margin: 0 0 6px;
+}
+
+.title {
+  margin: 0 0 6px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--color-navy);
+}
+
+.subtitle { margin: 0 0 24px; font-size: 0.95rem; color: var(--color-text-muted); }
+
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field + .field { margin-top: 20px; }
+
+.label { font-size: 0.85rem; font-weight: 700; color: var(--color-navy); }
+.hint { font-size: 0.8rem; color: var(--color-text-muted); }
+.optional { font-weight: 500; color: var(--color-text-muted); }
+
+.input {
+  height: 48px;
+  border: 1px solid var(--color-border);
+  border-radius: 11px;
+  padding: 0 15px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--color-navy);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.input::placeholder { color: var(--color-text-muted); opacity: 0.75; }
+.input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+.inputBad { border-color: #e05656; }
+
+.err { margin: 0; font-size: 0.8rem; color: #b23b3b; }
+
+/* Prefixed / suffixed money and phone controls — one joined box, matching the
+   sign-in gate rather than three loose elements in a row. */
+.combo {
+  display: flex;
+  align-items: stretch;
+  height: 48px;
+  border: 1px solid var(--color-border);
+  border-radius: 11px;
+  background: #fff;
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.combo:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+.comboBad { border-color: #e05656; }
+
+.affix {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  background: var(--color-bg);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.affixStart { border-right: 1px solid var(--color-border); color: var(--color-navy); }
+.affixEnd { border-left: 1px solid var(--color-border); }
+
+.comboInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  padding: 0 14px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--color-navy);
+}
+.comboInput:focus { outline: none; }
+.comboInput::placeholder { color: var(--color-text-muted); opacity: 0.75; }
+
+/* ------------------------------------------------------------- categories */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+@media (max-width: 720px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 420px) { .grid { grid-template-columns: 1fr; } }
+
+.tile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 11px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-navy);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.tile:hover { border-color: var(--border-card-hover); }
+.tile:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+.tileOn {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
+}
+.tileIcon { color: var(--color-text-muted); flex: 0 0 auto; }
+.tileOn .tileIcon { color: var(--color-primary); }
+
+/* The "Something else" tile reads as an action, not a trade. */
+.tileOther { border-style: dashed; }
+
+/* Revealed when "Something else" is chosen. */
+.otherPanel {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border: 1px solid #f3d8ad;
+  border-radius: 12px;
+  background: #fffaf1;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.otherNote {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #8a5709;
+}
+
+/* ------------------------------------------------------------------- link */
+.or {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 0 16px;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+.or::before,
+.or::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.browse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  border: 1px solid var(--color-border);
+  border-radius: 11px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.browse:hover:not(:disabled) { border-color: var(--border-card-hover); }
+.browse:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.browseNote {
+  margin: 8px 0 0;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}

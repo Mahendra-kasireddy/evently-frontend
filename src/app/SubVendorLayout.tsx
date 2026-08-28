@@ -144,7 +144,14 @@ export function SubVendorLayout() {
         </nav>
 
         <div className={styles.sidebarFoot}>
-          <Link to="/settings" className={styles.navItem}>
+          {/* Marked active like every other nav item — it sat outside the
+              loop above, so the sidebar never showed where you were. */}
+          <Link
+            to="/subvendor/settings"
+            className={`${styles.navItem} ${
+              pathname.startsWith('/subvendor/settings') ? styles.navActive : ''
+            }`}
+          >
             <Settings size={17} />
             Settings
           </Link>

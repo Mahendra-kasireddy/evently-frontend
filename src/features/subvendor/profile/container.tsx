@@ -3,17 +3,33 @@ import { useSubvendorProfile } from './hooks';
 import { Component } from './Component';
 
 export function SubvendorProfileContainer() {
-  const { profile, organizers, isLoading, isError, refetch } = useSubvendorProfile();
+  const p = useSubvendorProfile();
 
-  if (isLoading) return <LoadingScreen message="Loading your profile…" />;
-  if (isError || !profile) {
+  if (p.isLoading) return <LoadingScreen message="Loading your profile…" />;
+  if (p.isError || !p.profile) {
     return (
       <ErrorState
         message="We couldn't load your profile. Please check your connection and try again."
-        onRetry={refetch}
+        onRetry={p.refetch}
       />
     );
   }
 
-  return <Component profile={profile} organizers={organizers} />;
+  return (
+    <Component
+      profile={p.profile}
+      organizers={p.organizers}
+      editing={p.editing}
+      edits={p.edits}
+      errors={p.errors}
+      saved={p.saved}
+      saveError={p.saveError}
+      isSaving={p.isSaving}
+      onStartEditing={p.startEditing}
+      onCancelEditing={p.cancelEditing}
+      onEdit={p.setEdit}
+      onSave={p.save}
+      onAvailability={p.setAvailability}
+    />
+  );
 }

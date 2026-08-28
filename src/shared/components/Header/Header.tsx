@@ -51,7 +51,14 @@ export function Header({ variant = 'default', authCta }: HeaderProps) {
 
         {variant === 'auth' ? (
           <div className={styles.actions}>
-            <a href="#help" className={styles.helpLink}><HelpCircle size={18} /> Need help?</a>
+            {/* The label is a <span> so the small-screen rule below can drop
+                it and leave the icon — it used to be a bare text node, which
+                that rule could not target, so the header overlapped itself on
+                a phone. */}
+            <a href="#help" className={styles.helpLink}>
+              <HelpCircle size={18} />
+              <span>Need help?</span>
+            </a>
             <button
               type="button" className={styles.themeToggle}
               aria-label="Toggle theme" aria-pressed={dark}
@@ -61,7 +68,11 @@ export function Header({ variant = 'default', authCta }: HeaderProps) {
             </button>
             <span className={styles.vDivider} aria-hidden />
             <span className={styles.createWrap}>
-              {cta.prompt} <Link to={cta.to} className={styles.createLink}>{cta.label}</Link>
+              {/* Only the prompt collapses on a phone. The link itself stays:
+                  on onboarding it is "Save & exit", the sole way out of the
+                  wizard, and hiding the whole wrapper took that away. */}
+              {cta.prompt ? <span className={styles.createPrompt}>{cta.prompt}</span> : null}
+              <Link to={cta.to} className={styles.createLink}>{cta.label}</Link>
             </span>
           </div>
         ) : (

@@ -4,6 +4,18 @@ export const ONB_COPY = {
   verifyNote: 'Verification typically takes 24–48 hrs after submission.',
 };
 
+/**
+ * Reasons to finish, shown beside the form on the sign-up gate. Each is true
+ * of the product today — the gate itself lives in
+ * `features/onboarding/shared/OnboardingGate` and is shared with sub-vendor
+ * signup, so only the copy differs between the two.
+ */
+export const GATE_POINTS = [
+  'Free to join — Evently only earns when you do',
+  'Verified organizers get matched to real, budgeted enquiries',
+  'Your progress saves as you go, so you can finish later',
+] as const;
+
 export const ONBOARDING_STEPS = [
   { id: 'basic', order: 1, title: 'Basic info' },
   { id: 'verification', order: 2, title: 'Verification' },

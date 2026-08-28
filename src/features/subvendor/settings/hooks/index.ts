@@ -1,0 +1,1 @@
+export { useSubvendorSettings } from './useSubvendorSettings';

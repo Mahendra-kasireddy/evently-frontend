@@ -9,6 +9,8 @@ export interface OnboardSubvendorResult {
     initials: string;
     avatarColor: string;
     category: string;
+    /** The vendor's own words, when `category` is 'other'. */
+    customCategory: string;
     serviceArea: string;
     baseRate: number;
     baseRateUnit: string;
@@ -22,6 +24,9 @@ async function onboardSubvendor(draft: SubvendorDraft): Promise<OnboardSubvendor
   const body = {
     fullName: draft.fullName,
     categoryId: draft.categoryId,
+    // Sent only for 'other'; the hook already blanks it otherwise, and the
+    // server ignores it for every real category.
+    customCategory: draft.customCategory.trim() || undefined,
     serviceArea: draft.serviceArea,
     baseRate: draft.baseRate ? Number(draft.baseRate) : undefined,
     minOrder: draft.minOrder ? Number(draft.minOrder) : undefined,

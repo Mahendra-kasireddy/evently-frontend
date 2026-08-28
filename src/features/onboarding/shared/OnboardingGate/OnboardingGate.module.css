@@ -1,0 +1,348 @@
+/*
+ * The sign-up gate is a split: the pitch on the left, the form on the right,
+ * centred in the page rather than pinned to the top of it. The previous
+ * version was a 420px column starting at the top of a 100vh page, which left
+ * two thirds of the screen empty on any desktop.
+ */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 48px;
+  align-items: center;
+  max-width: 1020px;
+  margin: 0 auto;
+  /*
+   * Fills the viewport below the slim top bar without forcing a scrollbar.
+   *
+   * The offset is the top bar plus whatever vertical padding the host page
+   * adds. The two onboarding shells pad differently, so the host declares it
+   * rather than this file guessing; the default is the organizer shell
+   * (73px bar + 28px × 2).
+   */
+  min-height: calc(100vh - var(--gate-offset, 129px));
+  padding: 8px 0 32px;
+}
+
+@media (max-width: 900px) {
+  .split {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    align-items: start;
+    min-height: 0;
+    /*
+     * The gate owns its own gutter rather than trusting the host page: the
+     * organizer shell pads horizontally, the sub-vendor shell does not
+     * (`padding: 44px 0 80px`), so without this the card ran edge to edge on
+     * a phone in one of the two flows.
+     */
+    padding: 4px 20px 24px;
+  }
+  /* Form first on small screens — nobody should scroll past the pitch to
+     reach the input they came for. */
+  .card { order: -1; }
+}
+
+/* ----------------------------------------------------------------- pitch */
+.pitch {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--color-primary);
+}
+
+.heading {
+  margin: 0;
+  font-size: 2.1rem;
+  line-height: 1.18;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--color-navy);
+}
+
+@media (max-width: 900px) {
+  .heading { font-size: 1.5rem; }
+}
+
+.blurb {
+  margin: 0;
+  max-width: 46ch;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.point {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--color-navy);
+}
+
+.tick {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: 999px;
+  background: var(--color-green-soft);
+  color: var(--color-green);
+  flex: 0 0 auto;
+}
+
+/* The five real steps, so the commitment is visible before it's made. */
+.steps {
+  margin-top: 4px;
+  padding: 18px 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface, #fff);
+}
+
+.stepsTitle {
+  margin: 0 0 12px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.stepList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+
+.step {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px 6px 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--color-navy);
+}
+
+.stepNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  flex: 0 0 auto;
+}
+
+.sla {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 14px 0 0;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+/* ------------------------------------------------------------------ card */
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 30px 32px 28px;
+  box-shadow: 0 18px 40px -28px rgba(14, 26, 51, 0.28);
+}
+
+@media (max-width: 900px) {
+  .card { padding: 24px 20px 22px; }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  margin-bottom: 16px;
+}
+
+.title {
+  margin: 0 0 6px;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--color-navy);
+}
+
+.sub {
+  margin: 0 0 20px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+
+.sentTo { color: var(--color-navy); font-weight: 700; }
+
+.form { display: flex; flex-direction: column; gap: 10px; }
+
+.label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-navy);
+}
+
+/* One control, not two boxes with a gap between them. */
+.phone {
+  display: flex;
+  align-items: stretch;
+  height: 52px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.phone:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.phoneBad { border-color: #e05656; }
+
+.dial {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-bg);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-navy);
+  flex: 0 0 auto;
+}
+
+.phoneInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  padding: 0 14px;
+  font-family: inherit;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  color: var(--color-navy);
+}
+
+.phoneInput:focus { outline: none; }
+.phoneInput::placeholder { color: var(--color-text-muted); opacity: 0.7; }
+
+.codeInput {
+  height: 52px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: #fff;
+  padding: 0 16px;
+  font-family: inherit;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.42em;
+  text-align: center;
+  /* Letter-spacing adds a trailing gap after the last digit, which pushes a
+     centred string visibly off-centre. Indent by the same amount to cancel it. */
+  text-indent: 0.42em;
+  color: var(--color-navy);
+  transition: border-color 0.15s ease;
+}
+
+.codeInput:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.err { margin: 0; font-size: 0.82rem; color: #b23b3b; }
+
+.cta {
+  margin-top: 6px;
+  height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.98rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.cta:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  transform: translateY(-1px);
+}
+
+.cta:disabled { opacity: 0.7; cursor: not-allowed; }
+
+.link {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  padding: 6px 10px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-pill);
+  color: var(--color-primary);
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.link:hover { background: var(--color-primary-soft); }
+
+.terms {
+  margin: 4px 0 0;
+  text-align: center;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
