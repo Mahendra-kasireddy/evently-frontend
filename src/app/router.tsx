@@ -62,6 +62,7 @@ const OrganizerInvitationPage = lazy(() => import('@features/organizer/invitatio
 const OrganizerCalendarPage = lazy(() => import('@features/organizer/calendar/page'));
 const OrganizerOwnProfilePage = lazy(() => import('@features/organizer/profile/page'));
 const OrganizerSubvendorsPage = lazy(() => import('@features/organizer/subvendors/page'));
+const OrganizerCouponsPage = lazy(() => import('@features/organizer/coupons/page'));
 const OrganizerEarningsPage = lazy(() => import('@features/organizer/earnings/page'));
 const OrganizerBadgesPage = lazy(() => import('@features/organizer/badges/page'));
 const OrganizerAcademyPage = lazy(() => import('@features/organizer/academy/page'));
@@ -181,6 +182,7 @@ export const router = createBrowserRouter([
           },
           { path: '/organizer/calendar', element: lazyRoute(OrganizerCalendarPage, 'organizer-calendar') },
           { path: '/organizer/subvendors', element: lazyRoute(OrganizerSubvendorsPage, 'organizer-subvendors') },
+          { path: '/organizer/coupons', element: lazyRoute(OrganizerCouponsPage, 'organizer-coupons') },
           { path: '/organizer/earnings', element: lazyRoute(OrganizerEarningsPage, 'organizer-earnings') },
           { path: '/organizer/badges', element: lazyRoute(OrganizerBadgesPage, 'organizer-badges') },
           { path: '/organizer/academy', element: lazyRoute(OrganizerAcademyPage, 'organizer-academy') },

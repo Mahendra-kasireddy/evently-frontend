@@ -1,0 +1,149 @@
+.box {
+  border-top: 1px dashed var(--c-line, #e6e2df);
+  padding-top: 14px;
+  margin-top: 4px;
+}
+
+.label {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--c-muted, #6b7280);
+}
+
+.form {
+  display: flex;
+  gap: 8px;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--c-line, #e6e2df);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: #fff;
+  color: inherit;
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--c-accent, #e8633a);
+  outline-offset: 1px;
+}
+
+.apply {
+  flex-shrink: 0;
+  border: 1px solid var(--c-accent, #e8633a);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--c-accent, #e8633a);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.apply:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.error {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--c-red, #c8392b);
+}
+
+/* The applied state: what was saved, and one way to undo it. */
+.applied {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid var(--c-green, #1d9e75);
+  background: var(--c-green-soft, #e8f6ef);
+  border-radius: 12px;
+  padding: 11px 12px;
+}
+
+.appliedText {
+  flex: 1;
+  min-width: 0;
+}
+
+.appliedCode {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #12684c;
+}
+
+.appliedNote {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #2f6b57;
+}
+
+.remove {
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+  padding: 2px;
+  color: #2f6b57;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.offers {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.offer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  border: 1px dashed var(--c-line, #e6e2df);
+  border-radius: 10px;
+  background: transparent;
+  padding: 9px 11px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.offer:hover {
+  border-color: var(--c-accent, #e8633a);
+}
+
+.offerCode {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.offerTitle {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--c-muted, #6b7280);
+}
+
+.offerSaving {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-green, #1d9e75);
+}

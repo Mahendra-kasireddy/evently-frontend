@@ -1,8 +1,26 @@
 import { Lock, ShieldCheck } from 'lucide-react';
+import type { ReactNode } from 'react';
 import type { BookingData } from '../../types';
 import styles from './OrderSummary.module.css';
 
-export function OrderSummary({ data, onConfirm, isCreating = false }: { data: BookingData; onConfirm: () => void; isCreating?: boolean }) {
+/**
+ * What is being paid, and the one button that pays it.
+ *
+ * The coupon control is passed in rather than built here: this panel renders
+ * amounts, and every amount it renders — including the discounted ones — was
+ * computed on the server. It multiplies nothing.
+ */
+export function OrderSummary({
+  data,
+  onConfirm,
+  isCreating = false,
+  coupon,
+}: {
+  data: BookingData;
+  onConfirm: () => void;
+  isCreating?: boolean;
+  coupon?: ReactNode;
+}) {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.panel}>
@@ -15,12 +33,35 @@ export function OrderSummary({ data, onConfirm, isCreating = false }: { data: Bo
           <p className={styles.sumLabel}>ORDER SUMMARY</p>
           <ul className={styles.rows}>
             {data.summary.map((r) => (
-              <li key={r.label} className={styles.row}><span>{r.label}</span><strong>{r.value}</strong></li>
+              <li key={r.label} className={styles.row}>
+                <span>{r.label}</span>
+                <strong>{r.value}</strong>
+              </li>
             ))}
           </ul>
-          <div className={styles.grand}><span>Grand total</span><strong>{data.grandTotal}</strong></div>
-          <button type="button" className={styles.confirm} onClick={onConfirm} disabled={isCreating}><Lock size={16} /> {isCreating ? 'Confirming…' : data.confirmLabel}</button>
-          <p className={styles.footnote}><ShieldCheck size={14} /> {data.footnote}</p>
+          {coupon}
+          <div className={styles.grand}>
+            <span>Grand total</span>
+            <strong>
+              {/* The old total stays visible, struck through: a number that
+                  simply got smaller invites a second look at the quote. */}
+              {data.grandTotalBefore ? (
+                <s className={styles.was}>{data.grandTotalBefore}</s>
+              ) : null}
+              {data.grandTotal}
+            </strong>
+          </div>
+          <button
+            type="button"
+            className={styles.confirm}
+            onClick={onConfirm}
+            disabled={isCreating}
+          >
+            <Lock size={16} /> {isCreating ? 'Confirming…' : data.confirmLabel}
+          </button>
+          <p className={styles.footnote}>
+            <ShieldCheck size={14} /> {data.footnote}
+          </p>
         </div>
       </div>
     </aside>

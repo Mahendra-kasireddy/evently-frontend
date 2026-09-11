@@ -16,6 +16,16 @@ export interface BookingData {
   grandTotal: string;
   confirmLabel: string;
   footnote: string;
+  /**
+   * What a coupon took off, when one is applied — already reflected in
+   * `payNow`, `balanceNote`, `grandTotal` and `confirmLabel`.
+   *
+   * `grandTotalBefore` is the undiscounted total, kept so the summary can
+   * strike it through. Both are empty strings when no coupon is applied, which
+   * is how the rows know not to render.
+   */
+  discountLabel: string;
+  grandTotalBefore: string;
 }
 
 // ---- Booking API shapes (MongoDB-backed) ----
@@ -77,6 +87,10 @@ export interface ApiBooking {
   eventDate?: string;
   daysToGo: number;
   amount: number;
+  /** The total before any coupon; equal to `amount` when none was used. */
+  originalAmount: number;
+  couponCode: string;
+  couponDiscount: number;
   advanceAmount: number;
   advancePercentage: number;
   balanceAmount: number;

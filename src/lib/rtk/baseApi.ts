@@ -34,6 +34,8 @@ export const baseApi = createApi({
     'Invitation',
     'InvitationGuests',
     'Ideas',
+    'Coupons',
+    'CouponUsage',
   ],
   endpoints: () => ({}),
 });
