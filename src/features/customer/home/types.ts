@@ -153,7 +153,6 @@ export interface ProfileSummary { id: string; name: string; initials: string; lo
 export interface HomeContent {
   nav: NavItem[];
   hero: {
-    greetingTemplate: string;
     headingLead: string;
     headingAccent: string;
     headingTail: string;
