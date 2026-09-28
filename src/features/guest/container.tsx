@@ -21,7 +21,8 @@ export function GuestInvitationContainer() {
 
   const query = useGetSharedInvitationQuery(token, { skip: !token });
 
-  if (query.isLoading) return <LoadingScreen message={COPY.loading} inline={false} />;
+  if (query.isLoading)
+    return <LoadingScreen message={COPY.loading} inline={false} />;
 
   if (query.isError || !query.data) {
     return (
@@ -35,7 +36,9 @@ export function GuestInvitationContainer() {
     );
   }
 
-  return <GuestComponent invitation={query.data} section={section} />;
+  return (
+    <GuestComponent invitation={query.data} section={section} token={token} />
+  );
 }
 
 export default GuestInvitationContainer;

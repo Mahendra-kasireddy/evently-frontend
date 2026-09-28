@@ -44,10 +44,79 @@ export interface InvitationDetails {
   venueName: string;
   venueAddress: string;
   message: string;
+  /** What the story section is called, e.g. "Our Journey". */
+  storyTitle?: string;
+  /* ---- the countdown, and the notice it raises ---- */
+  /** Which sub-event the countdown points at; '' is the invitation's date. */
+  countdownSubEventId?: string;
+  oneDayNotificationEnabled?: boolean;
+  oneDayNotificationMessage?: string;
+  /** What the notice says instead to a guest who opens it after the day. */
+  missedNotificationMessage?: string;
+  /* ---- the invitation the organizer uploaded ---- */
+  /**
+   * What the organizer uploaded, if anything. '' means nothing yet.
+   *
+   * An invitation is a design — made in whatever the organizer already designs
+   * in — so the platform stores the finished artwork rather than trying to
+   * rebuild it out of form fields.
+   */
+  heroMediaType?: '' | 'image' | 'video';
+  heroMediaUrl?: string;
+  /** Storage handle, for replacing or deleting. Never sent to a guest. */
+  heroMediaKey?: string;
+  /** A video's length in seconds, as the uploading client measured it. */
+  heroMediaDurationSec?: number;
   rsvpEnabled: boolean;
   /** `yyyy-mm-dd`. */
   rsvpDeadline: string;
   rsvpPlusOnes: boolean;
+}
+
+/**
+ * What the countdown counts down to, as the guest API resolves it.
+ *
+ * `startsAt` is one absolute instant, already resolved from the event's own
+ * wall-clock date, time and zone — the client subtracts and never interprets.
+ */
+export interface GuestCountdown {
+  subEventId: string;
+  name: string;
+  /** ISO instant, or null when the event has no date yet. */
+  startsAt: string | null;
+  timezone: string;
+  venueName: string;
+  venueAddress: string;
+  postEventMessage: string;
+}
+
+/** Whether to raise the day-before notice with this guest. Decided server-side. */
+export type GuestNotification =
+  | { show: false }
+  | {
+      show: true;
+      kind: string;
+      /**
+       * `upcoming` before the event, `missed` for a guest arriving after it,
+       * and `live` for the "it has started" card F5 raises.
+       */
+      state: 'upcoming' | 'missed' | 'live';
+      message: string;
+      /** Live only: which event, so the card can scroll the guest to it. */
+      subEventId?: string;
+      name?: string;
+    };
+
+/** One photograph in the couple's story, and the line that goes under it. */
+export interface InvitationStoryCard {
+  /** Server-assigned; stable across reorders, unlike an array index. */
+  id: string;
+  imageUrl: string;
+  /** Storage handle. Present for the organizer and customer, never a guest. */
+  imageKey?: string;
+  caption: string;
+  /** The organizer's arrangement, stored rather than inferred from position. */
+  order: number;
 }
 
 /**
@@ -58,7 +127,18 @@ export interface InvitationDetails {
  * list, no share link, no guest identity — so that value waits for the guest
  * surface rather than existing as a state nothing can honour.
  */
-export type SubEventVisibility = 'all' | 'hidden';
+export type SubEventVisibility = 'all' | 'groups' | 'hidden';
+
+/** The groups the guest list already files people under. */
+export type GuestGroupId = 'family' | 'friends' | 'work' | 'other';
+
+/** The targeting options, named for the organizer. Server-owned ids. */
+export const GUEST_GROUPS: Array<{ id: GuestGroupId; label: string }> = [
+  { id: 'family', label: 'Family' },
+  { id: 'friends', label: 'Friends' },
+  { id: 'work', label: 'Work' },
+  { id: 'other', label: 'Everyone else' },
+];
 
 /** One sub-event of the celebration, and one Save-the-Date card. */
 export interface InvitationSubEvent {
@@ -79,6 +159,59 @@ export interface InvitationSubEvent {
   /** A `cardPalette` id, or '' to follow the invitation template. */
   colour: string;
   visibility: SubEventVisibility;
+  /**
+   * Which guest groups a targeted card is for; only meaningful when
+   * `visibility` is `groups`. Never sent to a guest — who else was invited is
+   * the organizer's business.
+   */
+  groups?: GuestGroupId[];
+
+  /* ---- F5: this event's live stream ----
+   *
+   * On the sub-event because "live" belongs to one ceremony, and because the
+   * guests who may watch are exactly the guests invited to it — `visibility`
+   * and `groups` above already say who that is.
+   */
+  /** The organizer's switch. Off means no guest is shown anything. */
+  liveEnabled?: boolean;
+  /** The line over the player, e.g. "Watch the Ceremony Live". */
+  liveTitle?: string;
+  /** Embed url. The server only accepts https players on its own allowlist. */
+  liveUrl?: string;
+  /** Optional alternates; a mode with no url is never offered to a guest. */
+  live360Url?: string;
+  liveVrUrl?: string;
+  /** ISO instant the switch went on. Server-owned — read-only to the builder. */
+  liveStartedAt?: string;
+}
+
+/** One way of watching, named for the control the guest taps. */
+export type LiveModeId = 'standard' | '360' | 'vr';
+
+export interface LiveStreamMode {
+  id: LiveModeId;
+  url: string;
+}
+
+/**
+ * The stream a guest may watch, or null.
+ *
+ * Decided on the server from the guest's own group: a guest not invited to the
+ * ceremony is handed null, not a hidden section.
+ */
+export interface GuestLive {
+  subEventId: string;
+  name: string;
+  title: string;
+  /** Always at least one; `modes[0]` is what plays first. */
+  modes: LiveStreamMode[];
+  startedAt: string;
+  venueName: string;
+  venueAddress: string;
+  eventDate: string;
+  eventTime: string;
+  timezone: string;
+  dressCode: string;
 }
 
 /** A card colour served by the API — a closed palette, not free-form hex. */
@@ -136,6 +269,8 @@ export interface Invitation {
   blocks: InvitationBlock[];
   /** The Save-the-Date cards, in the order the organizer arranged them. */
   subEvents: InvitationSubEvent[];
+  /** The story, in the organizer's order. Empty means there is no story. */
+  storyCards: InvitationStoryCard[];
   templates: InvitationTemplate[];
   /** Colours a card may be given. Server-owned, like `templates`. */
   cardPalette: CardColour[];

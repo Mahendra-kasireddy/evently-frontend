@@ -1,0 +1,417 @@
+/*
+ * The live stream, as part of the invitation.
+ *
+ * Same paper as the countdown and the Save-the-Date cards: the app's cream,
+ * its serif, its gold rule. The only thing that is not the invitation's own
+ * voice is the LIVE badge, which is the brand's coral because a live
+ * indicator that is not red is not read as one.
+ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px 4px 8px;
+  border-radius: 999px;
+  background: var(--c-coral-d);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+}
+/* Grey once the stream has ended: the shape stays, the urgency does not. */
+.badgeOff {
+  background: #9aa0ad;
+}
+.pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pulse {
+    animation: live-pulse 1.8s ease-in-out infinite;
+  }
+}
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* ---------- the banner, on an invitation that was already open ---------- */
+
+.banner {
+  position: sticky;
+  top: 8px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 16px 0;
+  padding: 10px 10px 10px 12px;
+  border: 1px solid rgba(207, 85, 48, 0.22);
+  border-radius: 14px;
+  background: #fff7f3;
+  box-shadow: 0 6px 18px rgba(26, 46, 90, 0.08);
+}
+.bannerText {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.bannerLine {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--c-ink);
+}
+.bannerName {
+  font-weight: 600;
+}
+.bannerWatch {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--c-coral-d);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.bannerClose {
+  flex: 0 0 auto;
+  display: inline-flex;
+  padding: 4px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--c-muted);
+  cursor: pointer;
+}
+
+/* ---------- the entry card, in the flow of the invitation ---------- */
+
+.entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: calc(100% - 32px);
+  margin: 12px 16px 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(176, 133, 43, 0.16);
+  border-radius: 16px;
+  background: var(--c-cream);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+.entryMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: var(--c-coral-wash);
+  color: var(--c-coral-d);
+}
+.entryText {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.entryTitle {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--c-navy);
+}
+.entryHint {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--c-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.entryChevron {
+  flex: 0 0 auto;
+  color: var(--c-muted);
+}
+
+/* ---------- the section itself ---------- */
+
+.card {
+  position: relative;
+  /* Clips the corner blooms to the card's own radius. */
+  overflow: hidden;
+  isolation: isolate;
+  margin: 16px;
+  padding: 18px 16px 16px;
+  border-radius: 20px;
+  background: var(--c-cream);
+  box-shadow: 0 1px 3px rgba(26, 46, 90, 0.05);
+  /* Cleared by the sticky banner above, so "Watch Live" does not scroll the
+     section's heading underneath it. */
+  scroll-margin-top: 72px;
+}
+
+/*
+ * The blossom at two corners, behind everything.
+ *
+ * Pinned and negative-inset so the spray runs off the edge rather than sitting
+ * inside a margin — decoration that stops short of the corner reads as a
+ * sticker. `z-index: 0` with the content above it, so it never intercepts a
+ * tap meant for the player.
+ */
+.bloomTop,
+.bloomBottom {
+  position: absolute;
+  z-index: 0;
+  line-height: 0;
+  pointer-events: none;
+}
+.bloomTop {
+  top: -14px;
+  right: -12px;
+}
+.bloomBottom {
+  bottom: -10px;
+  left: -14px;
+}
+.card > *:not(.bloomTop):not(.bloomBottom) {
+  position: relative;
+  z-index: 1;
+}
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.heading {
+  margin: 0;
+  /* The invitation's own serif, as the reference sets it — this is a card
+     from a wedding invitation, not a panel heading. */
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  color: var(--c-navy);
+}
+.state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+.watching {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--c-muted);
+}
+.title {
+  margin: 12px 0 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 23px;
+  line-height: 1.25;
+  color: var(--c-navy);
+}
+
+/* The Standard / 360 / VR row. */
+.modes {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 0;
+  /* Scrolls rather than wraps on a narrow phone, so the player never moves
+     down a line because a third control appeared. */
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.modes::-webkit-scrollbar {
+  display: none;
+}
+.mode {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border: 1px solid rgba(176, 133, 43, 0.22);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--c-ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mode svg {
+  opacity: 0.85;
+}
+.modeOn {
+  border-color: transparent;
+  background: var(--c-coral-d);
+  color: #fff;
+}
+
+/* ---------- the player ---------- */
+
+.player {
+  position: relative;
+  margin-top: 14px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #0f1116;
+  /* 16:9 without a wrapper hack, so nothing has to measure anything. */
+  aspect-ratio: 16 / 9;
+}
+.frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+/* The one thing the reference's transport bar carries that we actually know:
+   that this is live rather than a recording. */
+.playerLive {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(15, 17, 22, 0.66);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+}
+.expand {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(15, 17, 22, 0.66);
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---------- event details, under the player ---------- */
+
+.details {
+  position: relative;
+  overflow: hidden;
+  margin-top: 14px;
+  padding: 16px 14px 12px;
+  border: 1px solid rgba(176, 133, 43, 0.16);
+  border-radius: 16px;
+  background: #fffdfa;
+}
+.detailsBloom,
+.detailsBloomLow {
+  position: absolute;
+  z-index: 0;
+  line-height: 0;
+  pointer-events: none;
+}
+.detailsBloom {
+  top: -12px;
+  right: -10px;
+}
+.detailsBloomLow {
+  bottom: -12px;
+  right: -8px;
+  transform: scaleY(-1);
+}
+.details > *:not(.detailsBloom):not(.detailsBloomLow) {
+  position: relative;
+  z-index: 1;
+}
+.detailsHead {
+  margin: 0 0 12px;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--c-navy);
+}
+.fact {
+  display: flex;
+  /* Top-aligned, so the tile stays on the first line of a wrapped address. */
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--c-ink);
+}
+/* A tile rather than a bare glyph, so the three rows line up as a column of
+   marks the eye can skip down. */
+.factTile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--c-coral-wash);
+  color: #9c6248;
+}
+.factTile svg {
+  flex: 0 0 auto;
+}
+.factLabel {
+  display: block;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+.sep {
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  margin: 0 6px 2px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.45;
+}
+
+@media (min-width: 560px) {
+  .card,
+  .banner,
+  .entry {
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .entry {
+    width: 100%;
+  }
+}

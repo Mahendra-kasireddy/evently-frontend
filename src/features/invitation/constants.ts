@@ -36,6 +36,79 @@ export const BLOCK_ICON: Record<string, LucideIcon> = {
 export const FALLBACK_BLOCK_ICON: LucideIcon = LayoutGrid;
 
 /** Sections whose guest-facing body is generated rather than typed. */
+/** What the story says, and what it is called to a screen reader. */
+export const STORY_COPY = {
+  title: 'Our story',
+  trackLabel: 'Story cards. Swipe, or use the left and right arrow keys.',
+  slideLabel: (n: number, total: number) => `Card ${n} of ${total}`,
+  photoAlt: (n: number) => `Story photograph ${n}`,
+  openPhoto: (n: number) => `Open photograph ${n} full size`,
+  goTo: (n: number) => `Go to card ${n}`,
+  position: (n: number, total: number) => `${n} / ${total}`,
+  close: 'Close photograph',
+};
+
+/** The countdown's own words, and what it is called to a screen reader. */
+export const COUNTDOWN_COPY = {
+  label: 'Countdown to the event',
+  countdownTo: 'Countdown to',
+  remaining: 'Time remaining',
+  days: 'Days',
+  hours: 'Hours',
+  minutes: 'Minutes',
+  seconds: 'Seconds',
+  started: 'The celebration has begun.',
+};
+
+/** The night-before notice. One dismissal, worded as what it means. */
+export const NOTIFICATION_COPY = {
+  /*
+   * The card's own heading, by state. The organizer writes the message under
+   * it; this is the greeting, and it has to change once the day has passed —
+   * "you're almost there" the morning after a wedding is not true.
+   */
+  upcomingTitle: 'You\u2019re Almost There!',
+  missedTitle: 'Thank You',
+  directions: 'Get Directions',
+  dismiss: 'Got it, see you there!',
+};
+
+/** Save the Date's own words. */
+export const SAVE_THE_DATE_COPY = {
+  title: 'Save the Date',
+  lead: 'Celebrate every beautiful moment with us',
+  dressCode: 'Dress code',
+  add: 'Add to Calendar',
+  addToGoogle: 'Add to Google Calendar instead',
+  noDate: 'This celebration has no date yet',
+};
+
+/** The live stream's own words. */
+export const LIVE_COPY = {
+  /* The badge, everywhere it appears. Uppercase in the markup rather than in
+     CSS, because a screen reader should read "LIVE" and not "live". */
+  live: 'LIVE',
+  liveNow: 'LIVE NOW',
+  happeningNow: 'is happening now!',
+  watching: (n: number) => `${n} watching`,
+  watch: 'Watch Live',
+  dismiss: 'Dismiss',
+  entryHint: 'Watch the Ceremony Live',
+  sectionTitle: 'Live Stream',
+  playerLabel: 'Live stream player',
+  bannerClose: 'Dismiss the live notice',
+  eventDetails: 'Event Details',
+  dressCode: 'Dress Code',
+  modes: {
+    standard: 'Standard',
+    '360': '360°',
+    vr: 'VR',
+  } as const,
+  modeLabel: 'How to watch',
+  fullScreen: 'Watch full screen',
+  offline: 'The stream has ended.',
+};
+
 export const COUNTDOWN_BLOCK = 'countdown';
 export const HEADER_BLOCK = 'header';
 export const SAVE_THE_DATE_BLOCK = 'save-the-date';
@@ -46,7 +119,12 @@ export function longDateLabel(day: string): string {
   const d = new Date(`${day}T00:00:00`);
   if (Number.isNaN(d.getTime())) return '';
   return d
-    .toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    .toLocaleDateString('en-GB', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
     .toUpperCase();
 }
 
@@ -75,7 +153,8 @@ export function daysUntil(day: string): number {
 export const GUEST_COPY = {
   youreInvited: 'YOU’RE INVITED',
   scroll: 'SCROLL',
-  previewEmpty: 'Every section is hidden — turn one back on to show guests something.',
+  previewEmpty:
+    'Every section is hidden — turn one back on to show guests something.',
   /** Shown when the countdown reaches zero and no post-event message was set. */
   eventStarted: 'The celebration has begun.',
   addToCalendar: 'Add to Calendar',

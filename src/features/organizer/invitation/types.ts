@@ -7,7 +7,9 @@
 export type {
   BlockOwner,
   CardColour,
+  GuestGroupId,
   InvitationBlock,
+  InvitationStoryCard,
   InvitationChangeRequest,
   InvitationDetails,
   InvitationStatus,
@@ -32,9 +34,26 @@ export interface UpdateInvitationBody {
   blocks?: InvitationBlock[];
   /** Replaces the whole list; array order is the guest-facing order. */
   subEvents?: InvitationSubEvent[];
+  /** Replaces the whole story; array order is the order guests read it in. */
+  storyCards?: StoryCardInput[];
+}
+
+/**
+ * A story card on the way to the server.
+ *
+ * Without `id` or `order`: the id is the server's, and the order is the array's
+ * — sending a number the client made up would be inviting the two to disagree.
+ */
+export interface StoryCardInput {
+  imageUrl: string;
+  imageKey?: string;
+  caption: string;
 }
 
 /** Which editor dialog is open: an existing section, a brand-new one, or none. */
-export type EditorTarget = { kind: 'block'; key: string } | { kind: 'new' } | null;
+export type EditorTarget =
+  | { kind: 'block'; key: string }
+  | { kind: 'new' }
+  | null;
 
 export type { ApiBooking } from '@features/organizer/bookings/types';

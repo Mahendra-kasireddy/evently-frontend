@@ -1,0 +1,175 @@
+/*
+ * The countdown, as a card from the invitation rather than a widget on a page.
+ *
+ * Everything here comes from the app's own tokens — the serif that already
+ * sets the hero's names, the cream the invitation is printed on, the gold it
+ * is ruled with — so the block belongs to the design system rather than
+ * bringing one of its own.
+ */
+.card {
+  margin: 0 16px;
+  padding: 30px 20px 26px;
+  border-radius: 20px;
+  background: var(--c-cream);
+  box-shadow: 0 1px 3px rgba(26, 46, 90, 0.05);
+  text-align: center;
+}
+
+.flourish {
+  display: block;
+  margin-bottom: 14px;
+  line-height: 0;
+}
+.eyebrow {
+  margin: 0;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 2.6px;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+.title {
+  margin: 6px 0 0;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 27px;
+  line-height: 1.25;
+  color: var(--c-navy);
+}
+.subtitle {
+  margin: 8px 0 0;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+
+/* ---------- the timer ---------- */
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* The gap carries the dots between the boxes; it shrinks before the boxes
+     do, which is what keeps four units on a 320px screen without scrolling. */
+  gap: clamp(3px, 1.6vw, 10px);
+  margin-top: 24px;
+}
+.unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  /* Equal share of the row, with a floor that keeps two digits legible. */
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 14px 1px 11px;
+  border: 1px solid rgba(176, 133, 43, 0.14);
+  border-radius: 14px;
+  background: var(--c-coral-wash);
+}
+.value {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  /* Tabular figures, so the seconds do not shuffle the row every tick. */
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(22px, 7.5vw, 30px);
+  line-height: 1.05;
+  color: var(--c-navy2);
+}
+.unitLabel {
+  font-size: clamp(8px, 2.6vw, 9.5px);
+  font-weight: 600;
+  /* Tightens with the box, so "SECONDS" still fits on a 320px screen
+     without any of the four labels being abbreviated. */
+  letter-spacing: clamp(0.5px, 0.35vw, 1.4px);
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+.dot {
+  flex: 0 0 auto;
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  opacity: 0.55;
+}
+
+/* ---------- after the day ---------- */
+
+.after {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 26px;
+}
+.afterHead {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 1.25;
+  color: var(--c-navy);
+}
+.afterBody {
+  margin: 0;
+  max-width: 28ch;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--c-muted);
+}
+
+/* ---------- the details ---------- */
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 24px 0 18px;
+  line-height: 0;
+}
+.rule {
+  width: clamp(40px, 18vw, 72px);
+  height: 1px;
+  opacity: 0.35;
+}
+.fact {
+  display: flex;
+  /* Top-aligned, so the icon stays on the first line of a wrapped address. */
+  align-items: flex-start;
+  justify-content: center;
+  gap: 7px;
+  margin: 0 0 4px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--c-ink);
+}
+.fact svg {
+  flex: 0 0 auto;
+  margin-top: 3px;
+  color: var(--c-muted);
+}
+.fact span {
+  display: inline;
+}
+.sep {
+  width: 3px;
+  height: 3px;
+  margin: 0 3px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.45;
+}
+
+@media (min-width: 560px) {
+  .card {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 34px 28px 30px;
+  }
+  .unit {
+    flex: 0 0 84px;
+  }
+}

@@ -9,7 +9,9 @@ import {
 } from '../constants';
 import { pad2 } from '../countdown';
 import { useCountdown } from '../useCountdown';
-import { SaveTheDateCards } from './SaveTheDateCards';
+import { SaveTheDateCards } from '../SaveTheDate';
+import { LiveStreamBlock } from '../LiveStream';
+import { guestSubEvents, liveSubEventOf, liveViewOf } from '../subEvents';
 import type {
   CardColour,
   InvitationBlock,
@@ -47,7 +49,8 @@ export function GuestPreview({
   defaultSubEventMinutes,
   fallbackName,
 }: GuestPreviewProps) {
-  const template = templates.find((t) => t.id === details.template) ?? templates[0];
+  const template =
+    templates.find((t) => t.id === details.template) ?? templates[0];
   const visible = blocks.filter((b) => !b.hidden);
 
   /*
@@ -56,7 +59,11 @@ export function GuestPreview({
    * arithmetic. Once it passes, the organizer's post-event message takes the
    * block's place.
    */
-  const countdown = useCountdown(details.eventDate, details.eventTime, details.timezone);
+  const countdown = useCountdown(
+    details.eventDate,
+    details.eventTime,
+    details.timezone,
+  );
 
   if (visible.length === 0) {
     return <p className={styles.previewEmpty}>{COPY.previewEmpty}</p>;
@@ -64,12 +71,33 @@ export function GuestPreview({
 
   const names = [details.hostOne, details.hostTwo].filter(Boolean);
   /** The event, named — the hosts if given, else the booking title. */
-  const heroName = names.length > 0 ? names.join(` ${details.joiner || "and"} `) : fallbackName;
+  const heroName =
+    names.length > 0
+      ? names.join(` ${details.joiner || 'and'} `)
+      : fallbackName;
   const dateLine = longDateLabel(details.eventDate);
   const time = timeLabel(details.eventTime);
 
+  /*
+   * The stream, when one is on air.
+   *
+   * Derived from the cards this preview was already given, so the customer
+   * reviewing their invitation sees the same block their guests will — the
+   * component is literally the guest's. It is above the sections because it
+   * is the thing happening now, and everything below it has not happened yet.
+   *
+   * No viewer count: this is not a guest, so there is no count to report, and
+   * inventing one on the screen the customer signs off would be a lie.
+   */
+  const live = liveSubEventOf(subEvents);
+
   return (
-    <div className={styles.guest} style={{ background: template?.wash ?? '#fbf7f1' }}>
+    <div
+      className={styles.guest}
+      style={{ background: template?.wash ?? '#fbf7f1' }}
+    >
+      {live && <LiveStreamBlock live={liveViewOf(live)} />}
+
       {visible.map((block) => {
         if (block.key === HEADER_BLOCK) {
           return (
@@ -82,7 +110,9 @@ export function GuestPreview({
                 <Sparkles size={11} /> {COPY.youreInvited}
               </span>
               <div className={styles.gHeroBody}>
-                {details.eyebrow && <div className={styles.gEyebrow}>{details.eyebrow}</div>}
+                {details.eyebrow && (
+                  <div className={styles.gEyebrow}>{details.eyebrow}</div>
+                )}
                 {names.length > 0 ? (
                   <div className={styles.gNames}>
                     <span className={styles.gName}>{names[0]}</span>
@@ -95,7 +125,9 @@ export function GuestPreview({
                   </div>
                 ) : (
                   <div className={styles.gNames}>
-                    <span className={styles.gName}>{block.heading || fallbackName}</span>
+                    <span className={styles.gName}>
+                      {block.heading || fallbackName}
+                    </span>
                   </div>
                 )}
                 {dateLine && <div className={styles.gDate}>{dateLine}</div>}
@@ -107,7 +139,9 @@ export function GuestPreview({
                       .join(' · ')}
                   </div>
                 )}
-                {details.message && <p className={styles.gMessage}>“{details.message}”</p>}
+                {details.message && (
+                  <p className={styles.gMessage}>“{details.message}”</p>
+                )}
               </div>
               <span className={styles.gScroll}>
                 {COPY.scroll}
@@ -128,7 +162,10 @@ export function GuestPreview({
           const unscheduled = countdown.targetMs === null;
           return (
             <section key={block.key} className={styles.gCountdown}>
-              <div className={styles.gSectionTitle} style={{ color: template?.accent }}>
+              <div
+                className={styles.gSectionTitle}
+                style={{ color: template?.accent }}
+              >
                 {block.heading || block.title}
               </div>
 
@@ -143,7 +180,11 @@ export function GuestPreview({
                 </p>
               ) : (
                 <>
-                  <div className={styles.gCountRow} role="timer" aria-live="off">
+                  <div
+                    className={styles.gCountRow}
+                    role="timer"
+                    aria-live="off"
+                  >
                     <span className={styles.gCountBox}>
                       <strong>{countdown.days}</strong>
                       days
@@ -178,12 +219,15 @@ export function GuestPreview({
         if (block.key === SAVE_THE_DATE_BLOCK && subEvents.length > 0) {
           return (
             <section key={block.key} className={styles.gSection}>
-              <div className={styles.gSectionTitle} style={{ color: template?.accent }}>
+              <div
+                className={styles.gSectionTitle}
+                style={{ color: template?.accent }}
+              >
                 {block.heading || block.title}
               </div>
               {block.body && <p className={styles.gBody}>{block.body}</p>}
               <SaveTheDateCards
-                subEvents={subEvents}
+                subEvents={guestSubEvents(subEvents)}
                 cardPalette={cardPalette}
                 template={template}
                 defaultMinutes={defaultSubEventMinutes}
@@ -195,7 +239,10 @@ export function GuestPreview({
 
         return (
           <section key={block.key} className={styles.gSection}>
-            <div className={styles.gSectionTitle} style={{ color: template?.accent }}>
+            <div
+              className={styles.gSectionTitle}
+              style={{ color: template?.accent }}
+            >
               {block.heading || block.title}
             </div>
             {block.body ? (

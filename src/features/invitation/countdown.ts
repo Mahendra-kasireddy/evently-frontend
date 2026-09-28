@@ -61,9 +61,15 @@ export function zonedInstant(
   timeZone: string,
 ): number | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(eventDate)) return null;
-  const time = /^([01]\d|2[0-3]):[0-5]\d$/.test(eventTime) ? eventTime : '00:00';
+  const time = /^([01]\d|2[0-3]):[0-5]\d$/.test(eventTime)
+    ? eventTime
+    : '00:00';
 
-  const [y, m, d] = eventDate.split('-').map(Number) as [number, number, number];
+  const [y, m, d] = eventDate.split('-').map(Number) as [
+    number,
+    number,
+    number,
+  ];
   const [hh, mm] = time.split(':').map(Number) as [number, number];
 
   const zone = timeZone && isKnownZone(timeZone) ? timeZone : 'UTC';
@@ -112,7 +118,10 @@ const ZERO: CountdownParts = {
  * decrementing a stored counter — a browser throttles timers in a background
  * tab, so a counter drifts while this stays correct the moment the tab wakes.
  */
-export function countdownFrom(targetMs: number | null, nowMs: number): CountdownParts {
+export function countdownFrom(
+  targetMs: number | null,
+  nowMs: number,
+): CountdownParts {
   if (targetMs === null) return { ...ZERO, passed: false };
   const remainingMs = targetMs - nowMs;
   if (remainingMs <= 0) return ZERO;
@@ -126,6 +135,34 @@ export function countdownFrom(targetMs: number | null, nowMs: number): Countdown
     remainingMs,
     passed: false,
   };
+}
+
+/**
+ * The date and the time of an instant, printed in the event's own zone.
+ *
+ * Not the reader's zone: a guest in London opening an invitation to a ceremony
+ * in Hyderabad needs to be told when it starts there, which is the time
+ * printed on the card and the time everyone else will say out loud.
+ */
+export function dateInZone(iso: string | null, timeZone: string): string {
+  const ms = iso ? Date.parse(iso) : NaN;
+  if (!Number.isFinite(ms)) return '';
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone: isKnownZone(timeZone) ? timeZone : 'UTC',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(ms);
+}
+
+export function timeInZone(iso: string | null, timeZone: string): string {
+  const ms = iso ? Date.parse(iso) : NaN;
+  if (!Number.isFinite(ms)) return '';
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: isKnownZone(timeZone) ? timeZone : 'UTC',
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(ms);
 }
 
 /** Two digits, for the hour/minute/second boxes. */

@@ -206,6 +206,77 @@ export function googleCalendarUrl(
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
+/** The card fields the calendar needs, without the presentation-only ones. */
+export function toCalendarEvent(sub: {
+  id: string;
+  name: string;
+  eventDate: string;
+  eventTime: string;
+  endTime: string;
+  timezone: string;
+  venueName: string;
+  venueAddress: string;
+  dressCode: string;
+  note: string;
+}): CalendarEvent {
+  return {
+    id: sub.id,
+    name: sub.name,
+    eventDate: sub.eventDate,
+    eventTime: sub.eventTime,
+    endTime: sub.endTime,
+    timezone: sub.timezone,
+    venueName: sub.venueName,
+    venueAddress: sub.venueAddress,
+    dressCode: sub.dressCode,
+    note: sub.note,
+  };
+}
+
+/**
+ * Hands one card to whatever calendar this device has.
+ *
+ * Not a link, because which handoff is right depends on the device and that is
+ * only knowable at the moment of the tap — reading the user agent during render
+ * would also make the render impure. Nothing is added until the guest confirms
+ * in their own calendar app, which is what makes dismissing the prompt a no-op.
+ */
+export function handOffToCalendar(
+  event: CalendarEvent,
+  ctx: CalendarContext,
+): void {
+  if (
+    !prefersAppleCalendar(
+      window.navigator.userAgent,
+      window.navigator.maxTouchPoints,
+    )
+  ) {
+    const url = googleCalendarUrl(event, ctx);
+    if (url) window.open(url, '_blank', 'noopener,noreferrer');
+    return;
+  }
+
+  const ics = buildIcs(event, ctx, Date.now());
+  if (!ics) return;
+
+  /*
+   * A Blob rather than a `data:` URL: iOS will not hand a `data:text/calendar`
+   * URL to Calendar, and a long note would otherwise run into URL length
+   * limits. The object URL is revoked on a timer because revoking it
+   * synchronously cancels the download in Safari.
+   */
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const href = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = href;
+  link.download = icsFileName(event);
+  link.rel = 'noopener';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(href), 10_000);
+}
+
 /** A filename a guest can recognise in their downloads. */
 export function icsFileName(event: CalendarEvent): string {
   const slug = event.name

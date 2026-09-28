@@ -1,0 +1,166 @@
+/*
+ * The story, told in photographs.
+ *
+ * Quiet on purpose: the invitation around it already carries the colour and
+ * the lettering, and a section whose whole subject is somebody's photographs
+ * should not compete with them.
+ */
+.story {
+  padding: 28px 0 24px;
+}
+.title {
+  margin: 0 0 14px;
+  padding: 0 18px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--c-navy);
+}
+
+/*
+ * The swipe itself: the browser's own scrolling, snapped to each card.
+ *
+ * `touch-action: pan-x` is what keeps a sideways drag out of the page's
+ * vertical scroll, and `overscroll-behavior-x: contain` stops a flick at the
+ * last card from turning into a browser back-gesture.
+ */
+.track {
+  display: flex;
+  gap: 14px;
+  padding: 0 18px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.track::-webkit-scrollbar {
+  display: none;
+}
+.track:focus-visible {
+  outline: 2px solid var(--c-accent, #e8633a);
+  outline-offset: 4px;
+  border-radius: 18px;
+}
+
+.card {
+  flex: 0 0 auto;
+  /* One card fills the reading width, so the story is read one card at a
+     time; the sliver of the next is what says there is more to swipe to. */
+  width: min(78%, 300px);
+  scroll-snap-align: center;
+}
+
+.frame {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #e9e5df;
+  cursor: pointer;
+}
+.frame:focus-visible {
+  outline: 2px solid var(--c-accent, #e8633a);
+  outline-offset: 3px;
+}
+/*
+ * Cropped to the frame, never stretched: portrait, landscape and square
+ * photographs all sit in one row without any of them being distorted.
+ */
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.caption {
+  margin: 10px 2px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--c-muted);
+}
+
+/* Where the guest is in the story. */
+.progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(26, 46, 90, 0.22);
+  cursor: pointer;
+  transition: width 0.2s ease, background 0.2s ease;
+}
+.dotOn {
+  width: 20px;
+  background: var(--c-accent, #e8633a);
+}
+.dot:focus-visible {
+  outline: 2px solid var(--c-accent, #e8633a);
+  outline-offset: 3px;
+}
+/* Said in words as well as drawn, so the position does not depend on
+   distinguishing two shades of a dot. */
+.count {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  color: var(--c-muted);
+}
+
+/* The photograph, full size. */
+.viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  max-height: 92vh;
+}
+.viewerPhoto {
+  /* Contained here, not cropped: the viewer exists to show the whole
+     photograph, whatever shape it is. */
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 12px;
+}
+.viewerCaption {
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+/*
+ * A guest who has asked for less motion gets the same story without the
+ * gliding: the snap still works, it simply arrives immediately.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    scroll-behavior: auto;
+  }
+  .dot {
+    transition: none;
+  }
+}

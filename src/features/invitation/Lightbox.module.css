@@ -1,0 +1,42 @@
+/* A dark ground, so the picture is the only lit thing on the screen. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(8, 12, 24, 0.9);
+  backdrop-filter: blur(3px);
+}
+.frame {
+  position: relative;
+  display: flex;
+  max-width: min(560px, 94vw);
+  max-height: 92vh;
+}
+.close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  padding: 9px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  cursor: pointer;
+}
+/* On a card rather than a photograph: no disc, and inside the corner. */
+.closeLight {
+  top: 12px;
+  right: 12px;
+  padding: 6px;
+  background: transparent;
+  color: var(--c-muted);
+}
+.close:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}

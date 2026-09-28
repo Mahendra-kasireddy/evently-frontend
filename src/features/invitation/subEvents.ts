@@ -6,20 +6,32 @@
  * place is what makes it hard to forget in the other.
  */
 
-import type { CardColour, InvitationSubEvent, InvitationTemplate } from './types';
+import type {
+  CardColour,
+  GuestLive,
+  InvitationSubEvent,
+  InvitationTemplate,
+  LiveStreamMode,
+} from './types';
 
 /**
- * The cards a guest actually sees.
+ * The cards worth previewing in the builder.
  *
- * A card is shown when the organizer marked it visible to all guests and it has
- * a name to show. Anything else is builder-only state, not guest content.
+ * Hidden cards are builder-only state and a card with no name is not a card
+ * yet; everything else is shown, including one targeted at particular guest
+ * groups — the organizer is previewing the invitation, not standing in for
+ * one guest.
  *
- * F4's "cards for events the guest is not invited to are not shown" needs a
- * guest identity to compare against, and there is none yet; when invitee
- * records exist this is the single place that gains the check.
+ * Which guest actually receives which card is decided on the server and cannot
+ * be decided here: the guest page is handed a list that is already theirs, so
+ * it does no filtering at all.
  */
-export function guestSubEvents(subEvents: InvitationSubEvent[]): InvitationSubEvent[] {
-  return subEvents.filter((e) => e.visibility === 'all' && e.name.trim() !== '');
+export function guestSubEvents(
+  subEvents: InvitationSubEvent[],
+): InvitationSubEvent[] {
+  return subEvents.filter(
+    (e) => e.visibility !== 'hidden' && e.name.trim() !== '',
+  );
 }
 
 /** `2026-12-26` → `Saturday`; '' or malformed → ''. */
@@ -35,7 +47,11 @@ export function cardDateLabel(day: string): string {
   if (!day) return '';
   const d = new Date(`${day}T00:00:00`);
   if (Number.isNaN(d.getTime())) return '';
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  return d.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 }
 
 export interface CardStyle {
@@ -60,7 +76,11 @@ export function cardStyle(
 ): CardStyle {
   const picked = palette.find((c) => c.id === colourId);
   if (picked) {
-    return { background: picked.wash, color: picked.ink, border: `${picked.ink}22` };
+    return {
+      background: picked.wash,
+      color: picked.ink,
+      border: `${picked.ink}22`,
+    };
   }
   // No colour picked: a plain card on the template's wash, with the template's
   // accent as the rule so it still reads as part of the same invitation.
@@ -80,6 +100,58 @@ export function mapsUrl(venueName: string, venueAddress: string): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
 
+/**
+ * The event that is on air, out of a list of raw sub-events.
+ *
+ * For the surfaces that are given the invitation's own cards rather than the
+ * guest payload: the organizer's preview and the customer's review screen.
+ * The guest page does not use this — it is handed a stream or null by the
+ * server, because who may watch is a decision that has to happen there.
+ *
+ * The rule is the server's, restated: switched on, and with somewhere to
+ * watch. A stream toggled on with no url is not live, and a LIVE badge over
+ * an empty player is worse than no badge.
+ */
+export function liveSubEventOf(
+  subEvents: InvitationSubEvent[],
+): InvitationSubEvent | null {
+  return (
+    subEvents.find(
+      (e) => e.liveEnabled === true && (e.liveUrl ?? '').trim() !== '',
+    ) ?? null
+  );
+}
+
+/**
+ * That card, in the shape `LiveStreamBlock` draws — so the customer reviews
+ * the very component their guests will see, not a second rendering of it.
+ */
+export function liveViewOf(event: InvitationSubEvent): GuestLive {
+  const modes: LiveStreamMode[] = [
+    { id: 'standard', url: (event.liveUrl ?? '').trim() },
+  ];
+  /* Only the modes with a feed behind them, exactly as the server decides. */
+  if ((event.live360Url ?? '').trim()) {
+    modes.push({ id: '360', url: (event.live360Url ?? '').trim() });
+  }
+  if ((event.liveVrUrl ?? '').trim()) {
+    modes.push({ id: 'vr', url: (event.liveVrUrl ?? '').trim() });
+  }
+  return {
+    subEventId: event.id,
+    name: event.name,
+    title: (event.liveTitle ?? '').trim() || 'Watch the ceremony live',
+    modes,
+    startedAt: event.liveStartedAt ?? '',
+    venueName: event.venueName,
+    venueAddress: event.venueAddress,
+    eventDate: event.eventDate,
+    eventTime: event.eventTime,
+    timezone: event.timezone,
+    dressCode: event.dressCode,
+  };
+}
+
 /** A blank card for the builder's "add" action. */
 export function emptySubEvent(timezone: string): InvitationSubEvent {
   return {
@@ -95,5 +167,6 @@ export function emptySubEvent(timezone: string): InvitationSubEvent {
     note: '',
     colour: '',
     visibility: 'all',
+    groups: [],
   };
 }
