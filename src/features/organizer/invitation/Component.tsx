@@ -18,6 +18,7 @@ import {
 import { INVITATION_COPY as COPY, STATUS_COPY } from './constants';
 import { IMAGE_TYPES, VIDEO_TYPES } from './artwork';
 import { CountdownEditor } from './sections/CountdownEditor';
+import { MemoriesPanel } from './sections/MemoriesPanel';
 import { SaveTheDateEditor } from './sections/SaveTheDateEditor';
 import { StoryEditor } from './sections/StoryEditor';
 import type { UseInvitationResult } from './hooks';
@@ -68,6 +69,15 @@ export function Component({
   setOpenSubEvent,
   setSubEvents,
   saveSubEvents,
+  memories,
+  memoryKind,
+  memorySubEvent,
+  memoryBusy,
+  memorySay,
+  memorySayWarn,
+  setMemoryKind,
+  setMemorySubEvent,
+  addMemory,
   countdown,
   countdownDirty,
   countdownError,
@@ -295,6 +305,22 @@ export function Component({
           onOpenChange={setOpenSubEvent}
           onChange={setSubEvents}
           onSave={() => void saveSubEvents()}
+        />
+
+        {/*
+         * Shared memories, last: it fills up after the invitation has gone
+         * out. Read and add only — the gallery is the customer's.
+         */}
+        <MemoriesPanel
+          gallery={memories}
+          kind={memoryKind}
+          subEvent={memorySubEvent}
+          busy={memoryBusy}
+          say={memorySay}
+          sayWarn={memorySayWarn}
+          onKind={setMemoryKind}
+          onSubEvent={setMemorySubEvent}
+          onAdd={(file) => void addMemory(file)}
         />
 
         <CountdownEditor

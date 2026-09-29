@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { CalendarSearch } from 'lucide-react';
 import { LoadingScreen, ErrorState, EmptyState } from '@shared/components';
 import { useGetBookingQuery } from '@features/customer/booking/service';
-import { ideasRoute, invitationRoute, MY_EVENTS_ROUTE } from '../routes';
+import { ideasRoute, invitationRoute, memoriesRoute, MY_EVENTS_ROUTE } from '../routes';
 import { useGetIdeaBoardQuery } from '../ideas/service';
 import { useGetMyInvitationQuery } from '../invitation/service';
 import { Component } from './Component';
@@ -55,6 +55,7 @@ export function BookedWorkspaceContainer({ bookingId }: { bookingId: string }) {
       ideaCounts={board?.counts ?? { shared: 0, planned: 0, awaitingApproval: 0 }}
       onOpenIdeas={() => navigate(ideasRoute(bookingId))}
       onOpenInvitation={() => navigate(invitationRoute(bookingId))}
+      onOpenMemories={() => navigate(memoriesRoute(bookingId))}
     />
   );
 }

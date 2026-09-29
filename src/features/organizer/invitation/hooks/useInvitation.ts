@@ -8,12 +8,15 @@ import {
   VIDEO_MAX_SECONDS,
 } from '../artwork';
 import {
+  useAddOrganizerMemoryMutation,
+  useGetOrganizerMemoriesQuery,
   useGetInvitationQuery,
   useResolveChangeRequestMutation,
   useSendInvitationMutation,
   useUpdateInvitationMutation,
 } from '../service';
 import type { CountdownSettings } from '../sections/CountdownEditor';
+import type { OrganizerGallery } from '../service';
 import type {
   EditorTarget,
   InvitationBlock,
@@ -94,6 +97,18 @@ export interface UseInvitationResult {
   setSubEvents: (cards: InvitationSubEvent[]) => void;
   saveSubEvents: () => Promise<void>;
 
+  /* ---- shared memories, read and add ---- */
+  memories: OrganizerGallery | undefined;
+  memoryKind: string;
+  memorySubEvent: string;
+  memoryBusy: boolean;
+  /** The server's own sentence about the last upload. */
+  memorySay: string;
+  memorySayWarn: boolean;
+  setMemoryKind: (kind: string) => void;
+  setMemorySubEvent: (id: string) => void;
+  addMemory: (file: File) => Promise<void>;
+
   /* ---- the countdown ---- */
   countdown: CountdownSettings;
   countdownDirty: boolean;
@@ -136,6 +151,10 @@ const copyCaptionTooLong = (length: number) =>
   `One caption is ${length} characters. The limit is ${STORY_CAPTION_MAX}.`;
 const copyTooManyCards = () =>
   `A story can have at most ${STORY_MAX_CARDS} cards.`;
+
+const COPY_MEMORY_FAILED = 'That could not be shared. Check the file and try again.';
+const COPY_MEMORY_NO_ROUTE =
+  'This API version does not accept organizer uploads yet. The backend needs deploying (or restarting, if you are running it locally).';
 
 const COPY_NOT_STORED =
   'The file uploaded, but this API version does not store an invitation image or video yet, so nothing was saved. The backend needs deploying (or restarting, if you are running it locally).';
@@ -653,6 +672,56 @@ export function useInvitation(bookingId: string): UseInvitationResult {
     }
   }, [bookingId, storyCards, titleDraft, update]);
 
+  /*
+   * Shared memories. Two things only: see it, and add to it. Everything else
+   * about this gallery belongs to the customer, and there is no route here to
+   * any of it.
+   */
+  const [memoryKind, setMemoryKind] = useState('all');
+  const [memorySubEvent, setMemorySubEvent] = useState('all');
+  const [memorySay, setMemorySay] = useState('');
+  const [memorySayWarn, setMemorySayWarn] = useState(false);
+  const memoriesQuery = useGetOrganizerMemoriesQuery(
+    { bookingId, kind: memoryKind, subEvent: memorySubEvent },
+    /* Skipped entirely until the customer has switched the gallery on, so an
+       invitation without one makes no request for it. */
+    { skip: !bookingId },
+  );
+  const [addMemoryMutation, addMemoryState] = useAddOrganizerMemoryMutation();
+
+  const addMemory = useCallback(
+    async (file: File) => {
+      setMemorySay('');
+      try {
+        const outcome = await addMemoryMutation({
+          bookingId,
+          file,
+          ...(memorySubEvent !== 'all' ? { subEventId: memorySubEvent } : {}),
+        }).unwrap();
+        /* The server's wording, shown as it arrives — duplicate, quality
+           warning and waiting-for-approval are all its sentences. */
+        setMemorySay(outcome.message);
+        setMemorySayWarn(outcome.status === 'duplicate' || outcome.status === 'flagged');
+      } catch (error) {
+        /*
+         * The client rejects with its own normalised `{ status, message }`,
+         * so the server's sentence is on `message` — it is already written
+         * for a person, and showing it beats replacing it with a guess. A 404
+         * means the route is not there at all, which on a local machine
+         * almost always means the API has not been restarted.
+         */
+        const { status, message } = (error ?? {}) as { status?: number; message?: string };
+        setMemorySay(
+          status === 404
+            ? COPY_MEMORY_NO_ROUTE
+            : message || COPY_MEMORY_FAILED,
+        );
+        setMemorySayWarn(true);
+      }
+    },
+    [addMemoryMutation, bookingId, memorySubEvent],
+  );
+
   const send = useCallback(async () => {
     if (!bookingId) return;
     await sendMutation(bookingId).unwrap();
@@ -715,6 +784,16 @@ export function useInvitation(bookingId: string): UseInvitationResult {
     setOpenSubEvent,
     setSubEvents,
     saveSubEvents,
+
+    memories: memoriesQuery.data,
+    memoryKind,
+    memorySubEvent,
+    memoryBusy: addMemoryState.isLoading || memoriesQuery.isFetching,
+    memorySay,
+    memorySayWarn,
+    setMemoryKind,
+    setMemorySubEvent,
+    addMemory,
 
     countdown,
     countdownDirty,

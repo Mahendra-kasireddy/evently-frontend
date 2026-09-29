@@ -109,6 +109,39 @@ export const LIVE_COPY = {
   offline: 'The stream has ended.',
 };
 
+/** Shared Memories. Every line a guest reads, in their words not ours. */
+export const MEMORIES_COPY = {
+  title: 'Shared Memories',
+  lead: 'Everything the guests photographed, in one place.',
+  tally: (n: number) => `${n} shared`,
+  tabsLabel: 'What to show',
+  tabAll: 'All',
+  tabPhotos: 'Photos',
+  tabVideos: 'Videos',
+  tabReels: 'Reels',
+  filterLabel: 'Which celebration',
+  allEvents: 'All Events',
+  reel: 'REEL',
+  more: 'Show more',
+  loading: 'Loading\u2026',
+  add: 'Add a photo',
+  addReel: 'Record a reel',
+  adding: 'Adding your memory\u2026',
+  keep: 'Share it anyway',
+  close: 'Close',
+  previous: 'Previous',
+  next: 'Next',
+  download: 'Save',
+  /* Said on the guest's own tile, and only there. */
+  waiting: 'Waiting for approval',
+  onlyYou: 'Only you can see this',
+  empty: 'No photos have been shared yet.',
+  emptyCanAdd: 'No photos yet \u2014 be the first to share one.',
+  position: (n: number, total: number) => `${n} of ${total}`,
+  photoAlt: (n: number) => `Shared photograph ${n}`,
+  openItem: (n: number, total: number) => `Open item ${n} of ${total}`,
+};
+
 export const COUNTDOWN_BLOCK = 'countdown';
 export const HEADER_BLOCK = 'header';
 export const SAVE_THE_DATE_BLOCK = 'save-the-date';

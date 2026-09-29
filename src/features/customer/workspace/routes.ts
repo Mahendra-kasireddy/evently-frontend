@@ -10,6 +10,7 @@
  *   /workspace/booked/:bookingId              a booked event's workspace
  *   /workspace/booked/:bookingId/ideas        its ideas & planning board
  *   /workspace/booked/:bookingId/invitation   its guest invitation
+ *   /workspace/booked/:bookingId/memories     its shared memories
  *   /workspace/:requestId                     one event: compare its responses
  *   /workspace/:requestId/:quotationId        one response: full breakdown, act
  *
@@ -43,4 +44,15 @@ export function ideasRoute(bookingId: string): string {
  */
 export function invitationRoute(bookingId: string): string {
   return `${bookedWorkspaceRoute(bookingId)}/invitation`;
+}
+
+/**
+ * That event's shared memories — what the guests photographed.
+ *
+ * Nested under the booking for the same reason the invitation is: it is that
+ * event's gallery, and the customer who owns the booking is the only person
+ * who reaches it. There is no organizer route to this.
+ */
+export function memoriesRoute(bookingId: string): string {
+  return `${bookedWorkspaceRoute(bookingId)}/memories`;
 }

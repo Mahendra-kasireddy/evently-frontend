@@ -25,6 +25,8 @@ export type {
   LiveEntryCardProps,
   LiveStreamBlockProps,
 } from './LiveStream';
+export { MemoriesBlock } from './Memories';
+export type { MemoriesBlockProps, MemoryItem } from './Memories';
 export { NotificationModal } from './NotificationModal';
 export type { NotificationModalProps } from './NotificationModal';
 export { directionsUrl } from './directions';

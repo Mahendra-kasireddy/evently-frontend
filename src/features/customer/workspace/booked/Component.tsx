@@ -7,6 +7,7 @@ import {
   MapPin,
   Calendar,
   UserCheck,
+  Images,
 } from 'lucide-react';
 import type { ApiBooking, ApiBookingTask } from '@features/customer/booking/types';
 import { BackPill } from '../sections';
@@ -72,6 +73,8 @@ export interface BookedWorkspaceComponentProps {
   onOpenIdeas: () => void;
   /** Opens the invitation screen; approving happens there, not here. */
   onOpenInvitation: () => void;
+  /** Opens the shared-memories screen: the gallery the guests fill. */
+  onOpenMemories: () => void;
 }
 
 /**
@@ -91,6 +94,7 @@ export function Component({
   ideaCounts,
   onOpenIdeas,
   onOpenInvitation,
+  onOpenMemories,
 }: BookedWorkspaceComponentProps) {
   const progress = Math.min(100, Math.max(0, b.progress ?? 0));
   const offset = CIRC * (1 - progress / 100);
@@ -228,6 +232,35 @@ export function Component({
                   onClick={onOpenInvitation}
                 >
                   {invitation.status === 'approved' ? 'View' : 'Review'} <ChevronRight size={15} />
+                </button>
+              </section>
+            )}
+
+            {/*
+             * ---------------------------------------- shared memories
+             *
+             * Only once the invitation exists, because the gallery belongs to
+             * it — there is nothing to configure before the organizer has
+             * shared one, and an entry point to an empty screen is a dead end.
+             */}
+            {invitation && (
+              <section className={styles.invite}>
+                <span className={styles.inviteIcon}>
+                  <Images size={22} />
+                </span>
+                <div className={styles.inviteText}>
+                  <strong>Shared memories</strong>
+                  <span>
+                    What your guests photograph, and who may see it · yours to
+                    switch on
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  className={styles.inviteGhost}
+                  onClick={onOpenMemories}
+                >
+                  Manage <ChevronRight size={15} />
                 </button>
               </section>
             )}

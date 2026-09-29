@@ -8,6 +8,7 @@ import {
   LiveBanner,
   LiveEntryCard,
   LiveStreamBlock,
+  MemoriesBlock,
   NotificationModal,
   SaveTheDateBlock,
   StoryBlock,
@@ -16,6 +17,7 @@ import {
   useDismissGuestNotificationMutation,
   usePingGuestLiveMutation,
 } from './service';
+import { useMemories } from './useMemories';
 import { GUEST_PAGE_COPY as COPY } from './constants';
 import type { GuestInvitation } from './service';
 import styles from './styles.module.css';
@@ -94,6 +96,13 @@ export function GuestComponent({
       window.clearInterval(id);
     };
   }, [live, token, ping]);
+
+  /*
+   * Shared Memories. Asked for only when the customer switched it on, so an
+   * invitation without a gallery makes no request for one.
+   */
+  const memoriesOn = Boolean(invitation.memories?.enabled && invitation.memories.guestView);
+  const memories = useMemories(token, memoriesOn);
 
   /** Bring the player into view, from the banner, the card or the pop-up. */
   const goToLive = () => {
@@ -260,6 +269,34 @@ export function GuestComponent({
        * one block among the invitation's blocks, not a place of its own. It
        * renders itself away when there are no cards.
        */}
+      {/*
+       * The gallery, last: the invitation is what the hosts made, and this is
+       * what everyone else brought to it.
+       */}
+      {memoriesOn && memories.gallery && (
+        <MemoriesBlock
+          items={memories.items}
+          counts={memories.gallery.counts}
+          subEvents={memories.gallery.subEvents}
+          kind={memories.kind}
+          subEvent={memories.subEvent}
+          nextCursor={memories.gallery.nextCursor}
+          busy={memories.busy}
+          canUpload={memories.gallery.canUpload}
+          canDownload={memories.gallery.canDownload}
+          say={memories.say}
+          sayWarn={memories.sayWarn}
+          keepId={memories.keepId}
+          onKind={memories.setKind}
+          onSubEvent={memories.setSubEvent}
+          onMore={memories.more}
+          onAdd={(file, reel) => void memories.add(file, reel)}
+          onKeep={(id) => void memories.keep(id)}
+          onLike={memories.like}
+          onDownload={memories.download}
+        />
+      )}
+
       <StoryBlock
         cards={invitation.storyCards ?? []}
         title={invitation.details.storyTitle ?? ''}

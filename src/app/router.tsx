@@ -31,6 +31,9 @@ const OrganizerProfilePage = lazy(() => import('@features/customer/organizer-pro
 const BookedWorkspacePage = lazy(() => import('@features/customer/workspace/booked/page'));
 const IdeasPage = lazy(() => import('@features/customer/workspace/ideas/page'));
 const WorkspaceEventPage = lazy(() => import('@features/customer/workspace/event/page'));
+const WorkspaceMemoriesPage = lazy(
+  () => import('@features/customer/workspace/memories/page'),
+);
 const WorkspaceResponsePage = lazy(() => import('@features/customer/workspace/response/page'));
 // The old flat quote routes survive only as redirects into My Events (below).
 const LegacyQuotesPage = lazy(() => import('@features/customer/workspace/legacy/page'));
@@ -127,6 +130,10 @@ export const router = createBrowserRouter([
       {
         path: '/workspace/booked/:bookingId/invitation',
         element: lazyRoute(WorkspaceInvitationPage, 'workspace-invitation'),
+      },
+      {
+        path: '/workspace/booked/:bookingId/memories',
+        element: lazyRoute(WorkspaceMemoriesPage, 'workspace-memories'),
       },
       { path: '/workspace/:requestId', element: lazyRoute(WorkspaceEventPage, 'workspace-event') },
       {

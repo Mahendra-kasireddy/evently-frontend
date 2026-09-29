@@ -1,0 +1,356 @@
+/*
+ * Shared Memories.
+ *
+ * The same paper as the countdown, the Save-the-Date cards and the live
+ * stream: the app's cream, its serif, its gold rule. A gallery is the one
+ * section here that could easily turn into a product UI, so it is deliberately
+ * held to the invitation's own voice.
+ */
+
+.block {
+  position: relative;
+  overflow: hidden;
+  margin: 16px;
+  padding: 18px 16px 16px;
+  border-radius: 20px;
+  background: var(--c-cream);
+  box-shadow: 0 1px 3px rgba(26, 46, 90, 0.05);
+}
+.bloom {
+  position: absolute;
+  top: -14px;
+  right: -12px;
+  z-index: 0;
+  line-height: 0;
+  pointer-events: none;
+}
+.block > *:not(.bloom) {
+  position: relative;
+  z-index: 1;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.heading {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--c-navy);
+}
+.tally {
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--c-muted);
+}
+.lead {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--c-muted);
+}
+
+/* ---------- the two filter rows ---------- */
+
+/*
+ * Both scroll rather than wrap. A wedding has four or five celebrations and a
+ * phone is 360px wide; wrapping puts the grid below the fold before a single
+ * photograph has been seen.
+ */
+.tabs,
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar,
+.filters::-webkit-scrollbar {
+  display: none;
+}
+.tab {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 13px;
+  border: 1px solid rgba(176, 133, 43, 0.22);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--c-ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.tabOn {
+  border-color: transparent;
+  background: var(--c-coral-d);
+  color: #fff;
+}
+.tabCount {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+.filters {
+  margin-top: 8px;
+}
+.filter {
+  flex: 0 0 auto;
+  padding: 6px 11px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--c-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.filterOn {
+  border-color: rgba(176, 133, 43, 0.35);
+  color: var(--c-navy);
+}
+
+/* ---------- the grid ---------- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+.cell {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--c-coral-wash);
+  /* Square, so the grid is a grid before a single image has loaded and
+     nothing reflows underneath the reader as they arrive. */
+  aspect-ratio: 1 / 1;
+  cursor: pointer;
+}
+.thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* The play mark on a clip, and the length beside it. */
+.play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(180deg, rgba(15, 17, 22, 0) 45%, rgba(15, 17, 22, 0.45));
+  pointer-events: none;
+}
+.length {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: rgba(15, 17, 22, 0.66);
+  color: #fff;
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+}
+.reelMark {
+  position: absolute;
+  left: 7px;
+  top: 7px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba(15, 17, 22, 0.6);
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+/* A guest's own item that nobody else can see yet. */
+.cellNote {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  padding: 5px 7px;
+  border-radius: 8px;
+  background: rgba(255, 253, 250, 0.94);
+  color: var(--c-ink);
+  font-size: 10.5px;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.more {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px;
+  border: 1px solid rgba(176, 133, 43, 0.25);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--c-navy);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.empty {
+  margin: 16px 0 4px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--c-muted);
+  text-align: center;
+}
+
+/* ---------- adding ---------- */
+
+.addBar {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+.add {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--c-coral-d);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.add:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.addQuiet {
+  flex: 0 0 auto;
+  padding: 12px 14px;
+  border: 1px solid rgba(176, 133, 43, 0.25);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--c-navy);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.fileInput {
+  display: none;
+}
+/* One line under the buttons: what just happened, in the guest's words. */
+.say {
+  margin: 10px 0 0;
+  padding: 9px 11px;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--c-ink);
+}
+.sayWarn {
+  background: #fff7f3;
+  color: var(--c-coral-d);
+}
+.keep {
+  margin-left: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--c-navy);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ---------- the viewer ---------- */
+
+.viewer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: min(560px, 92vw);
+}
+.viewerMedia {
+  max-width: 100%;
+  max-height: 68vh;
+  border-radius: 14px;
+  display: block;
+}
+.viewerBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+.arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  cursor: pointer;
+}
+.arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.viewerCaption {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: center;
+}
+.like,
+.save {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 11px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+.likeOn {
+  background: var(--c-coral-d);
+}
+
+@media (min-width: 560px) {
+  .block {
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
