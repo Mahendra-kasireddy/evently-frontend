@@ -76,14 +76,21 @@ export function TicketTypes({
         </label>
         <label className={s.field}>
           <span className={s.label}>Quantity</span>
+          {/* At least one seat — a type with none can never be bought, and the
+              server refuses it. To stop selling a type, pause it instead. */}
           <input
             className={s.input}
             type="number"
-            min={type ? type.sold : 0}
+            min={Math.max(1, type ? type.sold : 1)}
+            step={1}
             name="totalQuantity"
-            defaultValue={type?.totalQuantity ?? 0}
+            defaultValue={type?.totalQuantity || ''}
+            placeholder="e.g. 100"
             required
           />
+          {!type ? (
+            <span className={s.hint}>How many tickets of this type to sell.</span>
+          ) : null}
           {type && type.sold > 0 ? (
             <span className={s.hint}>{type.sold} already sold, so it cannot go lower.</span>
           ) : null}
