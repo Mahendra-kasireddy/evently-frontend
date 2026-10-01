@@ -77,6 +77,12 @@ const NAV: NavItem[] = [
     // The per-enquiry builder belongs to this item, not to Enquiries.
     owns: ['/organizer/respond'],
   },
+  {
+    id: 'public-events',
+    label: 'Public events',
+    to: '/organizer/public-events',
+    icon: Ticket,
+  },
   { id: 'subvendors', label: 'Sub-vendors', to: '/organizer/subvendors', icon: Users },
   { id: 'coupons', label: 'Coupons', to: '/organizer/coupons', icon: Ticket },
   { id: 'calendar', label: 'Calendar', to: '/organizer/calendar', icon: CalendarDays },
@@ -115,6 +121,9 @@ const TITLES: Array<[prefix: string, title: string]> = [
   ['/organizer/events/', 'Event execution'],
   ['/organizer/events', 'Active events'],
   ['/organizer/invitation', 'Invitation setup'],
+  // More specific first, as above: one event is its own screen.
+  ['/organizer/public-events/', 'Event workspace'],
+  ['/organizer/public-events', 'Public events'],
   ['/organizer/quote-builder', 'Quote builder'],
   ['/organizer/respond', 'Quote builder'],
   ['/organizer/subvendors', 'Sub-vendors'],

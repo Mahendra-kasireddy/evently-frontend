@@ -59,6 +59,10 @@ const OrganizerQuotesPage = lazy(() => import('@features/organizer/quotes/page')
 const OrganizerRespondPage = lazy(() => import('@features/organizer/quote-respond/page'));
 const OrganizerQuoteBuilderPage = lazy(() => import('@features/organizer/quote-builder/page'));
 const OrganizerEventsPage = lazy(() => import('@features/organizer/events/page'));
+const OrganizerPublicEventsPage = lazy(() => import('@features/organizer/public-events/page'));
+const OrganizerPublicEventWorkspacePage = lazy(
+  () => import('@features/organizer/public-events/workspace-page'),
+);
 const OrganizerEventDetailPage = lazy(() => import('@features/organizer/event-detail/page'));
 const OrganizerIdeasPage = lazy(() => import('@features/organizer/ideas/page'));
 const OrganizerInvitationPage = lazy(() => import('@features/organizer/invitation/page'));
@@ -175,6 +179,22 @@ export const router = createBrowserRouter([
             element: lazyRoute(OrganizerRespondPage, 'organizer-respond'),
           },
           { path: '/organizer/events', element: lazyRoute(OrganizerEventsPage, 'organizer-events') },
+          /*
+           * Public events — an organizer selling seats to strangers — are a
+           * separate business flow from the private bookings above, so they
+           * get their own section rather than a tab inside Active events.
+           */
+          {
+            path: '/organizer/public-events',
+            element: lazyRoute(OrganizerPublicEventsPage, 'organizer-public-events'),
+          },
+          {
+            path: '/organizer/public-events/:eventId',
+            element: lazyRoute(
+              OrganizerPublicEventWorkspacePage,
+              'organizer-public-event-workspace',
+            ),
+          },
           {
             path: '/organizer/events/:bookingId',
             element: lazyRoute(OrganizerEventDetailPage, 'organizer-event-detail'),
