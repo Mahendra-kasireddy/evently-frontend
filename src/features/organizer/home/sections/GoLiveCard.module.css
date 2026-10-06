@@ -1,0 +1,136 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.head {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.badge {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+}
+.coral { background: var(--c-coral-wash); color: var(--c-coral); }
+.amber { background: var(--c-amber-wash); color: var(--c-amber); }
+.red { background: var(--c-red-wash); color: var(--c-red); }
+
+.title {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--c-navy);
+}
+
+.body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--c-muted);
+}
+
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.track {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--c-line2);
+  overflow: hidden;
+}
+.fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--c-coral);
+  transition: width 0.3s ease;
+}
+.progressLabel {
+  flex: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-navy);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--c-line2);
+}
+.row:first-child { border-top: 0; }
+.done { flex: none; color: var(--c-teal); }
+.todo { flex: none; color: #c3c8d2; }
+.rowText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.rowTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-navy);
+}
+.rowMeta {
+  font-size: 12.5px;
+  color: var(--c-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rowLink {
+  flex: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c-coral);
+  text-decoration: none;
+  padding: 6px 2px;
+}
+.rowLink:hover { text-decoration: underline; }
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.hint {
+  font-size: 12.5px;
+  color: var(--c-muted);
+}
+.error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--c-red);
+}
+
+.payout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--c-navy-wash);
+  color: var(--c-navy);
+  font-size: 13.5px;
+}
+.payout span { flex: 1; min-width: 0; }

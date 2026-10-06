@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
+  ArrowLeft,
   Bell,
   BookOpen,
   CalendarDays,
@@ -29,6 +30,7 @@ import {
 } from '@features/customer/home/notifications.service';
 import { useGetOrganizerBadgesQuery } from '@features/organizer/bookings/service';
 import { useGetMyOrganizerProfileQuery } from '@features/organizer/profile/service';
+import { BottomTabs, BottomTabsSpacer, type BottomTabItem } from '@shared/components';
 import { useAuth } from './auth';
 import styles from './OrganizerLayout.module.css';
 
@@ -59,7 +61,8 @@ interface NavItem {
  * and owns `/organizer/respond/:requestId`.
  */
 const NAV: NavItem[] = [
-  { id: 'home', label: 'Home', to: '/organizer/home', icon: HomeIcon },
+  // The go-live checklist is opened from the dashboard, so it belongs to Home.
+  { id: 'home', label: 'Home', to: '/organizer/home', icon: HomeIcon, owns: ['/organizer/setup'] },
   { id: 'enquiries', label: 'Enquiries', to: '/organizer/quotes', icon: MessageSquare },
   {
     id: 'events',
@@ -116,6 +119,7 @@ function activeNavId(pathname: string, navState: string | undefined): string | u
  */
 const TITLES: Array<[prefix: string, title: string]> = [
   ['/organizer/home', 'Home'],
+  ['/organizer/setup', 'Go-live setup'],
   ['/organizer/quotes', 'Enquiries'],
   // More specific first: the drill-in is its own screen (P-07), the list is not.
   ['/organizer/events/', 'Event execution'],
@@ -137,6 +141,16 @@ const TITLES: Array<[prefix: string, title: string]> = [
 
 const titleFor = (pathname: string): string =>
   TITLES.find(([prefix]) => pathname.startsWith(prefix))?.[1] ?? 'Organizer';
+
+/**
+ * Screens opened from another screen rather than from the nav, and where
+ * their back arrow returns to. A top-level section has no back arrow: the
+ * nav is the way between those.
+ */
+const BACK_TO: Array<[prefix: string, to: string]> = [['/organizer/setup', '/organizer/home']];
+
+const backFor = (pathname: string): string | undefined =>
+  BACK_TO.find(([prefix]) => pathname.startsWith(prefix))?.[1];
 
 const NOTIF_STYLE: Record<NotificationItem['type'], { icon: LucideIcon; color: string; soft: string }> = {
   quote: { icon: FileText, color: '#e8633a', soft: '#fdeee7' },
@@ -173,6 +187,7 @@ export function OrganizerLayout() {
   useEffect(() => warmRoutes(NAV.map((item) => item.to)), []);
   const navigate = useNavigate();
   const activeId = activeNavId(pathname, (state as { nav?: string } | null)?.nav);
+  const backTo = backFor(pathname);
   const { user: sessionUser, signOut } = useAuth();
   const { data: unread = 0 } = useGetUnreadCountQuery();
   const { data: notifications = [] } = useGetMyNotificationsQuery();
@@ -248,6 +263,40 @@ export function OrganizerLayout() {
     );
   };
 
+  /*
+   * The five an organizer opens daily, taken from NAV itself so a renamed or
+   * re-routed item cannot say one thing in the rail and another in the bar.
+   *
+   * No counts on these. The only number this shell holds is unread
+   * notifications, which belongs to the bell and not to Enquiries — putting it
+   * on a tab would have it report one thing while meaning another.
+   */
+  const BOTTOM_IDS = ['home', 'enquiries', 'events', 'public-events', 'profile'];
+  /*
+   * Shorter names for the bar than the rail carries.
+   *
+   * A fifth of a phone is about 74px, and "Active events" and "Public events"
+   * both clip to "Active eve…" — which names nothing. The rail has room for
+   * the full phrase and keeps it; this is the same destination said briefly.
+   */
+  const BOTTOM_LABEL: Record<string, string> = {
+    events: 'Events',
+    'public-events': 'Tickets',
+  };
+  const bottomTabs: BottomTabItem[] = BOTTOM_IDS.flatMap((id) => {
+    const item = NAV.find((n) => n.id === id);
+    if (!item) return [];
+    return [
+      {
+        id: item.id,
+        label: BOTTOM_LABEL[item.id] ?? item.label,
+        to: item.to,
+        icon: item.icon,
+        active: item.id === activeId,
+      },
+    ];
+  });
+
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
@@ -286,7 +335,14 @@ export function OrganizerLayout() {
 
       <div className={styles.main}>
         <header className={styles.topbar}>
-          <h1 className={styles.pageTitle}>{titleFor(pathname)}</h1>
+          <div className={styles.titleRow}>
+            {backTo && (
+              <Link to={backTo} className={styles.back} aria-label="Back">
+                <ArrowLeft size={20} />
+              </Link>
+            )}
+            <h1 className={styles.pageTitle}>{titleFor(pathname)}</h1>
+          </div>
 
           <div className={styles.topbarRight}>
             <form className={styles.search} onSubmit={submitSearch} role="search">
@@ -338,8 +394,21 @@ export function OrganizerLayout() {
 
         <main className={styles.content}>
           <Outlet />
+          {/* The room the phone's bar takes, given back — otherwise it covers
+              the last row of every screen in this shell. */}
+          <BottomTabsSpacer />
         </main>
       </div>
+
+      {/*
+        The same destinations, on the edge a thumb can reach. Shown under
+        760px only; above that the rail beside it is the better shape.
+
+        Five of the eleven: the ones an organizer opens daily. The rest stay in
+        the rail, which is still there on a tablet and up — a sixth tab is not
+        a smaller tab, it is an unreadable one.
+      */}
+      <BottomTabs items={bottomTabs} ariaLabel="Organizer" />
     </div>
   );
 }

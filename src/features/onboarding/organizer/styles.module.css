@@ -1,6 +1,6 @@
 /*
- * P-01 organizer signup wizard. Standalone page (not inside OrganizerLayout):
- * its own slim top bar above, then a 980px-wide tracker + panel row.
+ * Organizer sign-up (standalone page, its own slim top bar) and the step
+ * panel the dashboard's setup page reuses.
  */
 
 .page {
@@ -9,13 +9,11 @@
   padding: 28px;
 }
 
-.wrap {
-  display: flex;
-  align-items: flex-start;
-  gap: 24px;
-  max-width: 980px;
-  margin: 0 auto;
-  width: 100%;
+/* Inside the mobile app there is no site header above, and the app's own
+   header already provides the top spacing. */
+.pageInApp {
+  min-height: 100vh;
+  padding-top: 16px;
 }
 
 .panel {
@@ -35,9 +33,6 @@
 @media (max-width: 880px) {
   .page {
     padding: 18px;
-  }
-  .wrap {
-    flex-direction: column;
   }
   .panel {
     width: 100%;

@@ -73,6 +73,7 @@ const OrganizerCouponsPage = lazy(() => import('@features/organizer/coupons/page
 const OrganizerEarningsPage = lazy(() => import('@features/organizer/earnings/page'));
 const OrganizerBadgesPage = lazy(() => import('@features/organizer/badges/page'));
 const OrganizerAcademyPage = lazy(() => import('@features/organizer/academy/page'));
+const OrganizerSetupPage = lazy(() => import('@features/organizer/setup/page'));
 const SubvendorHomePage = lazy(() => import('@features/subvendor/home/page'));
 const SubvendorTaskDetailPage = lazy(() => import('@features/subvendor/task-detail/page'));
 const SubvendorPaymentsPage = lazy(() => import('@features/subvendor/payments/page'));
@@ -169,6 +170,12 @@ export const router = createBrowserRouter([
         element: <OrganizerLayout />,
         children: [
           { path: '/organizer/home', element: lazyRoute(OrganizerHomePage, 'organizer-home') },
+          /*
+           * The go-live checklist after sign-up — services, portfolio,
+           * documents, bank — inside this shell, so it keeps the dashboard's
+           * top bar, back arrow and tabs rather than the sign-up page's chrome.
+           */
+          { path: '/organizer/setup', element: lazyRoute(OrganizerSetupPage, 'organizer-setup') },
           { path: '/organizer/quotes', element: lazyRoute(OrganizerQuotesPage, 'organizer-quotes') },
           {
             path: '/organizer/quote-builder',

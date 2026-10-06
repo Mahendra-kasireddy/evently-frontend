@@ -14,6 +14,7 @@ import {
 import { weekdayLabel } from '@features/organizer/bookings/transform';
 import type { ApiIncomingRequest } from '@features/organizer/quotes/types';
 import { HOME_COPY } from './constants';
+import { GoLiveCard } from './sections/GoLiveCard';
 import type { BadgeStatus, DashboardScheduleItem, DashboardTask, OrganizerDashboard } from './types';
 import styles from './styles.module.css';
 
@@ -133,6 +134,8 @@ export function Component({ summary, onToggleTask, badges }: OrganizerHomeCompon
 
   return (
     <PageStack>
+      {/* Until verified: what's left before customers can find this organizer. */}
+      <GoLiveCard />
       <StatRow>
         <Link to="/organizer/quotes" className={styles.statLink}>
           <Stat

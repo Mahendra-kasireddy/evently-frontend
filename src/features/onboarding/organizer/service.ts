@@ -3,6 +3,7 @@ import { apiClient } from '@lib/api';
 import { baseApi, toQueryResult } from '@lib/rtk';
 import type {
   OnboardingConfig,
+  OnboardingStatusView,
   OrganizerProfile,
   ServicesConfig,
   StoredFileMeta,
@@ -46,8 +47,18 @@ async function patchSection(path: string, body: SectionPatch): Promise<Organizer
   return data;
 }
 
-async function registerOrganizer(): Promise<RegisterResult> {
-  const { data } = await apiClient.post<RegisterResult>('/organizer/register', {});
+/** The only details sign-up asks for; everything else is the go-live checklist. */
+export interface OrganizerSignupDetails {
+  firstName: string;
+  lastName: string;
+  businessName: string;
+  primaryCategory: string;
+  city: string;
+}
+
+/** Signs up with the basic details, or — with none — resumes an existing registration. */
+async function registerOrganizer(details?: OrganizerSignupDetails): Promise<RegisterResult> {
+  const { data } = await apiClient.post<RegisterResult>('/organizer/register', details ?? {});
   return data;
 }
 
@@ -58,6 +69,11 @@ async function fetchProfile(): Promise<OrganizerProfile> {
 
 async function patchProfile(patch: OrganizerProfilePatch): Promise<OrganizerProfile> {
   const { data } = await apiClient.patch<OrganizerProfile>('/organizer/profile', patch);
+  return data;
+}
+
+async function fetchOnboardingStatus(): Promise<OnboardingStatusView> {
+  const { data } = await apiClient.get<OnboardingStatusView>('/organizer/onboarding-status');
   return data;
 }
 
@@ -92,6 +108,8 @@ export const organizerOnboardingApi = baseApi.injectEndpoints({
     }),
     updateBank: build.mutation<OrganizerProfile, SectionPatch>({
       queryFn: (body) => toQueryResult(() => patchSection('bank', body)),
+      // The dashboard's payout reminder reads this; it clears once they're on file.
+      invalidatesTags: ['OrganizerProfile'],
     }),
     updateServices: build.mutation<OrganizerProfile, SectionPatch>({
       queryFn: (body) => toQueryResult(() => patchSection('services', body)),
@@ -99,8 +117,8 @@ export const organizerOnboardingApi = baseApi.injectEndpoints({
     updatePortfolio: build.mutation<OrganizerProfile, SectionPatch>({
       queryFn: (body) => toQueryResult(() => patchSection('portfolio', body)),
     }),
-    registerOrganizer: build.mutation<RegisterResult, void>({
-      queryFn: () => toQueryResult(registerOrganizer),
+    registerOrganizer: build.mutation<RegisterResult, OrganizerSignupDetails | void>({
+      queryFn: (details) => toQueryResult(() => registerOrganizer(details ?? undefined)),
       invalidatesTags: ['OrganizerProfile'],
     }),
     /*
@@ -123,6 +141,11 @@ export const organizerOnboardingApi = baseApi.injectEndpoints({
     updateOrganizerProfile: build.mutation<OrganizerProfile, OrganizerProfilePatch>({
       queryFn: (patch) => toQueryResult(() => patchProfile(patch)),
     }),
+    /** The go-live checklist the organizer dashboard shows until approval. */
+    getOrganizerOnboardingStatus: build.query<OnboardingStatusView, void>({
+      queryFn: () => toQueryResult(fetchOnboardingStatus),
+      providesTags: ['OrganizerProfile'],
+    }),
     completeOrganizerOnboarding: build.mutation<OrganizerProfile, void>({
       queryFn: () => toQueryResult(completeOnboarding),
       invalidatesTags: ['OrganizerProfile'],
@@ -144,5 +167,6 @@ export const {
   useUpdateServicesMutation,
   useUpdatePortfolioMutation,
   useCompleteOrganizerOnboardingMutation,
+  useGetOrganizerOnboardingStatusQuery,
   useUploadOrganizerFileMutation,
 } = organizerOnboardingApi;

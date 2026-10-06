@@ -8,7 +8,15 @@ export interface VerifyOtpResult {
   token: string;
   refreshToken?: string;
   isNewUser?: boolean;
-  user?: { id: string; name?: string; email?: string; city?: string; roles?: string[] };
+  user?: {
+    id: string;
+    name?: string;
+    email?: string;
+    city?: string;
+    roles?: string[];
+    /** Which side the account opens on — see the backend's `User.defaultRole`. */
+    defaultRole?: string;
+  };
 }
 
 /**

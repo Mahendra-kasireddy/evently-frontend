@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '@app/auth';
 import { setToken, type NormalizedApiError } from '@lib/api';
-import { ONBOARDING_STEPS } from '../constants';
+import { postToApp } from '@lib/native';
+import { useSearchParams } from 'react-router-dom';
+import { GO_LIVE_STEP_IDS, ONBOARDING_STEPS } from '../constants';
 import {
   useGetOnboardingConfigQuery,
   useGetServicesConfigQuery,
@@ -162,6 +164,12 @@ export interface UseOnboardingResult {
   status: OnboardingStatusValue;
   /** False while an admin gate is closed; the wizard is not rendered then. */
   canEdit: boolean;
+  /** Bank details may be added even after submission, until they are on file. */
+  canEditBank: boolean;
+  /** True once bank details are on file. */
+  payoutReady: boolean;
+  /** Every go-live step is filled in, so the profile can be submitted now. */
+  canSubmit: boolean;
   /** Admin's reason when the profile was rejected or sent back for changes. */
   reviewNote: string;
   submitted: boolean;
@@ -193,6 +201,11 @@ export function useOnboarding(): UseOnboardingResult {
   const [profileCompletion, setProfileCompletion] = useState(0);
   const [status, setStatus] = useState<OnboardingStatusValue>('draft');
   const [canEdit, setCanEdit] = useState(true);
+  const [canEditBank, setCanEditBank] = useState(true);
+  const [payoutReady, setPayoutReady] = useState(false);
+  // `?step=bank` — the dashboard's checklist links straight to the step it names.
+  const [searchParams] = useSearchParams();
+  const requestedStep = searchParams.get('step');
   const [reviewNote, setReviewNote] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [justSubmitted, setJustSubmitted] = useState(false);
@@ -258,11 +271,14 @@ export function useOnboarding(): UseOnboardingResult {
     setProfileCompletion(p.profileCompletion);
     setStatus(p.onboardingStatus);
     setCanEdit(p.canEdit);
+    setCanEditBank(p.canEditBank ?? p.canEdit);
+    setPayoutReady(p.payoutReady ?? false);
     setReviewNote(p.reviewNote ?? '');
     setSubmitted(p.onboardingStatus === 'submitted' || p.onboardingStatus === 'approved');
-    // Reopen where the organizer left off, not at step 1.
-    setCurrentId(resumeStepId(nextValues, nextFiles));
-  }, []);
+    // The step the dashboard linked to, else where the organizer left off.
+    const linked = ONBOARDING_STEPS.find((s) => s.id === requestedStep)?.id;
+    setCurrentId(linked ?? resumeStepId(nextValues, nextFiles));
+  }, [requestedStep]);
 
   const bootstrap = useCallback(() => {
     register()
@@ -270,6 +286,9 @@ export function useOnboarding(): UseOnboardingResult {
       .then((res) => {
         if (res.token) {
           setToken(res.token);
+          // Registering reissued the session; the mobile app (if this is inside
+          // it) must adopt the new pair or its old refresh token is dead.
+          postToApp({ type: 'session', token: res.token, refreshToken: res.refreshToken });
           // The backend reissues the token with Role.ORGANIZER added on
           // register — re-derive roles from it so the store (and any
           // role-gated route, e.g. the organizer dashboard) reflects the new
@@ -334,6 +353,7 @@ export function useOnboarding(): UseOnboardingResult {
         savers[section](buildPayload(section))
           .then((p) => {
             setProfileCompletion(p.profileCompletion);
+            setPayoutReady(p.payoutReady ?? false);
             setSaveState((s) => ({ ...s, [section]: 'saved' }));
           })
           .catch((err: NormalizedApiError) => {
@@ -430,6 +450,10 @@ export function useOnboarding(): UseOnboardingResult {
         setSubmitted(true);
         setJustSubmitted(true);
         setProfileCompletion(p.profileCompletion);
+        setStatus(p.onboardingStatus);
+        setCanEdit(p.canEdit);
+        setCanEditBank(p.canEditBank ?? false);
+        setPayoutReady(p.payoutReady ?? false);
       })
       .catch((err: NormalizedApiError) => setFormError(err?.message ?? 'Submission failed'));
   }, [savers, buildPayload, complete]);
@@ -476,6 +500,9 @@ export function useOnboarding(): UseOnboardingResult {
     profileCompletion,
     status,
     canEdit,
+    canEditBank,
+    payoutReady,
+    canSubmit: GO_LIVE_STEP_IDS.every((id) => isStepComplete(id, values, files)),
     reviewNote,
     submitted,
     justSubmitted,

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { setToken, type NormalizedApiError } from '@lib/api';
+import { postToApp } from '@lib/native';
 import { useAuth } from '@app/auth';
 import {
   OTHER_CATEGORY_ID,
@@ -132,6 +133,9 @@ export function useSubvendorOnboarding(): UseSubvendorResult {
       .unwrap()
       .then((res) => {
         setToken(res.token);
+        // Registering reissued the session; the mobile app (if this is inside
+        // it) must adopt the new pair or its old refresh token is dead.
+        postToApp({ type: 'session', token: res.token, refreshToken: res.refreshToken });
         refreshRolesFromToken();
         navigate('/subvendor/home');
       })

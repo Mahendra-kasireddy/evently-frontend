@@ -1,6 +1,15 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { AppHeader, Footer, Header, type AppNavItem } from '@shared/components';
+import { CalendarDays, Compass, Home as HomeIcon, Sparkles } from 'lucide-react';
+import {
+  AppHeader,
+  BottomTabs,
+  BottomTabsSpacer,
+  Footer,
+  Header,
+  type AppNavItem,
+  type BottomTabItem,
+} from '@shared/components';
 import { useGetProfileSummaryQuery } from '@features/customer/home/profile.service';
 import {
   useGetUnreadCountQuery,
@@ -22,6 +31,24 @@ const NAV: AppNavItem[] = [
   { label: 'Discover', to: '/discover' },
   { label: 'My events', to: '/workspace' },
 ];
+
+/**
+ * The same four destinations, with a mark each, for the phone's bar.
+ *
+ * Keyed off NAV's own paths rather than listed again: the header's nav and the
+ * bar have to agree about where "My events" goes, and two lists is how they
+ * come not to.
+ *
+ * This is not a nicety on the customer side — above 860px the header's nav is
+ * there, and below it the header hides it entirely, which left a phone with no
+ * navigation at all beyond the profile menu.
+ */
+const TAB_ICON: Record<string, typeof HomeIcon> = {
+  '/home': HomeIcon,
+  '/plan': Sparkles,
+  '/discover': Compass,
+  '/workspace': CalendarDays,
+};
 
 /**
  * Routes that belong to a nav section but do not live under its path. Checkout,
@@ -95,6 +122,22 @@ export function CustomerLayout() {
     navigate('/login');
   };
 
+  /* "Plan event" is the one that will not fit a fifth of a phone. */
+  const BOTTOM_LABEL: Record<string, string> = { '/plan': 'Plan' };
+  const bottomTabs: BottomTabItem[] = nav.flatMap((item) => {
+    const icon = TAB_ICON[item.to];
+    if (!icon) return [];
+    return [
+      {
+        id: item.to,
+        label: BOTTOM_LABEL[item.to] ?? item.label,
+        to: item.to,
+        icon,
+        active: item.active === true,
+      },
+    ];
+  });
+
   return (
     <>
       {isAuthed ? (
@@ -117,6 +160,14 @@ export function CustomerLayout() {
       )}
       <Outlet />
       <Footer />
+      {/* Only for a signed-in customer: an anonymous visitor on the planner or
+          a public profile has nothing of their own to navigate between. */}
+      {isAuthed ? (
+        <>
+          <BottomTabsSpacer />
+          <BottomTabs items={bottomTabs} ariaLabel="Customer" />
+        </>
+      ) : null}
     </>
   );
 }

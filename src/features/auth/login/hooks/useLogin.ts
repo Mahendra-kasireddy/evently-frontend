@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth, type Role } from '@app/auth';
+import { homePathFor, useAuth, type Role } from '@app/auth';
 import { type NormalizedApiError } from '@lib/api';
 import { needsOnboarding, useSendOtpMutation, useVerifyOtpMutation } from '../service';
 import { mobileSchema, otpSchema, type LoginFieldErrors, type MobileFormValues } from '../types';
@@ -87,7 +87,10 @@ export function useLogin(): UseLoginResult {
         // New accounts (and ones that never finished) go through the welcome
         // steps first: Home can neither greet them nor find organizers near
         // them without a name and a city.
-        navigate(needsOnboarding(data) ? '/welcome' : '/home');
+        // A business account opens on its own dashboard; the customer welcome
+        // steps are only for accounts that land on the customer side.
+        const home = homePathFor(data.user?.defaultRole, data.user?.roles ?? []);
+        navigate(home !== '/home' ? home : needsOnboarding(data) ? '/welcome' : '/home');
       })
       .catch((e) => {
         setOtpError((e as NormalizedApiError)?.message ?? 'Verification failed');

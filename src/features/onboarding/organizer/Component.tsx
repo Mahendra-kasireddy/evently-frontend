@@ -2,7 +2,6 @@ import { AlertTriangle, Check, CheckCircle2, ChevronRight, Clock, XCircle } from
 import { useNavigate } from 'react-router-dom';
 import { Btn } from '@shared/partner';
 import {
-  Stepper,
   BasicInfoForm,
   VerificationForm,
   BankForm,
@@ -77,25 +76,48 @@ function ReviewGate({ onb }: OnboardingComponentProps) {
     );
   }
 
-  // submitted — waiting on the second gate
+  // submitted (waiting on verification) or approved (live)
+  const live = onb.status === 'approved';
   return (
     <div className={form.success}>
       <span className={form.successTitle}>
-        <CheckCircle2 size={22} /> Profile submitted for review
+        <CheckCircle2 size={22} /> {live ? 'Your profile is live' : 'Profile submitted for verification'}
       </span>
       <p className={form.sub}>
-        Your profile is complete and with our team. Once it&apos;s approved it becomes visible to
-        customers looking for organizers, and you can start receiving quote requests.
+        {live
+          ? 'Customers looking for organizers can find you, and you receive their enquiries on your dashboard.'
+          : 'Your profile is with our team. Once it’s verified it becomes visible to customers looking for organizers, and you can start receiving enquiries.'}
       </p>
-      <Btn kind="outline" onClick={() => navigate('/organizer/home')}>
-        Go to your dashboard
-      </Btn>
+      {onb.canEditBank && (
+        <p className={form.sub}>Add your bank details now so your first payout isn&apos;t held up.</p>
+      )}
+      <div className={form.gateActions}>
+        {onb.canEditBank && (
+          <Btn onClick={() => onb.goToStep('bank')}>Add bank details</Btn>
+        )}
+        <Btn kind="outline" onClick={() => navigate('/organizer/home')}>
+          Go to your dashboard
+        </Btn>
+      </div>
     </div>
   );
 }
 
-export function Component({ onb }: OnboardingComponentProps) {
+/**
+ * One step of the go-live checklist: its form, autosaving, with the way to
+ * the next step — or, from verification on, to submitting for verification.
+ * Rendered by the dashboard's setup page (features/organizer/setup), inside
+ * the organizer shell; sign-up itself is SignupForm and asks for far less.
+ */
+export function SetupPanel({ onb }: OnboardingComponentProps) {
+  const navigate = useNavigate();
   const current = onb.steps.find((s) => s.id === onb.currentId);
+  // After submission the profile is locked except bank details, which an
+  // organizer adds whenever their first payout comes up.
+  const bankOnly = !onb.canEdit && onb.canEditBank && onb.currentId === 'bank';
+  // Submitting is offered from verification onward: bank details are optional
+  // to go live, so nobody has to fill them just to reach the button.
+  const offerSubmit = !bankOnly && (onb.currentId === 'verification' || onb.currentId === 'bank');
   const order = onb.steps.map((s) => s.id);
   const idx = order.indexOf(onb.currentId);
   const prevId = idx > 0 ? order[idx - 1] : null;
@@ -104,14 +126,6 @@ export function Component({ onb }: OnboardingComponentProps) {
   const head = STEP_HEADINGS[onb.currentId];
 
   return (
-    <div className={styles.wrap}>
-      <Stepper
-        steps={onb.steps}
-        onSelect={onb.goToStep}
-        note={ONB_COPY.verifyNote}
-        currentId={onb.currentId}
-      />
-
       <section className={styles.panel}>
         {onb.bootstrapping ? (
           <p className={form.state} role="status">
@@ -126,7 +140,7 @@ export function Component({ onb }: OnboardingComponentProps) {
               Try again
             </Btn>
           </div>
-        ) : !onb.canEdit ? (
+        ) : !onb.canEdit && !bankOnly ? (
           <ReviewGate onb={onb} />
         ) : (
           <>
@@ -158,7 +172,7 @@ export function Component({ onb }: OnboardingComponentProps) {
             </div>
 
             <div className={form.footer}>
-              {prevId && (
+              {prevId && !bankOnly && (
                 <Btn kind="outline" sm onClick={() => onb.goToStep(prevId)}>
                   Back
                 </Btn>
@@ -167,19 +181,38 @@ export function Component({ onb }: OnboardingComponentProps) {
                 {onb.formError ?? ''}
               </p>
               <span className={form.spacer} />
-              {nextId ? (
-                <Btn sm icon={<ChevronRight size={14} />} onClick={() => onb.goToStep(nextId)}>
-                  Save &amp; Continue
+              {bankOnly ? (
+                <Btn sm icon={<Check size={14} />} onClick={() => navigate('/organizer/home')}>
+                  Done
                 </Btn>
               ) : (
-                <Btn sm icon={<Check size={14} />} disabled={onb.isSubmitting} onClick={onb.submit}>
-                  {onb.isSubmitting ? 'Submitting…' : 'Submit for review'}
-                </Btn>
+                <>
+                  {nextId && (
+                    <Btn
+                      sm
+                      kind={offerSubmit ? 'outline' : 'primary'}
+                      icon={<ChevronRight size={14} />}
+                      onClick={() => onb.goToStep(nextId)}
+                    >
+                      Save &amp; Continue
+                    </Btn>
+                  )}
+                  {offerSubmit && (
+                    <Btn
+                      sm
+                      icon={<Check size={14} />}
+                      disabled={onb.isSubmitting || !onb.canSubmit}
+                      onClick={onb.submit}
+                      title={onb.canSubmit ? undefined : 'Complete the earlier steps first'}
+                    >
+                      {onb.isSubmitting ? ONB_COPY.submitting : ONB_COPY.submit}
+                    </Btn>
+                  )}
+                </>
               )}
             </div>
           </>
         )}
       </section>
-    </div>
   );
 }

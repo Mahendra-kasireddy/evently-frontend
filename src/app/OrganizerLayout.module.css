@@ -25,6 +25,9 @@
 
 .topbar { height: var(--org-topbar-h); flex: none; display: flex; align-items: center; gap: 14px; padding: 0 var(--org-pad); background: #fff; border-bottom: 1px solid var(--c-line); position: sticky; top: 0; z-index: 4; }
 
+.titleRow { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.back { flex: none; display: grid; place-items: center; width: 36px; height: 36px; margin-left: -8px; border-radius: 10px; color: var(--c-navy); }
+.back:hover { background: var(--c-line2); }
 .pageTitle { margin: 0; font-weight: 700; font-size: 17px; color: var(--c-navy); letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .topbarRight { margin-left: auto; display: flex; align-items: center; gap: 16px; flex: 0 0 auto; }
@@ -53,6 +56,22 @@
   .content { padding: 14px; }
   .pageTitle { font-size: 15px; }
 }
+/*
+ * Under 760px the bottom bar is the navigation, so the rail goes.
+ *
+ * It does not merely narrow: at 1000px it already collapses to unlabelled
+ * icons, and a column of six glyphs you have to guess at — while still taking
+ * a slice of a phone's width — is worse than no rail at all.
+ */
+@media (max-width: 760px) {
+  .sidebar { display: none; }
+  .shell { display: block; }
+  .main { min-height: 100vh; }
+  /* The title alone; search and the identity block have their own breakpoints
+     above and are already gone by here. */
+  .topbar { padding: 0 14px; }
+}
+
 @media (max-width: 1000px) {
   .sidebar { flex-basis: var(--org-side-rail-w); width: var(--org-side-rail-w); padding: 16px 8px; }
   .navItem { justify-content: center; gap: 0; padding: 10px 0; font-size: 0; }

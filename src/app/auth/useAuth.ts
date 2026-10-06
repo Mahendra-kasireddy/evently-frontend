@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { decodeJwtRoles, getToken, setToken } from '@lib/api';
+import { postToApp } from '@lib/native';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { signedIn, signedOut, rolesUpdated, selectAuth } from './authSlice';
 import type { Role, SessionUser } from './types';
@@ -36,6 +37,8 @@ export function useAuth(): UseAuthResult {
   const signOut = useCallback(() => {
     setToken(null);
     dispatch(signedOut());
+    // In the mobile app the session belongs to the app; it signs out too.
+    postToApp({ type: 'logout' });
   }, [dispatch]);
 
   const refreshRolesFromToken = useCallback(() => {

@@ -20,6 +20,7 @@ import {
   useMarkAllNotificationsReadMutation,
   type NotificationItem,
 } from '@features/customer/home/notifications.service';
+import { BottomTabs, BottomTabsSpacer, type BottomTabItem } from '@shared/components';
 import { useAuth } from './auth';
 import styles from './OrganizerLayout.module.css';
 
@@ -117,8 +118,19 @@ export function SubVendorLayout() {
     );
   };
 
+  /* Three destinations, so the bar carries all of them — nothing to choose
+     between, and nothing left behind in a rail a phone no longer shows. */
+  const bottomTabs: BottomTabItem[] = NAV.map((item) => ({
+    id: item.to,
+    label: item.label,
+    to: item.to,
+    icon: item.icon,
+    active: pathname.startsWith(item.to),
+  }));
+
   return (
     <div className={styles.shell}>
+      {/* All three fit, so the bar is the whole nav rather than a selection. */}
       <aside className={styles.sidebar}>
         <Link to="/subvendor/home" className={styles.logo}>
           <span className={styles.logoMark}>e</span>vently
@@ -197,7 +209,10 @@ export function SubVendorLayout() {
         </header>
 
         <Outlet />
+        <BottomTabsSpacer />
       </div>
+
+      <BottomTabs items={bottomTabs} ariaLabel="Sub-vendor" />
     </div>
   );
 }

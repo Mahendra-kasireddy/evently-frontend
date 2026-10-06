@@ -7,6 +7,7 @@ import {
   PROFILE_PHOTO_ACCEPT,
   TAGLINE_MAX,
 } from './constants';
+import { AccountSwitch } from '@shared/components';
 import { LivePreview } from './sections';
 import type { UseOrganizerProfileResult } from './hooks';
 import styles from './styles.module.css';
@@ -293,6 +294,8 @@ export function Component({
               />
             </div>
           </div>
+
+          <AccountSwitch portalLabel="organizer" />
         </section>
       </div>
     </main>

@@ -8,9 +8,16 @@ export { EmptyState, type EmptyStateProps } from './EmptyState';
 export { AppHeader, type AppNavItem, type AppHeaderUser, type ProfileMenuItem } from './AppHeader';
 export { AuthModal, type AuthModalProps } from './AuthModal';
 export {
+  BottomTabs,
+  BottomTabsSpacer,
+  type BottomTabItem,
+  type BottomTabsProps,
+} from './BottomTabs/BottomTabs';
+export {
   LocationPicker,
   type LocationPickerProps,
   LOCATION_COPY,
   readRecentCities,
   rememberCity,
 } from './LocationPicker';
+export { AccountSwitch, type AccountSwitchProps } from './AccountSwitch';

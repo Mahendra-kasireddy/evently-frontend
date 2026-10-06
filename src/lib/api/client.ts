@@ -2,6 +2,7 @@ import axios, { type AxiosInstance } from 'axios';
 import { env } from '@lib/env';
 import { getToken, setToken } from './token';
 import { normalizeError } from './errors';
+import { postToApp } from '@lib/native';
 
 /**
  * THE single axios instance for the whole app.
@@ -33,7 +34,9 @@ apiClient.interceptors.response.use(
 
     // Token rejected/expired: clear it so the app drops to unauthenticated.
     // Route-level redirect is handled by the router guard, not here.
-    if (normalized.status === 401) {
+    // Inside the mobile app the app holds the refresh token: hand the expiry
+    // to it (it refreshes and reloads this page) instead of signing out here.
+    if (normalized.status === 401 && !postToApp({ type: 'sessionExpired' })) {
       setToken(null);
     }
 

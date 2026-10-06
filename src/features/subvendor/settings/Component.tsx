@@ -1,4 +1,5 @@
 import { AlertCircle, Bell, Check, LogOut, Pencil, X } from 'lucide-react';
+import { AccountSwitch } from '@shared/components';
 import { SETTINGS_COPY as COPY } from './constants';
 import type { AccountDetails, AccountEdits, AccountFieldErrors } from './types';
 import type { SubVendorProfile } from '@features/subvendor/profile/types';
@@ -217,6 +218,9 @@ export function Component({
             <Bell size={15} /> <span>{COPY.notificationsBody}</span>
           </p>
         </section>
+
+        {/* ------------------------------------------------- switch side */}
+        <AccountSwitch portalLabel="sub-vendor" showSignOut={false} />
 
         {/* ------------------------------------------------------- session */}
         <section className={styles.panel}>

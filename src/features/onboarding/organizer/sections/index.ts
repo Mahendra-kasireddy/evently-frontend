@@ -1,4 +1,3 @@
-export { Stepper, type StepperProps } from './Stepper';
 export { BasicInfoForm } from './BasicInfoForm';
 export { VerificationForm } from './VerificationForm';
 export { BankForm } from './BankForm';

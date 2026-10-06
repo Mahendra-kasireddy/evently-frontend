@@ -1,41 +1,21 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@app/auth';
-import { useOnboarding } from './hooks';
-import { Component } from './Component';
 import { AuthGate } from './sections/AuthGate/AuthGate';
-
-/** Inner view — only mounted once we know the user is authenticated. */
-function OnboardingInner() {
-  const onb = useOnboarding();
-
-  /*
-   * An approved organizer does not belong in the wizard. "Log in as Organizer"
-   * points at this route, so without this they land back on onboarding on every
-   * sign-in and have to click through to reach their dashboard.
-   *
-   * Only `approved` redirects. `submitted` now means "waiting on an admin",
-   * which is a state worth showing rather than hiding behind the dashboard —
-   * except for a submission made in this session, which shows its confirmation
-   * panel first.
-   */
-  if (onb.status === 'approved' && !onb.justSubmitted) {
-    return <Navigate to="/organizer/home" replace />;
-  }
-
-  return <Component onb={onb} />;
-}
+import { SignupForm } from './sections/SignupForm/SignupForm';
 
 /**
- * Organizer onboarding is OTP-first: the user must verify their mobile (via the
- * existing OTP auth) before registering as an organizer. Rather than bouncing
- * unauthenticated visitors to /login, we show the verification inline so the
- * "Log in as Organizer" entry point always lands somewhere useful.
+ * Organizer sign-up (/onboarding/organizer): verify the mobile, give five
+ * basic details, land on the dashboard.
+ *
+ * OTP-first, inline: an unauthenticated visitor verifies here rather than
+ * being bounced to /login, so "Register your business" always lands somewhere
+ * useful. An account that is already an organizer has nothing to sign up for
+ * and goes to its dashboard, where the go-live checklist lives.
  */
 export function OrganizerOnboardingContainer() {
-  const { status } = useAuth();
+  const { status, roles } = useAuth();
 
-  if (status !== 'authenticated') {
-    return <AuthGate />;
-  }
-  return <OnboardingInner />;
+  if (status !== 'authenticated') return <AuthGate />;
+  if (roles.includes('organizer')) return <Navigate to="/organizer/home" replace />;
+  return <SignupForm />;
 }

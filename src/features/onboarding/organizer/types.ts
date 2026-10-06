@@ -65,6 +65,29 @@ export type OnboardingStatusValue =
   | 'approved'
   | 'rejected';
 
+/** One step of `GET /organizer/onboarding-status`. */
+export interface OnboardingStepStatus {
+  id: string;
+  title: string;
+  complete: boolean;
+  missingFields: string[];
+  /** False for bank details — needed before payouts, not before going live. */
+  requiredForGoLive: boolean;
+}
+
+/** `GET /organizer/onboarding-status` — the dashboard's go-live checklist. */
+export interface OnboardingStatusView {
+  onboardingStatus: OnboardingStatusValue;
+  canEdit: boolean;
+  canEditBank: boolean;
+  canSubmit: boolean;
+  goLiveMissing: string[];
+  payoutReady: boolean;
+  reviewNote: string;
+  submittedAt: string | null;
+  steps: OnboardingStepStatus[];
+}
+
 /** The full organizer profile view returned by the backend (all 5 steps). */
 export interface OrganizerProfile {
   id: string;
@@ -73,6 +96,10 @@ export interface OrganizerProfile {
   submittedAt: string | null;
   /** Whether the API will currently accept this organizer's onboarding writes. */
   canEdit: boolean;
+  /** Bank details stay addable after submission, until a complete set is on file. */
+  canEditBank: boolean;
+  /** True once bank details are on file — needed before the first payout. */
+  payoutReady: boolean;
   /** Outstanding admin reason for a rejection or a changes request. */
   reviewNote: string;
   // Step 1

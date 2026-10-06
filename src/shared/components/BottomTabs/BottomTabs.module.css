@@ -1,0 +1,132 @@
+/*
+ * The bottom bar, on phones only.
+ *
+ * Every shell in this app navigated from the side — a navy rail that, under
+ * 1000px, collapsed to a column of unlabelled icons and still took a slice of
+ * an already narrow screen. On a phone that is the wrong edge: the thumb is at
+ * the bottom, and a vertical list of six destinations is a menu to read rather
+ * than a bar to tap.
+ */
+
+.bar {
+  display: none;
+}
+
+/* Read out, never drawn. This app has no global utility for it, so it lives
+   with the one component that needs it. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.spacer {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    display: flex;
+    align-items: stretch;
+    background: #fff;
+    border-top: 1px solid var(--color-border, #e9e7e3);
+    /* The home indicator on an iPhone sits inside the viewport, so the bar has
+       to end above it or the last few points of every tab are untappable. */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-shadow: 0 -2px 14px rgba(15, 23, 42, 0.06);
+  }
+
+  .tab {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    /* 56 plus the label: the smallest a thing worth tapping should be. */
+    padding: 8px 2px 7px;
+    border: none;
+    background: none;
+    font: inherit;
+    color: var(--color-text-muted, #5d6674);
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .tab svg {
+    width: 21px;
+    height: 21px;
+    flex: none;
+  }
+
+  .label {
+    font-size: 10.5px;
+    font-weight: 600;
+    line-height: 1.2;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .active {
+    color: var(--color-primary, #e8633a);
+  }
+
+  /* A short bar over the chosen tab rather than a filled pill: filled reads as
+     a button, which is a thing you press once, not a place you are. */
+  .active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 26px;
+    height: 3px;
+    border-radius: 0 0 999px 999px;
+    background: var(--color-primary, #e8633a);
+  }
+
+  /* A count on a tab — unanswered enquiries, unread messages. */
+  .badge {
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    margin-left: 4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--color-primary, #e8633a);
+    color: #fff;
+    font-size: 9.5px;
+    font-weight: 800;
+    line-height: 16px;
+    text-align: center;
+  }
+
+  /*
+   * The height the bar takes out of the page, given back as padding under the
+   * content. Without it the bar sits on top of the last row of whatever screen
+   * is open — a table's final line, a form's submit button — and that row can
+   * never be reached.
+   */
+  .spacer {
+    display: block;
+    height: calc(58px + env(safe-area-inset-bottom, 0px));
+    flex: none;
+  }
+}
