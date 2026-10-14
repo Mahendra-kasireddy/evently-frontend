@@ -56,7 +56,10 @@ export const CATEGORY_SPECS: CategorySpec[] = [
       { label: 'Photographers', placeholder: '2', numeric: true },
       { label: 'Coverage hours', placeholder: '10', numeric: true },
     ],
-    options: { label: 'Deliverables', values: ['Photos', 'Video', 'Album', 'Reel'] },
+    options: {
+      label: 'Deliverables',
+      values: ['Photos', 'Video', 'Album', 'Reel'],
+    },
   },
   {
     key: 'priest',
@@ -96,7 +99,9 @@ export const GENERIC_SPEC: CategorySpec = {
 export function specForCategory(category: string): CategorySpec {
   const needle = category.trim().toLowerCase();
   return (
-    CATEGORY_SPECS.find((spec) => spec.match.some((m) => needle.includes(m))) ?? {
+    CATEGORY_SPECS.find((spec) =>
+      spec.match.some((m) => needle.includes(m)),
+    ) ?? {
       ...GENERIC_SPEC,
       key: needle.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'other',
     }
@@ -105,5 +110,8 @@ export function specForCategory(category: string): CategorySpec {
 
 /** Resolves a saved line item back to its spec, preferring the stored key. */
 export function specForLine(key: string, title: string): CategorySpec {
-  return CATEGORY_SPECS.find((spec) => spec.key === key) ?? specForCategory(title || key);
+  return (
+    CATEGORY_SPECS.find((spec) => spec.key === key) ??
+    specForCategory(title || key)
+  );
 }

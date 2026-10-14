@@ -238,3 +238,8 @@
   color: var(--c-navy, #0e1a33);
 }
 .confirmReason:focus-visible { outline: 2px solid var(--color-primary, #e2603a); outline-offset: 1px; }
+
+@media (max-width: 560px) {
+  .header { padding: 14px 16px; }
+  .confirmActions > * { flex: 1 1 auto; justify-content: center; }
+}

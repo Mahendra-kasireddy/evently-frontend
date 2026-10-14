@@ -1,22 +1,18 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
-  ArrowLeft,
   Bell,
-  BookOpen,
-  CalendarDays,
   CheckCircle2,
+  ChevronLeft,
   CreditCard,
   FileText,
   Home as HomeIcon,
   LogOut,
-  Medal,
   MessageSquare,
   PartyPopper,
   Search,
   Sparkles,
+  Sprout,
   User,
-  Ticket,
-  Users,
   Wallet,
   type LucideIcon,
 } from 'lucide-react';
@@ -30,106 +26,158 @@ import {
 } from '@features/customer/home/notifications.service';
 import { useGetOrganizerBadgesQuery } from '@features/organizer/bookings/service';
 import { useGetMyOrganizerProfileQuery } from '@features/organizer/profile/service';
-import { BottomTabs, BottomTabsSpacer, type BottomTabItem } from '@shared/components';
+import {
+  BottomTabs,
+  BottomTabsSpacer,
+  type BottomTabItem,
+} from '@shared/components';
 import { useAuth } from './auth';
 import styles from './OrganizerLayout.module.css';
 
-interface NavItem {
-  /** Stable identity — two items may share a `to`, so labels/paths aren't keys. */
-  id: string;
+/** One screen inside a section — a tab under the top bar. */
+interface SectionTab {
   label: string;
+  /** A shorter name for a phone's tab row, where four full names do not fit. */
+  short?: string;
   to: string;
-  icon: LucideIcon;
   /**
-   * Screens this item owns outright, even though they aren't its `to`. A quote
-   * only exists inside an enquiry, so "Quote builder" owns the drill-in rather
-   * than linking to a param-less route of its own.
+   * Screens this tab owns outright, though they are not its `to` — a drill-in
+   * opened from it (an event's invitation, one enquiry's quote).
    */
   owns?: string[];
-  /**
-   * Sent as router location state so two items pointing at the same screen stay
-   * distinguishable for the active highlight.
-   */
-  state?: { nav: string };
+}
+
+/** A top-bar destination: one or more screens that are used together. */
+interface Section {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  tabs: SectionTab[];
 }
 
 /**
- * Order, labels and icons mirror the reference design's organizer rail
- * (screens P-04..P-11). The design lists "Quote builder" as a top-level
- * destination, but a quote is always composed against a specific enquiry —
- * there is no param-less quote screen — so it shares Enquiries' destination
- * and owns `/organizer/respond/:requestId`.
+ * The organizer's navigation, grouped by where each feature is used.
+ *
+ * Twelve rail items became six sections. Screens that serve the same job sit
+ * side by side as tabs: an enquiry and the quote that answers it; a booking,
+ * the calendar it occupies, the sub-vendors who work it and the ticketed
+ * events beside it; the money earned and the coupons that discount it; the
+ * badge ladder and the Academy that climbs it. Profile lives in the avatar
+ * menu, where the account belongs.
+ *
+ * Every route is unchanged — deep links, notifications and the mobile app's
+ * WebView keep working; only the way between them moved.
  */
-const NAV: NavItem[] = [
-  // The go-live checklist is opened from the dashboard, so it belongs to Home.
-  { id: 'home', label: 'Home', to: '/organizer/home', icon: HomeIcon, owns: ['/organizer/setup'] },
-  { id: 'enquiries', label: 'Enquiries', to: '/organizer/quotes', icon: MessageSquare },
+const SECTIONS: Section[] = [
+  {
+    id: 'home',
+    label: 'Home',
+    icon: HomeIcon,
+    tabs: [
+      { label: 'Dashboard', to: '/organizer/home', owns: ['/organizer/setup'] },
+    ],
+  },
+  {
+    id: 'enquiries',
+    label: 'Enquiries',
+    icon: MessageSquare,
+    tabs: [
+      { label: 'Inbox', to: '/organizer/quotes' },
+      {
+        label: 'Quote builder',
+        to: '/organizer/quote-builder',
+        owns: ['/organizer/respond'],
+      },
+    ],
+  },
   {
     id: 'events',
-    label: 'Active events',
-    to: '/organizer/events',
+    label: 'Events',
     icon: PartyPopper,
-    // The guest-invitation builder is opened from an event, so it belongs here.
-    owns: ['/organizer/invitation'],
+    tabs: [
+      {
+        label: 'Active events',
+        short: 'Events',
+        to: '/organizer/events',
+        owns: ['/organizer/invitation'],
+      },
+      { label: 'Calendar', to: '/organizer/calendar' },
+      { label: 'Sub-vendors', short: 'Vendors', to: '/organizer/subvendors' },
+      {
+        label: 'Public events',
+        short: 'Tickets',
+        to: '/organizer/public-events',
+      },
+    ],
   },
   {
-    id: 'quote-builder',
-    label: 'Quote builder',
-    to: '/organizer/quote-builder',
-    icon: FileText,
-    // The per-enquiry builder belongs to this item, not to Enquiries.
-    owns: ['/organizer/respond'],
+    id: 'earnings',
+    label: 'Earnings',
+    icon: Wallet,
+    tabs: [
+      { label: 'Earnings', to: '/organizer/earnings' },
+      { label: 'Coupons', to: '/organizer/coupons' },
+    ],
   },
   {
-    id: 'public-events',
-    label: 'Public events',
-    to: '/organizer/public-events',
-    icon: Ticket,
+    id: 'grow',
+    label: 'Grow',
+    icon: Sprout,
+    tabs: [
+      { label: 'Badges & tiers', to: '/organizer/badges' },
+      { label: 'Academy', to: '/organizer/academy' },
+    ],
   },
-  { id: 'subvendors', label: 'Sub-vendors', to: '/organizer/subvendors', icon: Users },
-  { id: 'coupons', label: 'Coupons', to: '/organizer/coupons', icon: Ticket },
-  { id: 'calendar', label: 'Calendar', to: '/organizer/calendar', icon: CalendarDays },
-  { id: 'earnings', label: 'Earnings', to: '/organizer/earnings', icon: Wallet },
-  { id: 'badges', label: 'Badges', to: '/organizer/badges', icon: Medal },
-  { id: 'academy', label: 'Academy', to: '/organizer/academy', icon: BookOpen },
-  { id: 'profile', label: 'Profile', to: '/organizer/profile', icon: User },
+  {
+    id: 'profile',
+    label: 'Profile',
+    icon: User,
+    tabs: [{ label: 'Profile', to: '/organizer/profile' }],
+  },
 ];
+
+/** The sections drawn in the top bar; Profile is reached from the avatar. */
+const TOP_SECTIONS = SECTIONS.filter((s) => s.id !== 'profile');
 
 const matchesPath = (pathname: string, prefix: string): boolean =>
   pathname === prefix || pathname.startsWith(`${prefix}/`);
 
-/**
- * Which rail item to highlight. An owned screen wins outright; otherwise the
- * destination decides, and when two items share one, the state set by the click
- * breaks the tie. Landing on a shared destination without that state (a direct
- * URL, a refresh, a redirect) falls back to the first item declaring it.
- */
-function activeNavId(pathname: string, navState: string | undefined): string | undefined {
-  const owner = NAV.find((item) => item.owns?.some((prefix) => matchesPath(pathname, prefix)));
-  if (owner) return owner.id;
+const tabOwns = (tab: SectionTab, pathname: string): boolean =>
+  matchesPath(pathname, tab.to) ||
+  Boolean(tab.owns?.some((p) => matchesPath(pathname, p)));
 
-  const candidates = NAV.filter((item) => matchesPath(pathname, item.to));
-  if (candidates.length < 2) return candidates[0]?.id;
-  return (candidates.find((item) => item.state?.nav === navState) ?? candidates[0])?.id;
+/** The section and tab that own the current URL. */
+function locate(pathname: string): { section?: Section; tab?: SectionTab } {
+  for (const section of SECTIONS) {
+    // An owned drill-in wins over a plain prefix: /organizer/respond is the
+    // quote builder's, not the inbox's.
+    const owner = section.tabs.find((t) =>
+      t.owns?.some((p) => matchesPath(pathname, p)),
+    );
+    if (owner) return { section, tab: owner };
+  }
+  for (const section of SECTIONS) {
+    const tab = section.tabs.find((t) => tabOwns(t, pathname));
+    if (tab) return { section, tab };
+  }
+  return {};
 }
 
 /**
- * The design shows the current screen's name in the top bar rather than
- * repeating it as an in-page H1, so content starts straight at the cards.
+ * The screen's own name, shown as the page heading under the top bar. More
+ * specific prefixes first: one event is its own screen, the list is not.
  */
 const TITLES: Array<[prefix: string, title: string]> = [
-  ['/organizer/home', 'Home'],
+  ['/organizer/home', 'Dashboard'],
   ['/organizer/setup', 'Go-live setup'],
   ['/organizer/quotes', 'Enquiries'],
-  // More specific first: the drill-in is its own screen (P-07), the list is not.
   ['/organizer/events/', 'Event execution'],
   ['/organizer/events', 'Active events'],
   ['/organizer/invitation', 'Invitation setup'],
-  // More specific first, as above: one event is its own screen.
   ['/organizer/public-events/', 'Event workspace'],
   ['/organizer/public-events', 'Public events'],
   ['/organizer/quote-builder', 'Quote builder'],
-  ['/organizer/respond', 'Quote builder'],
+  ['/organizer/respond', 'Build a quote'],
   ['/organizer/subvendors', 'Sub-vendors'],
   ['/organizer/coupons', 'Coupons'],
   ['/organizer/calendar', 'Calendar'],
@@ -143,20 +191,28 @@ const titleFor = (pathname: string): string =>
   TITLES.find(([prefix]) => pathname.startsWith(prefix))?.[1] ?? 'Organizer';
 
 /**
- * Screens opened from another screen rather than from the nav, and where
- * their back arrow returns to. A top-level section has no back arrow: the
- * nav is the way between those.
+ * Drill-ins and where their back arrow returns to. A screen reached from the
+ * tabs has none: the tabs are the way between those.
  */
-const BACK_TO: Array<[prefix: string, to: string]> = [['/organizer/setup', '/organizer/home']];
+const BACK_TO: Array<[prefix: string, to: string]> = [
+  ['/organizer/setup', '/organizer/home'],
+  ['/organizer/respond', '/organizer/quote-builder'],
+  ['/organizer/events/', '/organizer/events'],
+  ['/organizer/invitation', '/organizer/events'],
+  ['/organizer/public-events/', '/organizer/public-events'],
+];
 
 const backFor = (pathname: string): string | undefined =>
   BACK_TO.find(([prefix]) => pathname.startsWith(prefix))?.[1];
 
-const NOTIF_STYLE: Record<NotificationItem['type'], { icon: LucideIcon; color: string; soft: string }> = {
-  quote: { icon: FileText, color: '#e8633a', soft: '#fdeee7' },
-  booking: { icon: CheckCircle2, color: '#1d9e75', soft: '#e7f4ee' },
-  payment: { icon: CreditCard, color: '#ba7517', soft: '#f7efe1' },
-  system: { icon: Sparkles, color: '#1a2e5a', soft: '#eef1f7' },
+const NOTIF_STYLE: Record<
+  NotificationItem['type'],
+  { icon: LucideIcon; color: string; soft: string }
+> = {
+  quote: { icon: FileText, color: '#e23d7a', soft: '#fdeaf2' },
+  booking: { icon: CheckCircle2, color: '#0f9fb3', soft: '#e2f6f9' },
+  payment: { icon: CreditCard, color: '#e07a2e', soft: '#fff1e5' },
+  system: { icon: Sparkles, color: '#141a2e', soft: '#f2f3f8' },
 };
 
 function timeAgo(iso: string): string {
@@ -172,21 +228,44 @@ function timeAgo(iso: string): string {
   return new Date(iso).toLocaleDateString();
 }
 
+/** Closes a popover when a press lands outside it. */
+function useOutsidePress(open: boolean, close: () => void) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) close();
+    };
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && close();
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open, close]);
+  return ref;
+}
+
 /**
- * Persistent shell for authenticated organizer screens: a dark sidebar
- * (the whole "Organizer & Sub-vendor" surface lives under it) plus a light
- * content pane with its own compact top bar. Deliberately its own shell
- * rather than the customer AppHeader — the organizer product is an
- * internal working tool, not a marketing-site page, so no footer either.
+ * Persistent shell for authenticated organizer screens.
+ *
+ * A floating pill bar across the top — the logo, six sections, search, the
+ * bell, a gradient "Build quote" action and the account menu — and under it
+ * the screen's heading with its section's tabs. No side rail: the content has
+ * the full width, and on a phone the bottom bar carries the same sections.
  */
 export function OrganizerLayout() {
-  const { pathname, state } = useLocation();
+  const { pathname } = useLocation();
 
-  // Same reason as CustomerLayout: each section is its own chunk, so warm them
-  // once the browser is idle and the first click has nothing to download.
-  useEffect(() => warmRoutes(NAV.map((item) => item.to)), []);
+  // Each section is its own chunk; warm them once the browser is idle so the
+  // first click has nothing to download.
+  useEffect(
+    () => warmRoutes(SECTIONS.flatMap((s) => s.tabs.map((t) => t.to))),
+    [],
+  );
   const navigate = useNavigate();
-  const activeId = activeNavId(pathname, (state as { nav?: string } | null)?.nav);
+  const { section: activeSection, tab: activeTab } = locate(pathname);
   const backTo = backFor(pathname);
   const { user: sessionUser, signOut } = useAuth();
   const { data: unread = 0 } = useGetUnreadCountQuery();
@@ -195,32 +274,31 @@ export function OrganizerLayout() {
   const { data: profile } = useGetMyOrganizerProfileQuery();
   const [markAllRead] = useMarkAllNotificationsReadMutation();
   const [bellOpen, setBellOpen] = useState(false);
-  const bellRef = useRef<HTMLDivElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const bellRef = useOutsidePress(bellOpen, () => setBellOpen(false));
+  const menuRef = useOutsidePress(menuOpen, () => setMenuOpen(false));
   const [searchTerm, setSearchTerm] = useState('');
 
   const submitSearch = (e: FormEvent) => {
     e.preventDefault();
     const term = searchTerm.trim();
-    navigate(term ? `/organizer/quotes?q=${encodeURIComponent(term)}` : '/organizer/quotes');
+    navigate(
+      term
+        ? `/organizer/quotes?q=${encodeURIComponent(term)}`
+        : '/organizer/quotes',
+    );
   };
 
-  useEffect(() => {
-    if (!bellOpen) return;
-    const onDown = (e: MouseEvent) => {
-      if (bellRef.current && !bellRef.current.contains(e.target as Node)) setBellOpen(false);
-    };
-    document.addEventListener('mousedown', onDown);
-    return () => document.removeEventListener('mousedown', onDown);
-  }, [bellOpen]);
-
   /**
-   * The design identifies the signed-in partner by their *business*, not the
-   * contact person, and the session user is null after a hard refresh — so the
-   * organizer profile is the source of truth here, with the session name as a
-   * fallback while it loads.
+   * The partner is identified by their business, not the contact person, and
+   * the session user is null after a hard refresh — so the organizer profile
+   * is the source of truth, with the session name as a fallback while it loads.
    */
   const businessName =
-    profile?.displayName?.trim() || profile?.businessName?.trim() || sessionUser?.name || 'Your business';
+    profile?.displayName?.trim() ||
+    profile?.businessName?.trim() ||
+    sessionUser?.name ||
+    'Your business';
   const tier = badges?.currentTier ?? 'Bronze';
 
   const initials =
@@ -253,7 +331,12 @@ export function OrganizerLayout() {
     );
     const cls = `${styles.notifRow} ${!n.read ? styles.notifUnread : ''}`;
     return n.link ? (
-      <Link key={n.id} to={n.link} className={cls} onClick={() => setBellOpen(false)}>
+      <Link
+        key={n.id}
+        to={n.link}
+        className={cls}
+        onClick={() => setBellOpen(false)}
+      >
         {body}
       </Link>
     ) : (
@@ -264,151 +347,239 @@ export function OrganizerLayout() {
   };
 
   /*
-   * The five an organizer opens daily, taken from NAV itself so a renamed or
-   * re-routed item cannot say one thing in the rail and another in the bar.
-   *
-   * No counts on these. The only number this shell holds is unread
-   * notifications, which belongs to the bell and not to Enquiries — putting it
-   * on a tab would have it report one thing while meaning another.
+   * The phone's bar: five sections, the same ones the top bar shows. Grow is
+   * reached from Home's badge card and the avatar menu there; five is the most
+   * a bar can hold legibly.
    */
-  const BOTTOM_IDS = ['home', 'enquiries', 'events', 'public-events', 'profile'];
-  /*
-   * Shorter names for the bar than the rail carries.
-   *
-   * A fifth of a phone is about 74px, and "Active events" and "Public events"
-   * both clip to "Active eve…" — which names nothing. The rail has room for
-   * the full phrase and keeps it; this is the same destination said briefly.
-   */
-  const BOTTOM_LABEL: Record<string, string> = {
-    events: 'Events',
-    'public-events': 'Tickets',
-  };
+  const BOTTOM_IDS = ['home', 'enquiries', 'events', 'earnings', 'profile'];
   const bottomTabs: BottomTabItem[] = BOTTOM_IDS.flatMap((id) => {
-    const item = NAV.find((n) => n.id === id);
-    if (!item) return [];
+    const section = SECTIONS.find((s) => s.id === id);
+    if (!section) return [];
     return [
       {
-        id: item.id,
-        label: BOTTOM_LABEL[item.id] ?? item.label,
-        to: item.to,
-        icon: item.icon,
-        active: item.id === activeId,
+        id: section.id,
+        label: section.label,
+        to: section.tabs[0]?.to ?? '/organizer/home',
+        icon: section.icon,
+        active: section.id === activeSection?.id,
       },
     ];
   });
 
+  const tabs = activeSection?.tabs ?? [];
+
   return (
     <div className={styles.shell}>
-      <aside className={styles.sidebar}>
-        <Link to="/organizer/home" className={styles.logo}>
-          <span className={styles.logoE}>e</span>vently
-        </Link>
+      <header className={styles.topWrap}>
+        <div className={styles.topbar}>
+          <Link
+            to="/organizer/home"
+            className={styles.logo}
+            aria-label="Evently organizer home"
+          >
+            <span className={styles.logoMark} aria-hidden>
+              e
+            </span>
+            <span className={styles.logoWord}>EVENTLY</span>
+            <span className={styles.logoTag}>Partner</span>
+          </Link>
 
-        <nav className={styles.nav} aria-label="Organizer">
-          {NAV.map((item) => {
-            const active = item.id === activeId;
-            return (
-              <Link
-                key={item.id}
-                to={item.to}
-                state={item.state ?? null}
-                aria-current={active ? 'page' : undefined}
-                className={`${styles.navItem} ${active ? styles.navActive : ''}`}
-                onMouseEnter={() => prefetchRoute(item.to)}
-                onFocus={() => prefetchRoute(item.to)}
-                onTouchStart={() => prefetchRoute(item.to)}
-              >
-                <item.icon size={17} />
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className={styles.sidebarFoot}>
-          <button type="button" className={styles.navItem} onClick={handleSignOut}>
-            <LogOut size={18} />
-            Log out
-          </button>
-        </div>
-      </aside>
-
-      <div className={styles.main}>
-        <header className={styles.topbar}>
-          <div className={styles.titleRow}>
-            {backTo && (
-              <Link to={backTo} className={styles.back} aria-label="Back">
-                <ArrowLeft size={20} />
-              </Link>
-            )}
-            <h1 className={styles.pageTitle}>{titleFor(pathname)}</h1>
-          </div>
+          <nav className={styles.nav} aria-label="Organizer">
+            {TOP_SECTIONS.map((section) => {
+              const active = section.id === activeSection?.id;
+              const to = section.tabs[0]?.to ?? '/organizer/home';
+              return (
+                <Link
+                  key={section.id}
+                  to={to}
+                  aria-current={active ? 'page' : undefined}
+                  className={`${styles.navItem} ${active ? styles.navActive : ''}`}
+                  onMouseEnter={() =>
+                    section.tabs.forEach((t) => prefetchRoute(t.to))
+                  }
+                  onFocus={() => prefetchRoute(to)}
+                  onTouchStart={() => prefetchRoute(to)}
+                >
+                  {section.label}
+                </Link>
+              );
+            })}
+          </nav>
 
           <div className={styles.topbarRight}>
-            <form className={styles.search} onSubmit={submitSearch} role="search">
-              <Search size={15} />
+            <form
+              className={styles.search}
+              onSubmit={submitSearch}
+              role="search"
+            >
+              <Search size={15} aria-hidden />
               <input
-                type="text"
-                placeholder="Search"
+                type="search"
+                aria-label="Search enquiries"
+                placeholder="Search enquiries"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </form>
-            <div className={styles.topbarActions} ref={bellRef}>
+
+            <div className={styles.popAnchor} ref={bellRef}>
               <button
                 type="button"
-                className={styles.bell}
-                aria-label="Notifications"
+                className={styles.iconBtn}
+                aria-label={
+                  unread > 0
+                    ? `Notifications, ${unread} unread`
+                    : 'Notifications'
+                }
+                aria-expanded={bellOpen}
                 onClick={() => setBellOpen((v) => !v)}
               >
-                <Bell size={20} />
-                {unread > 0 && <span className={styles.dot}>{unread > 9 ? '9+' : unread}</span>}
+                <Bell size={19} />
+                {unread > 0 && (
+                  <span className={styles.dot}>
+                    {unread > 9 ? '9+' : unread}
+                  </span>
+                )}
               </button>
               {bellOpen && (
                 <div className={styles.notifPanel} role="menu">
                   <div className={styles.notifHead}>
                     <span>Notifications</span>
                     {unread > 0 && (
-                      <button type="button" className={styles.markRead} onClick={() => void markAllRead()}>
+                      <button
+                        type="button"
+                        className={styles.markRead}
+                        onClick={() => void markAllRead()}
+                      >
                         Mark all read
                       </button>
                     )}
                   </div>
                   {notifications.length === 0 ? (
-                    <p className={styles.notifEmpty}>You&rsquo;re all caught up.</p>
+                    <p className={styles.notifEmpty}>
+                      You&rsquo;re all caught up.
+                    </p>
                   ) : (
-                    <div className={styles.notifList}>{notifications.slice(0, 8).map(renderNotifRow)}</div>
+                    <div className={styles.notifList}>
+                      {notifications.slice(0, 8).map(renderNotifRow)}
+                    </div>
                   )}
                 </div>
               )}
             </div>
-            <Link to="/organizer/profile" className={styles.identity}>
-              <span className={styles.avatar}>{initials}</span>
-              <span className={styles.userInfo}>
-                <span className={styles.userName}>{businessName}</span>
-                <span className={styles.userTier}>{tier} organizer</span>
-              </span>
+
+            <Link to="/organizer/quote-builder" className={styles.cta}>
+              Build quote
             </Link>
+
+            <div className={styles.popAnchor} ref={menuRef}>
+              <button
+                type="button"
+                className={styles.avatarBtn}
+                aria-label={`${businessName}, account menu`}
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen((v) => !v)}
+              >
+                <span className={styles.avatar}>{initials}</span>
+              </button>
+              {menuOpen && (
+                <div className={styles.menu} role="menu">
+                  <div className={styles.menuHead}>
+                    <span className={styles.avatarLg}>{initials}</span>
+                    <span className={styles.userInfo}>
+                      <span className={styles.userName}>{businessName}</span>
+                      <span className={styles.userTier}>{tier} organizer</span>
+                    </span>
+                  </div>
+                  <Link
+                    to="/organizer/profile"
+                    className={styles.menuItem}
+                    role="menuitem"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <User size={16} /> Profile
+                  </Link>
+                  <Link
+                    to="/organizer/badges"
+                    className={styles.menuItem}
+                    role="menuitem"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <Sprout size={16} /> Badges &amp; Academy
+                  </Link>
+                  <button
+                    type="button"
+                    className={styles.menuItem}
+                    role="menuitem"
+                    onClick={handleSignOut}
+                  >
+                    <LogOut size={16} /> Log out
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        </header>
+        </div>
+      </header>
 
-        <main className={styles.content}>
-          <Outlet />
-          {/* The room the phone's bar takes, given back — otherwise it covers
-              the last row of every screen in this shell. */}
-          <BottomTabsSpacer />
-        </main>
-      </div>
+      {/* The screen's name, for screen readers only — the tabs and the page's
+          own content already say where you are, so no visible heading repeats it. */}
+      <h1 className={styles.srOnly}>{titleFor(pathname)}</h1>
 
-      {/*
-        The same destinations, on the edge a thumb can reach. Shown under
-        760px only; above that the rail beside it is the better shape.
+      {(backTo || tabs.length > 1) && (
+        <div className={styles.pageHead}>
+          {backTo && (
+            <Link to={backTo} className={styles.back} aria-label="Back">
+              <ChevronLeft size={24} strokeWidth={2.4} />
+            </Link>
+          )}
 
-        Five of the eleven: the ones an organizer opens daily. The rest stay in
-        the rail, which is still there on a tablet and up — a sixth tab is not
-        a smaller tab, it is an unreadable one.
-      */}
-      <BottomTabs items={bottomTabs} ariaLabel="Organizer" />
+          {/* The section's screens, side by side — only when there is a choice,
+              and not inside a drill-in, where the chevron is the way back. */}
+          {!backTo && tabs.length > 1 && (
+            <nav
+              className={styles.tabs}
+              aria-label={`${activeSection?.label ?? ''} screens`}
+            >
+              {tabs.map((tab) => {
+                const active = tab === activeTab;
+                return (
+                  <Link
+                    key={tab.to}
+                    to={tab.to}
+                    aria-current={active ? 'page' : undefined}
+                    className={`${styles.tab} ${active ? styles.tabActive : ''}`}
+                    onMouseEnter={() => prefetchRoute(tab.to)}
+                    onFocus={() => prefetchRoute(tab.to)}
+                  >
+                    {tab.short ? (
+                      <>
+                        <span className={styles.tabLong}>{tab.label}</span>
+                        <span className={styles.tabShort} aria-hidden>
+                          {tab.short}
+                        </span>
+                      </>
+                    ) : (
+                      tab.label
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+          )}
+        </div>
+      )}
+
+      <main className={styles.content}>
+        <Outlet />
+        {/* The room the phone's bar takes, given back. */}
+        {!backTo && <BottomTabsSpacer />}
+      </main>
+
+      {/* A drill-in (one quote, one event) is a full screen with its own back
+          arrow and actions, as in a native app — the tab bar steps aside. */}
+      {!backTo && <BottomTabs items={bottomTabs} ariaLabel="Organizer" />}
     </div>
   );
 }

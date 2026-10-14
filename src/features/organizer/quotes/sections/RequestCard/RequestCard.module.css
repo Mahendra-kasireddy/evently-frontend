@@ -63,3 +63,18 @@
   font-weight: 700;
   color: var(--c-navy);
 }
+
+@media (max-width: 560px) {
+  .head { flex-wrap: wrap; gap: 12px; }
+  .side {
+    order: -1;
+    flex: 1 0 100%;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .foot { flex-wrap: wrap; }
+  .spacer { display: none; }
+  .quoteTotal { flex: 1 0 100%; }
+  .foot > a:last-child { flex: 1 1 auto; justify-content: center; }
+}

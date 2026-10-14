@@ -565,3 +565,24 @@
   white-space: nowrap;
   border: 0;
 }
+
+@media (max-width: 560px) {
+  .filters,
+  .tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filters::-webkit-scrollbar,
+  .tabs::-webkit-scrollbar { display: none; }
+  .filter,
+  .tab { flex: none; white-space: nowrap; }
+  .cover { aspect-ratio: 21 / 9; }
+  .toolbarRight { width: 100%; }
+  .toolbarRight > :first-child { flex: 1 1 auto; min-width: 0; }
+  .headActions > * { flex: 1 1 auto; }
+}
+
+/* The shell's back chevron already leads to the list. */
+.backLink { display: none; }
+.coverBlank { background: var(--evah-grad-soft, #f3f4f6); }

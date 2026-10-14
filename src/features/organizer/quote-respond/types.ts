@@ -1,4 +1,7 @@
-export type { ApiIncomingRequest, ApiQuotation } from '@features/organizer/quotes/types';
+export type {
+  ApiIncomingRequest,
+  ApiQuotation,
+} from '@features/organizer/quotes/types';
 
 export interface LineItemSubItemForm {
   label: string;
@@ -53,7 +56,15 @@ export interface CategorySpec {
   key: string;
   /** Matcher against the customer's requested category string. */
   match: string[];
-  icon: 'utensils' | 'flower' | 'camera' | 'flame' | 'music' | 'car' | 'gift' | 'sparkles';
+  icon:
+    | 'utensils'
+    | 'flower'
+    | 'camera'
+    | 'flame'
+    | 'music'
+    | 'car'
+    | 'gift'
+    | 'sparkles';
   fields: CategoryFieldSpec[];
   /** Multi-select add-ons, stored as one comma-joined `subItem`. */
   options?: { label: string; values: string[] } | undefined;

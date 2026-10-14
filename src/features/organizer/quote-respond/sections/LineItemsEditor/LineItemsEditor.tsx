@@ -62,11 +62,15 @@ function Field({
   return (
     <label className={styles.field}>
       <span className={styles.fieldLabel}>{label}</span>
-      <span className={`${styles.fieldBox} ${readOnly ? styles.fieldBoxRead : ''}`}>
+      <span
+        className={`${styles.fieldBox} ${readOnly ? styles.fieldBoxRead : ''}`}
+      >
         {prefix && <span className={styles.fieldPrefix}>{prefix}</span>}
         <input
           className={styles.fieldInput}
           type={numeric && !readOnly ? 'number' : 'text'}
+          inputMode={numeric && !readOnly ? 'decimal' : undefined}
+          enterKeyHint="next"
           {...(numeric && !readOnly ? { min: '0' } : {})}
           value={value}
           readOnly={readOnly ?? false}
@@ -98,10 +102,18 @@ function OptionRow({
             type="button"
             role="checkbox"
             aria-checked={on}
-            className={styles.option}
-            onClick={() => onChange(on ? selected.filter((v) => v !== option) : [...selected, option])}
+            className={`${styles.option} ${on ? styles.optionOn : ''}`}
+            onClick={() =>
+              onChange(
+                on
+                  ? selected.filter((v) => v !== option)
+                  : [...selected, option],
+              )
+            }
           >
-            <span className={`${styles.optionBox} ${on ? styles.optionBoxOn : ''}`}>
+            <span
+              className={`${styles.optionBox} ${on ? styles.optionBoxOn : ''}`}
+            >
               {on && <Check size={10} strokeWidth={3} />}
             </span>
             {option}
@@ -130,9 +142,12 @@ function CategoryCard({
   canRemove: boolean;
 }) {
   const spec = specForLine(line.key, line.title);
-  const filled = Boolean(line.title.trim() && line.price !== '' && Number(line.price) > 0);
+  const filled = Boolean(
+    line.title.trim() && line.price !== '' && Number(line.price) > 0,
+  );
   const name = line.title.trim() || 'service';
-  const valueOf = (label: string) => line.subItems.find((s) => s.label === label)?.value ?? '';
+  const valueOf = (label: string) =>
+    line.subItems.find((s) => s.label === label)?.value ?? '';
   const optionLabel = spec.options?.label ?? '';
   const selectedOptions = optionLabel
     ? valueOf(optionLabel)
@@ -143,7 +158,14 @@ function CategoryCard({
 
   return (
     <Card className={styles.cat}>
-      <div className={styles.catHead}>
+      {/* The whole header opens and closes the card; only the name is typed. */}
+      <div
+        className={styles.catHead}
+        onClick={(e) => {
+          if ((e.target as HTMLElement).closest('input, button')) return;
+          onToggle();
+        }}
+      >
         <span className={styles.catIcon}>{ICONS[spec.icon]}</span>
         <input
           className={styles.catTitle}
@@ -153,7 +175,14 @@ function CategoryCard({
           aria-label="Service category"
           onChange={(e) => onUpdate({ title: e.target.value })}
         />
-        {filled && <CheckCircle2 size={18} className={styles.catCheck} aria-hidden />}
+        <span
+          className={`${styles.catPrice} ${filled ? '' : styles.catPriceEmpty}`}
+        >
+          {filled ? formatInr(Number(line.price) || 0) : 'Add price'}
+        </span>
+        {filled && (
+          <CheckCircle2 size={18} className={styles.catCheck} aria-hidden />
+        )}
         <button
           type="button"
           className={styles.catToggle}
@@ -180,7 +209,11 @@ function CategoryCard({
             ))}
             {spec.derivePrice ? (
               // Catering's total is plates x rate — displayed, formatted, not typed.
-              <Field label="Subtotal" value={formatInr(Number(line.price) || 0)} readOnly />
+              <Field
+                label="Subtotal"
+                value={formatInr(Number(line.price) || 0)}
+                readOnly
+              />
             ) : (
               <Field
                 label="Subtotal"
@@ -202,7 +235,9 @@ function CategoryCard({
           )}
 
           <label className={styles.field}>
-            <span className={styles.fieldLabel}>{spec.noteLabel ?? 'What’s included'}</span>
+            <span className={styles.fieldLabel}>
+              {spec.noteLabel ?? 'What’s included'}
+            </span>
             <textarea
               className={styles.area}
               rows={2}

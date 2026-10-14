@@ -250,3 +250,35 @@
   color: var(--c-muted2);
   white-space: nowrap;
 }
+
+/*
+ * A phone: each enquiry is a compact row — avatar, who and what, and a small
+ * soft "View & Quote" pill under the time, instead of a full-width button per
+ * row that turned the card into a stack of pink bars.
+ */
+@media (max-width: 560px) {
+  .enqRow {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr) auto;
+    column-gap: 12px;
+    row-gap: 6px;
+    align-items: center;
+  }
+  .enqRow > :first-child { grid-row: 1 / 3; align-self: start; }
+  .enqWho { grid-column: 2; grid-row: 1 / 3; }
+  .enqName { white-space: normal; }
+  .enqTime { grid-column: 3; grid-row: 1; justify-self: end; }
+  .enqRow > a:last-child {
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: end;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    background: var(--c-coral-wash);
+    color: var(--c-coral);
+    box-shadow: none;
+    border: none;
+  }
+}

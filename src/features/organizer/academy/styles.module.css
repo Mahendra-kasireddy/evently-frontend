@@ -331,3 +331,13 @@
   margin-left: auto;
   flex: none;
 }
+
+@media (max-width: 560px) {
+  .hero { flex-direction: column; align-items: flex-start; gap: 14px; padding: 20px; }
+  .heroRing { order: -1; margin-left: 0; }
+  .heroTitle { font-size: 21px; }
+  .stageHead { flex-wrap: wrap; row-gap: 4px; }
+  .stageCount { margin-left: 0; flex: 1 0 100%; }
+  .helpline { flex-wrap: wrap; }
+  .helplineCta { margin-left: 0; flex: 1 0 100%; justify-content: center; }
+}

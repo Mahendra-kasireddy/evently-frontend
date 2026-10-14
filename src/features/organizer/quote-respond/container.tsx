@@ -9,7 +9,9 @@ export interface QuoteRespondContainerProps {
   requestId: string;
 }
 
-export function QuoteRespondContainer({ requestId }: QuoteRespondContainerProps) {
+export function QuoteRespondContainer({
+  requestId,
+}: QuoteRespondContainerProps) {
   const navigate = useNavigate();
   const {
     request,
@@ -54,7 +56,10 @@ export function QuoteRespondContainer({ requestId }: QuoteRespondContainerProps)
   if (isLoading) return <LoadingScreen message="Loading request…" />;
   if (isError) {
     return (
-      <ErrorState message="We couldn't load this request. Please check your connection and try again." onRetry={refetch} />
+      <ErrorState
+        message="We couldn't load this request. Please check your connection and try again."
+        onRetry={refetch}
+      />
     );
   }
   if (!request) {

@@ -130,7 +130,7 @@
 .weekdays,
 .grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 6px;
 }
 .weekdays {
@@ -304,6 +304,7 @@
 @media (max-width: 1000px) {
   .layout {
     flex-direction: column;
+    align-items: stretch;
   }
   .rail {
     flex: 1 1 auto;
@@ -314,5 +315,17 @@
   .barActions {
     margin-left: 0;
     width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .day { aspect-ratio: 1; padding: 5px; }
+  .dayTag {
+    font-size: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+    margin: auto auto 2px;
   }
 }

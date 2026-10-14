@@ -72,3 +72,9 @@
     justify-content: center;
   }
 }
+
+@media (max-width: 560px) {
+  .head { flex-wrap: wrap; row-gap: 8px; }
+  .headText { flex: 1 1 calc(100% - 52px); }
+  .head > :last-child { margin-left: 52px; }
+}
