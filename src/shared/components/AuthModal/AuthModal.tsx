@@ -109,6 +109,7 @@ export function AuthModal({ open, onClose, onSuccess, reason, title }: AuthModal
           { id: d.user?.id ?? '', email: d.user?.email ?? '', name: d.user?.name ?? '' },
           d.token,
           (d.user?.roles as Role[] | undefined) ?? ['customer'],
+          d.refreshToken,
         );
         reset();
         onSuccess();

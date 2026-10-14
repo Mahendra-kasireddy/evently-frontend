@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Clock } from 'lucide-react';
 import { useAuth } from '@app/auth';
-import { setToken, type NormalizedApiError } from '@lib/api';
+import { setSession, type NormalizedApiError } from '@lib/api';
 import { postToApp } from '@lib/native';
 import { Btn } from '@shared/partner';
 import { SelectField, TextField } from '../Fields';
@@ -74,7 +74,7 @@ export function SignupForm() {
     register(trimmed)
       .unwrap()
       .then((res) => {
-        setToken(res.token);
+        setSession(res.token, res.refreshToken);
         // Registering reissued the session; the mobile app (if this is inside
         // it) must adopt the new pair or its old refresh token is dead.
         postToApp({ type: 'session', token: res.token, refreshToken: res.refreshToken });

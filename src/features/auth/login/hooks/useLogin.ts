@@ -83,6 +83,7 @@ export function useLogin(): UseLoginResult {
           },
           data.token,
           (data.user?.roles as Role[] | undefined) ?? ['customer'],
+          data.refreshToken,
         );
         // New accounts (and ones that never finished) go through the welcome
         // steps first: Home can neither greet them nor find organizers near

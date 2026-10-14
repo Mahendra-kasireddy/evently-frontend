@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { decodeJwtRoles, getToken, setToken } from '@lib/api';
+import { decodeJwtRoles, getToken, setSession } from '@lib/api';
 import { postToApp } from '@lib/native';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { signedIn, signedOut, rolesUpdated, selectAuth } from './authSlice';
@@ -10,7 +10,12 @@ export interface UseAuthResult {
   user: SessionUser | null;
   roles: Role[];
   /** Persist the token and mark the session authenticated. */
-  signIn: (user: SessionUser, token: string, roles?: Role[]) => void;
+  signIn: (
+    user: SessionUser,
+    token: string,
+    roles?: Role[],
+    refreshToken?: string,
+  ) => void;
   /** Clear the token and drop to unauthenticated. */
   signOut: () => void;
   /**
@@ -27,15 +32,21 @@ export function useAuth(): UseAuthResult {
   const { status, user, roles } = useAppSelector(selectAuth);
 
   const signIn = useCallback(
-    (u: SessionUser, token: string, roles: Role[] = ['customer']) => {
-      setToken(token);
+    (
+      u: SessionUser,
+      token: string,
+      roles: Role[] = ['customer'],
+      refreshToken?: string,
+    ) => {
+      // The refresh token too, so the 1-hour access token can be renewed.
+      setSession(token, refreshToken);
       dispatch(signedIn({ user: u, roles }));
     },
     [dispatch],
   );
 
   const signOut = useCallback(() => {
-    setToken(null);
+    setSession(null);
     dispatch(signedOut());
     // In the mobile app the session belongs to the app; it signs out too.
     postToApp({ type: 'logout' });

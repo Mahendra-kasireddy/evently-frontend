@@ -107,6 +107,7 @@ export function OnboardingGate({ copy }: { copy: GateCopy }) {
           { id: d.user?.id ?? '', email: d.user?.email ?? '', name: d.user?.name ?? '' },
           d.token,
           (d.user?.roles as Role[] | undefined) ?? ['customer'],
+          d.refreshToken,
         );
         // No navigation — the container re-renders once authenticated.
       })
