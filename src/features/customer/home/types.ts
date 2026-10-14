@@ -153,6 +153,11 @@ export interface ProfileSummary { id: string; name: string; initials: string; lo
 export interface HomeContent {
   nav: NavItem[];
   hero: {
+    /**
+     * "Hi {name}" — optional: the CMS may not send it, and the home hook
+     * falls back to that default when it doesn't.
+     */
+    greetingTemplate?: string;
     headingLead: string;
     headingAccent: string;
     headingTail: string;
