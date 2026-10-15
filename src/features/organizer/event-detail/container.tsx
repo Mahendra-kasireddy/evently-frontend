@@ -38,12 +38,17 @@ export function EventDetailContainer({ bookingId }: EventDetailContainerProps) {
     isResponding,
   } = useEventDetail(bookingId);
   // Same cache entry the board screen uses, so replying there updates these.
-  const { data: ideaBoard } = useGetOrganizerIdeasQuery(bookingId, { skip: !bookingId });
+  const { data: ideaBoard } = useGetOrganizerIdeasQuery(bookingId, {
+    skip: !bookingId,
+  });
 
   if (isLoading) return <LoadingScreen message="Loading event…" />;
   if (isError) {
     return (
-      <ErrorState message="We couldn't load this event. Please check your connection and try again." onRetry={refetch} />
+      <ErrorState
+        message="We couldn't load this event. Please check your connection and try again."
+        onRetry={refetch}
+      />
     );
   }
   if (!booking) {
@@ -74,7 +79,9 @@ export function EventDetailContainer({ bookingId }: EventDetailContainerProps) {
       isAddingTask={isAddingTask}
       onMoveTask={moveTask}
       onRemoveTask={removeTask}
-      ideaCounts={ideaBoard?.counts ?? { shared: 0, planned: 0, awaitingApproval: 0 }}
+      ideaCounts={
+        ideaBoard?.counts ?? { shared: 0, planned: 0, awaitingApproval: 0 }
+      }
       onOpenIdeaBoard={() => navigate(`/organizer/events/${bookingId}/ideas`)}
       onAssignTask={assignTask}
       onUploadProof={(taskId, file) => void uploadProofForTask(taskId, file)}

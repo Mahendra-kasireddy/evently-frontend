@@ -10,7 +10,12 @@ export function InvitationContainer() {
 
   if (state.isLoading) return <LoadingScreen message={COPY.loading} />;
   if (state.isError || !state.invitation) {
-    return <ErrorState message={`${COPY.errorTitle}. ${COPY.errorBody}`} onRetry={state.refetch} />;
+    return (
+      <ErrorState
+        message={`${COPY.errorTitle}. ${COPY.errorBody}`}
+        onRetry={state.refetch}
+      />
+    );
   }
 
   return <Component {...state} invitation={state.invitation} />;

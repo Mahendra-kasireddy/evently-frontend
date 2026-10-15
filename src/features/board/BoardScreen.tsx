@@ -22,6 +22,11 @@ export interface BoardScreenProps {
   counterpartName: string;
   /** Always the organizer's name, whichever side is reading. */
   organizerName: string;
+  /**
+   * Drawn inside a shell that already shows a back arrow and the screen's name
+   * (the organizer's), so the board's own top bar is left out.
+   */
+  embedded?: boolean;
   /** Where the back control goes, and what it is called. */
   backLabel: string;
   eventTitle: string;
@@ -65,27 +70,40 @@ export function BoardScreen({
   onReply,
   onSaveVision,
   onBack,
+  embedded = false,
 }: BoardScreenProps) {
   const [filter, setFilter] = useState<BoardFilter>('all');
   const [editingVision, setEditingVision] = useState(false);
   const { items, counts, vision } = board;
 
-  const visible = useMemo(() => items.filter((i) => matchesFilter(i, filter)), [items, filter]);
-  const awaiting = useMemo(() => items.filter((i) => i.approval === 'pending'), [items]);
+  const visible = useMemo(
+    () => items.filter((i) => matchesFilter(i, filter)),
+    [items, filter],
+  );
+  const awaiting = useMemo(
+    () => items.filter((i) => i.approval === 'pending'),
+    [items],
+  );
 
   return (
-    <main className={styles.page}>
-      <div className={styles.topbar}>
-        <div className={styles.topbarInner}>
-          <button type="button" className={styles.back} onClick={onBack}>
-            <ChevronLeft size={16} /> {backLabel}
-          </button>
-          <span className={styles.topbarMeta}>{eventTitle}</span>
+    <main className={`${styles.page} ${embedded ? styles.pageEmbedded : ''}`}>
+      {!embedded && (
+        <div className={styles.topbar}>
+          <div className={styles.topbarInner}>
+            <button type="button" className={styles.back} onClick={onBack}>
+              <ChevronLeft size={16} /> {backLabel}
+            </button>
+            <span className={styles.topbarMeta}>{eventTitle}</span>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className={styles.container}>
-        <BoardHero role={role} counterpartName={counterpartName} counts={counts} />
+        <BoardHero
+          role={role}
+          counterpartName={counterpartName}
+          counts={counts}
+        />
 
         <div className={styles.body}>
           <div className={styles.main}>
@@ -102,9 +120,17 @@ export function BoardScreen({
             {visible.length === 0 ? (
               <div className={styles.empty}>
                 <span className={styles.emptyIcon}>
-                  {items.length === 0 ? <Sparkles size={24} /> : <MessageSquare size={24} />}
+                  {items.length === 0 ? (
+                    <Sparkles size={24} />
+                  ) : (
+                    <MessageSquare size={24} />
+                  )}
                 </span>
-                <h2>{items.length === 0 ? 'Nothing here yet' : 'Nothing in this filter'}</h2>
+                <h2>
+                  {items.length === 0
+                    ? 'Nothing here yet'
+                    : 'Nothing in this filter'}
+                </h2>
                 <p>
                   {items.length === 0
                     ? role === 'organizer'
@@ -140,11 +166,23 @@ export function BoardScreen({
                 : {})}
             />
             <ProgressCard counts={counts} eventDate={eventDate} />
-            <AwaitingCard items={awaiting} role={role} onReview={() => setFilter('awaiting')} />
+            <AwaitingCard
+              items={awaiting}
+              role={role}
+              onReview={() => setFilter('awaiting')}
+            />
             <PersonCard
               name={counterpartName}
-              relation={role === 'organizer' ? 'Your client for this event' : 'Your organizer'}
-              color={role === 'organizer' ? 'var(--color-primary)' : 'var(--color-navy)'}
+              relation={
+                role === 'organizer'
+                  ? 'Your client for this event'
+                  : 'Your organizer'
+              }
+              color={
+                role === 'organizer'
+                  ? 'var(--color-primary)'
+                  : 'var(--color-navy)'
+              }
               square={role === 'customer'}
             />
           </aside>

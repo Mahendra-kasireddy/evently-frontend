@@ -3,7 +3,8 @@ import type { BookingStatus, BookingTaskStatus } from './types';
 export const EVENT_DETAIL_COPY = {
   totalValue: 'Total value',
   chat: 'Chat with customer',
-  chatUnavailable: 'Customer messaging isn’t available yet — the chat module is not wired up.',
+  chatUnavailable:
+    'Customer messaging isn’t available yet — the chat module is not wired up.',
   markCompleted: 'Mark event as completed',
   marking: 'Marking…',
   assign: 'Assign',
@@ -21,10 +22,8 @@ export const EVENT_DETAIL_COPY = {
  * Statuses where the booking is waiting on this organizer to accept or decline.
  * The customer has already paid their advance by this point.
  */
-export const RESPONDABLE_STATUSES: ReadonlySet<BookingStatus> = new Set<BookingStatus>([
-  'pending',
-  'awaiting_organizer',
-]);
+export const RESPONDABLE_STATUSES: ReadonlySet<BookingStatus> =
+  new Set<BookingStatus>(['pending', 'awaiting_organizer']);
 
 export const CONFIRM_COPY = {
   title: 'This booking needs your confirmation',
@@ -34,19 +33,26 @@ export const CONFIRM_COPY = {
   decline: 'Decline',
   declining: 'Declining…',
   reasonPlaceholder: 'Reason for declining (shared with the customer)',
-  deadline: (iso: string) => `Respond by ${new Date(iso).toLocaleString('en-GB', {
-    weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit',
-  })}`,
+  deadline: (iso: string) =>
+    `Respond by ${new Date(iso).toLocaleString('en-GB', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      hour: 'numeric',
+      minute: '2-digit',
+    })}`,
 } as const;
 
 /** Statuses from which an organizer may still close the event out. */
-export const COMPLETABLE_STATUSES: ReadonlySet<BookingStatus> = new Set<BookingStatus>([
-  'confirmed',
-  'in_progress',
-]);
+export const COMPLETABLE_STATUSES: ReadonlySet<BookingStatus> =
+  new Set<BookingStatus>(['confirmed', 'in_progress']);
 
 /** Board columns, in the order the design lays them out. */
-export const TASK_COLUMNS: readonly BookingTaskStatus[] = ['todo', 'in_progress', 'done'];
+export const TASK_COLUMNS: readonly BookingTaskStatus[] = [
+  'todo',
+  'in_progress',
+  'done',
+];
 
 /**
  * Accent per column — the dot, and the due-date text on each card. Maps onto
@@ -63,10 +69,14 @@ export const COLUMN_ACCENT: Record<BookingTaskStatus, string> = {
  * two are the same strip for an event that is today or already past, so the
  * banner never renders a negative day count.
  */
-export function countdownLabel(daysToGo: number, status: BookingStatus): string {
+export function countdownLabel(
+  daysToGo: number,
+  status: BookingStatus,
+): string {
   if (status === 'completed') return 'Event completed';
   if (status === 'cancelled' || status === 'rejected') return 'Event cancelled';
-  if (status === 'expired') return 'Booking expired — you did not respond in time';
+  if (status === 'expired')
+    return 'Booking expired — you did not respond in time';
   if (status === 'pending' || status === 'awaiting_organizer') {
     return 'Awaiting your confirmation';
   }
@@ -74,5 +84,7 @@ export function countdownLabel(daysToGo: number, status: BookingStatus): string 
   if (daysToGo === 1) return 'Tomorrow is event day';
   if (daysToGo === 0) return 'Today is event day';
   const past = Math.abs(daysToGo);
-  return past === 1 ? 'Event day was yesterday' : `Event day was ${past} days ago`;
+  return past === 1
+    ? 'Event day was yesterday'
+    : `Event day was ${past} days ago`;
 }

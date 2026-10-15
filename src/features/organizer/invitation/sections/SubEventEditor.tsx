@@ -413,7 +413,11 @@ export function SubEventEditor({
                             setField(index, 'live360Url', e.target.value.trim())
                           }
                           onBlur={(e) =>
-                            setField(index, 'live360Url', embedUrlOf(e.target.value))
+                            setField(
+                              index,
+                              'live360Url',
+                              embedUrlOf(e.target.value),
+                            )
                           }
                           maxLength={500}
                         />
@@ -427,7 +431,11 @@ export function SubEventEditor({
                             setField(index, 'liveVrUrl', e.target.value.trim())
                           }
                           onBlur={(e) =>
-                            setField(index, 'liveVrUrl', embedUrlOf(e.target.value))
+                            setField(
+                              index,
+                              'liveVrUrl',
+                              embedUrlOf(e.target.value),
+                            )
                           }
                           maxLength={500}
                         />

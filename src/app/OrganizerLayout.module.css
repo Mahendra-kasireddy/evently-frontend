@@ -66,13 +66,8 @@
   top: 0;
   z-index: 30;
   padding: 14px var(--org-pad) 0;
-  /* A soft fade behind the pill so content scrolling under it never collides
-     with the bar's edge. */
-  background: linear-gradient(
-    to bottom,
-    var(--c-page) 70%,
-    rgba(250, 250, 252, 0)
-  );
+  /* Solid behind the pill, so nothing peeks between it and the sticky tabs. */
+  background: var(--c-page);
 }
 
 .topbar {
@@ -736,5 +731,78 @@
   .menu,
   .notifPanel {
     top: 60px;
+  }
+}
+
+/* ---- sticky section tabs ---- */
+
+.pageHeadSticky {
+  position: sticky;
+  top: 78px;
+  z-index: 20;
+  padding-bottom: 10px;
+  background: var(--c-page);
+  /* The page colour runs edge to edge behind the tabs, not just the column. */
+  box-shadow: 0 0 0 100vmax var(--c-page);
+  clip-path: inset(0 -100vmax);
+}
+
+/* ---- a drill-in's own bar: back arrow and the screen's name ---- */
+
+.drillBar {
+  max-width: var(--org-max);
+  margin: 0 auto;
+  padding: 18px var(--org-pad) 0;
+}
+.drillInner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.drillTitle {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--c-navy);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 760px) {
+  /* The app bar steps aside for a drill-in; its own bar takes the top. */
+  .shellDrill .topWrap {
+    display: none;
+  }
+  .drillBar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    max-width: none;
+    padding: 0 8px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: saturate(1.4) blur(10px);
+    -webkit-backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid var(--c-line);
+  }
+  .drillInner {
+    height: 54px;
+  }
+  .drillBar .back {
+    margin-left: 0;
+  }
+  .drillTitle {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+}
+
+@media (max-width: 560px) {
+  .pageHeadSticky {
+    top: 53px;
+    padding-bottom: 8px;
   }
 }

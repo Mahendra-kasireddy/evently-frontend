@@ -265,3 +265,98 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- status tabs (phone) and scrolling lists ---------- */
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Wide screens show all three columns, so the tabs are not drawn. */
+.tabs {
+  display: none;
+}
+
+/* Each column's cards scroll inside it once there are more than a few. */
+.list {
+  max-height: 520px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 0 -4px;
+  padding: 0 4px;
+  scrollbar-width: thin;
+}
+
+@media (max-width: 900px) {
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid var(--c-line);
+  }
+  .tab {
+    flex: 1 1 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 0;
+    height: 38px;
+    padding: 0 8px;
+    border: none;
+    border-radius: 999px;
+    background: none;
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--c-muted);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .tabOn {
+    background: var(--c-navy);
+    color: #fff;
+    font-weight: 700;
+  }
+  .tabDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    flex: none;
+  }
+  .tabCount {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--c-line2);
+    color: var(--c-muted);
+  }
+  .tabOn .tabCount {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
+
+  /* One list at a time; its heading is the tab above it. */
+  .columnAway {
+    display: none;
+  }
+  .columnHead {
+    display: none;
+  }
+  .column {
+    padding: 10px;
+  }
+  .list {
+    max-height: 60vh;
+  }
+}

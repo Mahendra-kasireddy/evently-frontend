@@ -1,7 +1,21 @@
 import { Link } from 'react-router-dom';
-import { Check, ChevronRight, Clock, Heart, MessageSquare, Plus, ShieldCheck, X } from 'lucide-react';
+import {
+  CalendarClock,
+  Check,
+  ChevronRight,
+  Heart,
+  ListChecks,
+  MessageSquare,
+  Plus,
+  ShieldCheck,
+  Wallet,
+  X,
+} from 'lucide-react';
 import { Avatar, Btn, Card, formatInr } from '@shared/partner';
-import { dateLabel } from '@features/organizer/bookings/transform';
+import {
+  bookingStatusLabel,
+  dateLabel,
+} from '@features/organizer/bookings/transform';
 import { TaskBoard, IdeaSummary } from './sections';
 import {
   COMPLETABLE_STATUSES,
@@ -69,26 +83,97 @@ export function Component({
   const name = booking.title || booking.occasion || 'Event';
   // The design's identity line: date · venue · reference. Each part is dropped
   // when the booking doesn't carry it, so the separator never dangles.
-  const identity = [dateLabel(booking.eventDate), booking.location, booking.ref ? `ID ${booking.ref}` : '']
+  const identity = [
+    dateLabel(booking.eventDate),
+    booking.location,
+    booking.ref ? `ID ${booking.ref}` : '',
+  ]
     .filter(Boolean)
     .join(' · ');
   const canComplete = COMPLETABLE_STATUSES.has(booking.status);
   const mustRespond = RESPONDABLE_STATUSES.has(booking.status);
+  const doneTasks = booking.tasks.filter((t) => t.status === 'done').length;
+  const totalTasks = booking.tasks.length;
+  const taskPct = totalTasks ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
+  /*
+   * Top to bottom, in the order an organizer works the event:
+   *   1. what it is and where it stands (the summary card)
+   *   2. anything waiting on them (accept / decline)
+   *   3. the two things they build with the customer (invitation, ideas)
+   *   4. the work itself (tasks)
+   */
   return (
     <div className={styles.page}>
-      <Card className={styles.header}>
-        <Avatar name={name} size={44} square bg="var(--c-navy)" />
-        <div className={styles.headerText}>
-          <h2 className={styles.eventName}>{name}</h2>
-          {identity && <p className={styles.identity}>{identity}</p>}
-        </div>
-        <div className={styles.headerRight}>
-          <div className={styles.value}>
-            <span className={styles.valueLabel}>{COPY.totalValue}</span>
-            <span className={styles.valueAmount}>{formatInr(booking.amount)}</span>
+      <Card className={styles.hero}>
+        <div className={styles.heroTop}>
+          <Avatar name={name} size={48} square bg="var(--c-navy)" />
+          <div className={styles.headerText}>
+            <h2 className={styles.eventName}>{name}</h2>
+            {identity && <p className={styles.identity}>{identity}</p>}
           </div>
-          <Btn kind="navy" icon={<MessageSquare size={15} />} disabled title={COPY.chatUnavailable}>
+          <span
+            className={`${styles.statusChip} ${mustRespond ? styles.statusWait : ''}`}
+          >
+            {bookingStatusLabel(booking.status)}
+          </span>
+        </div>
+
+        <div className={styles.stats}>
+          <div className={styles.stat}>
+            <Wallet size={16} className={styles.statIcon} />
+            <span className={styles.statLabel}>{COPY.totalValue}</span>
+            <span className={styles.statValue}>
+              {formatInr(booking.amount)}
+            </span>
+          </div>
+          <div className={styles.stat}>
+            <CalendarClock size={16} className={styles.statIcon} />
+            <span className={styles.statLabel}>Event day</span>
+            <span className={styles.statValueSm}>
+              {countdownLabel(booking.daysToGo, booking.status)}
+            </span>
+          </div>
+          <div className={styles.stat}>
+            <ListChecks size={16} className={styles.statIcon} />
+            <span className={styles.statLabel}>Tasks</span>
+            <span className={styles.statValue}>
+              {doneTasks}/{totalTasks}
+            </span>
+          </div>
+        </div>
+
+        {totalTasks > 0 && (
+          <div
+            className={styles.progress}
+            aria-label={`${taskPct}% of tasks done`}
+          >
+            <span
+              className={styles.progressFill}
+              style={{ width: `${taskPct}%` }}
+            />
+          </div>
+        )}
+
+        <div className={styles.heroActions}>
+          {canComplete && (
+            <Btn
+              kind="teal"
+              icon={<Check size={15} />}
+              onClick={onMarkCompleted}
+              disabled={isCompleting}
+              className={styles.heroBtn}
+            >
+              {isCompleting ? COPY.marking : COPY.markCompleted}
+            </Btn>
+          )}
+          <Btn
+            kind="outline"
+            icon={<MessageSquare size={15} />}
+            disabled
+            title={COPY.chatUnavailable}
+            className={styles.heroBtn}
+          >
             {COPY.chat}
           </Btn>
         </div>
@@ -141,93 +226,104 @@ export function Component({
         </section>
       )}
 
-      <div className={styles.countdown}>
-        <Clock size={18} className={styles.countdownIcon} />
-        <span className={styles.countdownText}>{countdownLabel(booking.daysToGo, booking.status)}</span>
-        {canComplete && (
-          <Btn
-            kind="teal"
-            sm
-            icon={<Check size={14} />}
-            onClick={onMarkCompleted}
-            disabled={isCompleting}
-            className={styles.completeBtn}
+      <section className={styles.block}>
+        <h3 className={styles.blockTitle}>With your customer</h3>
+        <div className={styles.links}>
+          <Link
+            to={`/organizer/invitation/${booking.id}`}
+            className={styles.invitation}
           >
-            {isCompleting ? COPY.marking : COPY.markCompleted}
-          </Btn>
-        )}
-      </div>
+            <span className={styles.invitationIcon}>
+              <Heart size={20} />
+            </span>
+            <span className={styles.invitationText}>
+              <span className={styles.invitationTitle}>
+                {COPY.invitationTitle}
+              </span>
+              <span className={styles.invitationSub}>{COPY.invitationSub}</span>
+            </span>
+            <ChevronRight size={18} className={styles.invitationChevron} />
+          </Link>
 
-      <Link to={`/organizer/invitation/${booking.id}`} className={styles.invitation}>
-        <span className={styles.invitationIcon}>
-          <Heart size={20} />
-        </span>
-        <span className={styles.invitationText}>
-          <span className={styles.invitationTitle}>{COPY.invitationTitle}</span>
-          <span className={styles.invitationSub}>{COPY.invitationSub}</span>
-        </span>
-        <ChevronRight size={18} className={styles.invitationChevron} />
-      </Link>
-
-      <form
-        className={styles.addTask}
-        onSubmit={(e) => {
-          e.preventDefault();
-          onAddTask();
-        }}
-      >
-        <input
-          type="text"
-          className={styles.addInput}
-          placeholder={COPY.addTaskPlaceholder}
-          value={newTaskTitle}
-          onChange={(e) => setNewTaskTitle(e.target.value)}
-        />
-        {subvendors.length > 0 && (
-          <select
-            className={styles.addSelect}
-            aria-label="Assign to sub-vendor"
-            value={newTaskSubVendorId}
-            onChange={(e) => setNewTaskSubVendorId(e.target.value)}
-          >
-            <option value="">{COPY.unassigned}</option>
-            {subvendors.map((sv) => (
-              <option key={sv.id} value={sv.id}>
-                {sv.fullName}
-              </option>
-            ))}
-          </select>
-        )}
-        {newTaskSubVendorId && (
-          <input
-            type="number"
-            min="0"
-            className={styles.addAmount}
-            aria-label="Sub-vendor pay"
-            placeholder="₹ pay"
-            value={newTaskAmount}
-            onChange={(e) => setNewTaskAmount(e.target.value)}
+          <IdeaSummary
+            counts={ideaCounts}
+            clientName={booking.customer?.name ?? 'Your client'}
+            onOpen={onOpenIdeaBoard}
           />
-        )}
-        <Btn sm type="submit" icon={<Plus size={14} />} disabled={!newTaskTitle.trim() || isAddingTask}>
-          Add task
-        </Btn>
-      </form>
+        </div>
+      </section>
 
-      <TaskBoard
-        tasks={booking.tasks}
-        subvendors={subvendors}
-        onMove={onMoveTask}
-        onRemove={onRemoveTask}
-        onAssign={onAssignTask}
-        onUploadProof={onUploadProof}
-      />
+      <section className={styles.block}>
+        <div className={styles.blockHead}>
+          <h3 className={styles.blockTitle}>Tasks</h3>
+          {totalTasks > 0 && (
+            <span className={styles.blockMeta}>
+              {doneTasks} of {totalTasks} done
+            </span>
+          )}
+        </div>
 
-      <IdeaSummary
-        counts={ideaCounts}
-        clientName={booking.customer?.name ?? 'Your client'}
-        onOpen={onOpenIdeaBoard}
-      />
+        <form
+          className={styles.addTask}
+          onSubmit={(e) => {
+            e.preventDefault();
+            onAddTask();
+          }}
+        >
+          <input
+            type="text"
+            className={styles.addInput}
+            placeholder={COPY.addTaskPlaceholder}
+            value={newTaskTitle}
+            onChange={(e) => setNewTaskTitle(e.target.value)}
+          />
+          {subvendors.length > 0 && (
+            <select
+              className={styles.addSelect}
+              aria-label="Assign to sub-vendor"
+              value={newTaskSubVendorId}
+              onChange={(e) => setNewTaskSubVendorId(e.target.value)}
+            >
+              <option value="">{COPY.unassigned}</option>
+              {subvendors.map((sv) => (
+                <option key={sv.id} value={sv.id}>
+                  {sv.fullName}
+                </option>
+              ))}
+            </select>
+          )}
+          {newTaskSubVendorId && (
+            <input
+              type="number"
+              min="0"
+              inputMode="decimal"
+              className={styles.addAmount}
+              aria-label="Sub-vendor pay"
+              placeholder="₹ pay"
+              value={newTaskAmount}
+              onChange={(e) => setNewTaskAmount(e.target.value)}
+            />
+          )}
+          <Btn
+            sm
+            type="submit"
+            icon={<Plus size={14} />}
+            disabled={!newTaskTitle.trim() || isAddingTask}
+            className={styles.addBtn}
+          >
+            Add task
+          </Btn>
+        </form>
+
+        <TaskBoard
+          tasks={booking.tasks}
+          subvendors={subvendors}
+          onMove={onMoveTask}
+          onRemove={onRemoveTask}
+          onAssign={onAssignTask}
+          onUploadProof={onUploadProof}
+        />
+      </section>
     </div>
   );
 }

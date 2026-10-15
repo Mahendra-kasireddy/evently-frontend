@@ -1,12 +1,16 @@
 import { useRef, useState } from 'react';
 import {
   ArrowRight,
+  CalendarHeart,
   Check,
-  Clock,
   Image as ImageIcon,
+  ImagePlus,
   Maximize2,
   MessageSquare,
+  Images,
+  Timer,
   Trash2,
+  Upload,
   Video,
 } from 'lucide-react';
 import { Btn, PageStack, formatEventDate } from '@shared/partner';
@@ -87,6 +91,14 @@ export function Component({
   const imageInput = useRef<HTMLInputElement>(null);
   const videoInput = useRef<HTMLInputElement>(null);
   const [viewing, setViewing] = useState(false);
+  /*
+   * The four things built around the invitation, one at a time. Stacked, they
+   * made a page five screens long with the invitation itself at the top and
+   * nothing to say where the rest was.
+   */
+  const [tab, setTab] = useState<'story' | 'dates' | 'countdown' | 'memories'>(
+    'story',
+  );
 
   const { status } = invitation;
   const sent = status !== 'draft';
@@ -103,38 +115,190 @@ export function Component({
       if (file) void uploadArtwork(file, kind);
     };
 
+  /* Where the invitation is in its life: made, sent, approved. */
+  const steps: Array<{ label: string; done: boolean }> = [
+    { label: 'Uploaded', done: Boolean(artwork) },
+    { label: 'Sent to customer', done: sent },
+    { label: 'Approved · link live', done: approved },
+  ];
+  const sendLabel = sent ? COPY.resend : COPY.send;
+
+  const tabs: Array<{
+    id: typeof tab;
+    label: string;
+    icon: React.ReactNode;
+    dirty?: boolean;
+  }> = [
+    {
+      id: 'story',
+      label: 'Story',
+      icon: <Images size={15} />,
+      dirty: storyDirty,
+    },
+    {
+      id: 'dates',
+      label: 'Save the date',
+      icon: <CalendarHeart size={15} />,
+      dirty: subEventsDirty,
+    },
+    {
+      id: 'countdown',
+      label: 'Countdown',
+      icon: <Timer size={15} />,
+      dirty: countdownDirty,
+    },
+    { id: 'memories', label: 'Memories', icon: <ImagePlus size={15} /> },
+  ];
+
+  /*
+   * Top to bottom: the invitation itself and where it stands (the focus of the
+   * screen), anything the customer has asked to change, then the pieces built
+   * around it — one tab at a time.
+   */
   return (
-    <PageStack>
+    <PageStack className={styles.page ?? ''}>
       <div className={styles.main}>
-        <div className={styles.head}>
-          <div className={styles.headText}>
-            <h2 className={styles.heading}>{COPY.heading}</h2>
+        <section className={styles.hero}>
+          <div className={styles.heroMedia}>
+            {artwork ? (
+              <button
+                type="button"
+                className={styles.thumbBtn}
+                onClick={() => setViewing(true)}
+                aria-label={COPY.artworkOpen}
+              >
+                <InvitationArtworkView
+                  artwork={artwork}
+                  label={COPY.artworkImageLabel}
+                  className={styles.thumb}
+                />
+                <span className={styles.thumbHint}>
+                  <Maximize2 size={13} /> {COPY.artworkOpen}
+                </span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={styles.uploadTile}
+                onClick={() => imageInput.current?.click()}
+                disabled={busy}
+              >
+                <Upload size={22} />
+                <strong>{COPY.artworkEmptyTitle}</strong>
+                <span>{COPY.artworkEmptyBody}</span>
+              </button>
+            )}
+          </div>
+
+          <div className={styles.heroBody}>
+            <p className={styles.heroEyebrow}>{COPY.artworkTitle}</p>
+            <h2 className={styles.heroTitle}>{invitation.bookingTitle}</h2>
             <p className={styles.sub}>
-              {invitation.bookingTitle} ·{' '}
               {formatEventDate(invitation.eventDate)} · ID{' '}
               {invitation.bookingRef}
             </p>
-          </div>
-          <Btn
-            kind="primary"
-            sm
-            icon={<ArrowRight size={14} />}
-            onClick={() => void send()}
-            disabled={busy || !artwork}
-          >
-            {sent ? COPY.resend : COPY.send}
-          </Btn>
-        </div>
 
-        <div
-          className={`${styles.statusBar} ${approved ? styles.statusOk : styles.statusWait}`}
-        >
-          {approved ? <Check size={18} /> : <Clock size={18} />}
-          <span className={styles.statusText}>{STATUS_COPY[status]}</span>
-          {status === 'sent' && (
-            <span className={styles.statusHint}>{COPY.awaitingHint}</span>
-          )}
-        </div>
+            <ol className={styles.steps} aria-label="Invitation progress">
+              {steps.map((step, i) => (
+                <li
+                  key={step.label}
+                  className={`${styles.step} ${step.done ? styles.stepDone : ''}`}
+                >
+                  <span className={styles.stepDot}>
+                    {step.done ? <Check size={12} /> : i + 1}
+                  </span>
+                  <span className={styles.stepLabel}>{step.label}</span>
+                </li>
+              ))}
+            </ol>
+            <p className={styles.heroStatus}>
+              {STATUS_COPY[status]}
+              {status === 'sent' ? `. ${COPY.awaitingHint}` : ''}
+            </p>
+
+            <div className={styles.artworkBar}>
+              <Btn
+                kind="outline"
+                sm
+                icon={<ImageIcon size={14} />}
+                onClick={() => imageInput.current?.click()}
+                disabled={busy}
+              >
+                {artwork?.kind === 'image'
+                  ? COPY.artworkReplace
+                  : COPY.artworkImage}
+              </Btn>
+              <Btn
+                kind="outline"
+                sm
+                icon={<Video size={14} />}
+                onClick={() => videoInput.current?.click()}
+                disabled={busy}
+              >
+                {artwork?.kind === 'video'
+                  ? COPY.artworkReplace
+                  : COPY.artworkVideo}
+              </Btn>
+              {artwork && (
+                <Btn
+                  kind="ghost"
+                  sm
+                  icon={<Trash2 size={14} />}
+                  onClick={() => void removeArtwork()}
+                  disabled={busy}
+                >
+                  {COPY.artworkRemove}
+                </Btn>
+              )}
+              <span className={styles.artworkState}>
+                {isUploading
+                  ? COPY.artworkUploading
+                  : artwork?.kind === 'video'
+                    ? COPY.artworkVideoLength(artwork.seconds)
+                    : ''}
+              </span>
+            </div>
+
+            {uploadError && (
+              <p className={styles.artworkError}>{uploadError}</p>
+            )}
+
+            <div className={styles.heroSend}>
+              <Btn
+                kind="primary"
+                icon={<ArrowRight size={15} />}
+                onClick={() => void send()}
+                disabled={busy || !artwork}
+              >
+                {sendLabel}
+              </Btn>
+              <p className={styles.artworkNote}>
+                {!artwork
+                  ? COPY.sendNeedsArtwork
+                  : sent
+                    ? COPY.resendNote
+                    : COPY.sendNote}
+              </p>
+            </div>
+          </div>
+
+          {/* The file inputs themselves are never shown — the buttons are the
+              control, and a bare "Choose file" is not one. */}
+          <input
+            ref={imageInput}
+            type="file"
+            accept={IMAGE_TYPES}
+            className={styles.fileInput}
+            onChange={pick('image')}
+          />
+          <input
+            ref={videoInput}
+            type="file"
+            accept={VIDEO_TYPES}
+            className={styles.fileInput}
+            onChange={pick('video')}
+          />
+        </section>
 
         {/*
          * What the customer has asked for. Shown here rather than only as a
@@ -167,174 +331,120 @@ export function Component({
           </section>
         )}
 
-        <section className={styles.artwork}>
-          <h3 className={styles.artworkTitle}>{COPY.artworkTitle}</h3>
-          <p className={styles.artworkLead}>{COPY.artworkLead}</p>
-
-          {artwork ? (
-            /*
-             * Small on the page, full size on click.
-             *
-             * The invitation is portrait and tall; at full width it pushed
-             * everything that acts on it — upload, replace, send — below the
-             * fold. A thumbnail says which invitation this is, and opening it
-             * is one click away when the organizer wants to actually read it.
-             */
-            <button
-              type="button"
-              className={styles.thumbBtn}
-              onClick={() => setViewing(true)}
-              aria-label={COPY.artworkOpen}
-            >
-              <InvitationArtworkView
-                artwork={artwork}
-                label={COPY.artworkImageLabel}
-                className={styles.thumb}
-              />
-              <span className={styles.thumbHint}>
-                <Maximize2 size={13} /> {COPY.artworkOpen}
-              </span>
-            </button>
-          ) : (
-            <div className={styles.canvasEmpty}>
-              <strong>{COPY.artworkEmptyTitle}</strong>
-              <span>{COPY.artworkEmptyBody}</span>
-            </div>
-          )}
-
-          <div className={styles.artworkBar}>
-            <Btn
-              kind="outline"
-              sm
-              icon={<ImageIcon size={14} />}
-              onClick={() => imageInput.current?.click()}
-              disabled={busy}
-            >
-              {artwork?.kind === 'image'
-                ? COPY.artworkReplace
-                : COPY.artworkImage}
-            </Btn>
-            <Btn
-              kind="outline"
-              sm
-              icon={<Video size={14} />}
-              onClick={() => videoInput.current?.click()}
-              disabled={busy}
-            >
-              {artwork?.kind === 'video'
-                ? COPY.artworkReplace
-                : COPY.artworkVideo}
-            </Btn>
-            {artwork && (
-              <Btn
-                kind="outline"
-                sm
-                icon={<Trash2 size={14} />}
-                onClick={() => void removeArtwork()}
-                disabled={busy}
+        <div className={styles.builder}>
+          <h3 className={styles.builderTitle}>Around the invitation</h3>
+          <div
+            className={styles.sectionTabs}
+            role="tablist"
+            aria-label="Invitation sections"
+          >
+            {tabs.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                role="tab"
+                aria-selected={tab === t.id}
+                className={`${styles.sectionTab} ${tab === t.id ? styles.sectionTabOn : ''}`}
+                onClick={() => setTab(t.id)}
               >
-                {COPY.artworkRemove}
-              </Btn>
-            )}
-            <span className={styles.artworkState}>
-              {isUploading
-                ? COPY.artworkUploading
-                : artwork?.kind === 'video'
-                  ? COPY.artworkVideoLength(artwork.seconds)
-                  : ''}
-            </span>
+                {t.icon}
+                {t.label}
+                {t.dirty && (
+                  <span
+                    className={styles.dirtyDot}
+                    aria-label="Unsaved changes"
+                  />
+                )}
+              </button>
+            ))}
           </div>
 
-          {/* The file inputs themselves are never shown — the buttons are the
-              control, and a bare "Choose file" is not one. */}
-          <input
-            ref={imageInput}
-            type="file"
-            accept={IMAGE_TYPES}
-            className={styles.fileInput}
-            onChange={pick('image')}
-          />
-          <input
-            ref={videoInput}
-            type="file"
-            accept={VIDEO_TYPES}
-            className={styles.fileInput}
-            onChange={pick('video')}
-          />
+          <div className={styles.tabPanel} role="tabpanel">
+            {tab === 'story' && (
+              <StoryEditor
+                cards={storyCards}
+                title={storyTitle}
+                isUploading={isStoryUploading}
+                isSaving={isSaving}
+                dirty={storyDirty}
+                error={storyError}
+                onTitle={setStoryTitle}
+                onAdd={(file) => void addStoryCard(file)}
+                onCaption={setStoryCaption}
+                onReplace={(id, file) => void replaceStoryPhoto(id, file)}
+                onRemove={removeStoryCard}
+                onMove={moveStoryCard}
+                onSave={() => void saveStory()}
+              />
+            )}
 
-          {uploadError && <p className={styles.artworkError}>{uploadError}</p>}
+            {tab === 'dates' && (
+              <SaveTheDateEditor
+                cards={subEvents}
+                palette={invitation.cardPalette}
+                fallbackTimezone={invitation.details.timezone}
+                openIndex={openSubEvent}
+                isSaving={isSaving}
+                dirty={subEventsDirty}
+                error={subEventsError}
+                onOpenChange={setOpenSubEvent}
+                onChange={setSubEvents}
+                onSave={() => void saveSubEvents()}
+              />
+            )}
 
-          <p className={styles.artworkNote}>
-            {!artwork
-              ? COPY.sendNeedsArtwork
-              : sent
-                ? COPY.resendNote
-                : COPY.sendNote}
-          </p>
-        </section>
+            {tab === 'countdown' && (
+              <CountdownEditor
+                subEvents={invitation.subEvents}
+                settings={countdown}
+                isSaving={isSaving}
+                dirty={countdownDirty}
+                error={countdownError}
+                onChange={setCountdown}
+                onSave={() => void saveCountdown()}
+              />
+            )}
 
-        <StoryEditor
-          cards={storyCards}
-          title={storyTitle}
-          isUploading={isStoryUploading}
-          isSaving={isSaving}
-          dirty={storyDirty}
-          error={storyError}
-          onTitle={setStoryTitle}
-          onAdd={(file) => void addStoryCard(file)}
-          onCaption={setStoryCaption}
-          onReplace={(id, file) => void replaceStoryPhoto(id, file)}
-          onRemove={removeStoryCard}
-          onMove={moveStoryCard}
-          onSave={() => void saveStory()}
-        />
-
-        {/*
-         * Above the countdown, because the countdown points at one of these.
-         * An organizer picking a target reads the list of events they have
-         * just been arranging, in the order they arranged them.
-         */}
-        <SaveTheDateEditor
-          cards={subEvents}
-          palette={invitation.cardPalette}
-          fallbackTimezone={invitation.details.timezone}
-          openIndex={openSubEvent}
-          isSaving={isSaving}
-          dirty={subEventsDirty}
-          error={subEventsError}
-          onOpenChange={setOpenSubEvent}
-          onChange={setSubEvents}
-          onSave={() => void saveSubEvents()}
-        />
-
-        {/*
-         * Shared memories, last: it fills up after the invitation has gone
-         * out. Read and add only — the gallery is the customer's.
-         */}
-        <MemoriesPanel
-          gallery={memories}
-          kind={memoryKind}
-          subEvent={memorySubEvent}
-          busy={memoryBusy}
-          say={memorySay}
-          sayWarn={memorySayWarn}
-          onKind={setMemoryKind}
-          onSubEvent={setMemorySubEvent}
-          onAdd={(file) => void addMemory(file)}
-        />
-
-        <CountdownEditor
-          subEvents={invitation.subEvents}
-          settings={countdown}
-          isSaving={isSaving}
-          dirty={countdownDirty}
-          error={countdownError}
-          onChange={setCountdown}
-          onSave={() => void saveCountdown()}
-        />
+            {/* Read and add only — the gallery is the customer's. */}
+            {tab === 'memories' && (
+              <MemoriesPanel
+                gallery={memories}
+                kind={memoryKind}
+                subEvent={memorySubEvent}
+                busy={memoryBusy}
+                say={memorySay}
+                sayWarn={memorySayWarn}
+                onKind={setMemoryKind}
+                onSubEvent={setMemorySubEvent}
+                onAdd={(file) => void addMemory(file)}
+              />
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* The invitation, as the customer and their guests get it. */}
+      {/* A phone: where it stands and the send button, under the thumb. */}
+      <div className={styles.mobileBar}>
+        <span className={styles.mobileStatus}>
+          <span
+            className={`${styles.mobileDot} ${approved ? styles.mobileDotOk : ''}`}
+          />
+          {approved
+            ? 'Approved · link live'
+            : sent
+              ? 'Waiting for approval'
+              : 'Not sent yet'}
+        </span>
+        <Btn
+          kind="primary"
+          icon={<ArrowRight size={15} />}
+          onClick={() => void send()}
+          disabled={busy || !artwork}
+        >
+          {sendLabel}
+        </Btn>
+      </div>
+
       {/* One viewer for every picture the invitation shows full size. */}
       <Lightbox
         open={viewing}

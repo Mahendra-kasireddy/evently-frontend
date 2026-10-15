@@ -1,8 +1,15 @@
 import { useRef, useState } from 'react';
 import { Camera, Check, Plus, Trash2, Undo2 } from 'lucide-react';
 import { Avatar } from '@shared/partner';
-import { dateLabel, taskStatusLabel } from '@features/organizer/bookings/transform';
-import { COLUMN_ACCENT, EVENT_DETAIL_COPY as COPY, TASK_COLUMNS } from '../../constants';
+import {
+  dateLabel,
+  taskStatusLabel,
+} from '@features/organizer/bookings/transform';
+import {
+  COLUMN_ACCENT,
+  EVENT_DETAIL_COPY as COPY,
+  TASK_COLUMNS,
+} from '../../constants';
 import type { ApiBookingTask, BookingTaskStatus } from '../../types';
 import styles from './TaskBoard.module.css';
 
@@ -59,7 +66,11 @@ function AssignControl({
 
   if (!picking) {
     return (
-      <button type="button" className={styles.assign} onClick={() => setPicking(true)}>
+      <button
+        type="button"
+        className={styles.assign}
+        onClick={() => setPicking(true)}
+      >
         <Plus size={13} />
         {COPY.assign}
       </button>
@@ -113,16 +124,25 @@ function TaskCard({
       <p className={styles.cardTitle}>{task.title}</p>
 
       <div className={styles.cardRow}>
-        <AssignControl task={task} subvendors={subvendors} onAssign={onAssign} />
+        <AssignControl
+          task={task}
+          subvendors={subvendors}
+          onAssign={onAssign}
+        />
         {trailing && (
-          <span className={styles.due} style={{ color: COLUMN_ACCENT[task.status] }}>
+          <span
+            className={styles.due}
+            style={{ color: COLUMN_ACCENT[task.status] }}
+          >
             {trailing}
           </span>
         )}
       </div>
 
       {task.subVendorId && task.assignmentStatus !== 'unassigned' && (
-        <span className={`${styles.assignTag} ${styles[task.assignmentStatus] ?? ''}`}>
+        <span
+          className={`${styles.assignTag} ${styles[task.assignmentStatus] ?? ''}`}
+        >
           {task.assignmentStatus === 'pending' && 'Awaiting sub-vendor'}
           {task.assignmentStatus === 'accepted' && 'Accepted'}
           {task.assignmentStatus === 'declined' && 'Declined'}
@@ -142,13 +162,22 @@ function TaskCard({
       />
 
       {task.photoProof ? (
-        <a href={task.photoProof.url} target="_blank" rel="noreferrer" className={styles.proofLink}>
+        <a
+          href={task.photoProof.url}
+          target="_blank"
+          rel="noreferrer"
+          className={styles.proofLink}
+        >
           <Camera size={14} /> {COPY.proofAttached}
         </a>
       ) : (
         // The design shows the dashed dropzone only on work still in flight.
         task.status !== 'done' && (
-          <button type="button" className={styles.proofZone} onClick={() => fileRef.current?.click()}>
+          <button
+            type="button"
+            className={styles.proofZone}
+            onClick={() => fileRef.current?.click()}
+          >
             <Camera size={14} /> {COPY.uploadProof}
           </button>
         )
@@ -156,12 +185,22 @@ function TaskCard({
 
       <div className={styles.cardActions}>
         {task.subVendorId && (
-          <button type="button" className={styles.iconBtn} onClick={() => onAssign(null)} title={COPY.unassign}>
+          <button
+            type="button"
+            className={styles.iconBtn}
+            onClick={() => onAssign(null)}
+            title={COPY.unassign}
+          >
             {COPY.unassign}
           </button>
         )}
         {task.status !== 'todo' && (
-          <button type="button" className={styles.iconBtn} onClick={() => onMove('todo')} title="Move to To do">
+          <button
+            type="button"
+            className={styles.iconBtn}
+            onClick={() => onMove('todo')}
+            title="Move to To do"
+          >
             <Undo2 size={13} />
           </button>
         )}
@@ -176,11 +215,21 @@ function TaskCard({
           </button>
         )}
         {task.status !== 'done' && (
-          <button type="button" className={styles.doneBtn} onClick={() => onMove('done')} title="Mark done">
+          <button
+            type="button"
+            className={styles.doneBtn}
+            onClick={() => onMove('done')}
+            title="Mark done"
+          >
             <Check size={13} /> Done
           </button>
         )}
-        <button type="button" className={styles.removeBtn} onClick={onRemove} title="Remove task">
+        <button
+          type="button"
+          className={styles.removeBtn}
+          onClick={onRemove}
+          title="Remove task"
+        >
           <Trash2 size={13} />
         </button>
       </div>
@@ -188,36 +237,92 @@ function TaskCard({
   );
 }
 
-export function TaskBoard({ tasks, subvendors, onMove, onRemove, onAssign, onUploadProof }: TaskBoardProps) {
+export function TaskBoard({
+  tasks,
+  subvendors,
+  onMove,
+  onRemove,
+  onAssign,
+  onUploadProof,
+}: TaskBoardProps) {
+  /*
+   * On a phone the three columns become tabs — To do · In progress · Done —
+   * with one list showing at a time, rather than three stacked columns that
+   * made the page as long as the whole task list. On a wide screen all three
+   * columns stay side by side and the tabs are not drawn.
+   */
+  const [active, setActive] = useState<BookingTaskStatus>('todo');
+
   return (
-    <div className={styles.board}>
-      {TASK_COLUMNS.map((col) => {
-        const items = tasks.filter((t) => t.status === col);
-        return (
-          <section key={col} className={styles.column} aria-label={taskStatusLabel(col)}>
-            <div className={styles.columnHead}>
-              <span className={styles.dot} style={{ background: COLUMN_ACCENT[col] }} aria-hidden />
-              <strong className={styles.columnTitle}>{taskStatusLabel(col)}</strong>
-              <span className={styles.count}>{items.length}</span>
-            </div>
-            {items.length === 0 ? (
-              <p className={styles.empty}>{COPY.emptyColumn}</p>
-            ) : (
-              items.map((t) => (
-                <TaskCard
-                  key={t.id}
-                  task={t}
-                  subvendors={subvendors}
-                  onMove={(status) => onMove(t.id, status)}
-                  onRemove={() => onRemove(t.id)}
-                  onAssign={(subVendorId) => onAssign(t.id, subVendorId)}
-                  onUploadProof={(file) => onUploadProof(t.id, file)}
+    <div className={styles.wrap}>
+      <div className={styles.tabs} role="tablist" aria-label="Task status">
+        {TASK_COLUMNS.map((col) => {
+          const count = tasks.filter((t) => t.status === col).length;
+          const on = col === active;
+          return (
+            <button
+              key={col}
+              type="button"
+              role="tab"
+              aria-selected={on}
+              className={`${styles.tab} ${on ? styles.tabOn : ''}`}
+              onClick={() => setActive(col)}
+            >
+              <span
+                className={styles.tabDot}
+                style={{ background: COLUMN_ACCENT[col] }}
+                aria-hidden
+              />
+              {taskStatusLabel(col)}
+              <span className={styles.tabCount}>{count}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className={styles.board}>
+        {TASK_COLUMNS.map((col) => {
+          const items = tasks.filter((t) => t.status === col);
+          return (
+            <section
+              key={col}
+              className={`${styles.column} ${col === active ? '' : styles.columnAway}`}
+              aria-label={taskStatusLabel(col)}
+            >
+              <div className={styles.columnHead}>
+                <span
+                  className={styles.dot}
+                  style={{ background: COLUMN_ACCENT[col] }}
+                  aria-hidden
                 />
-              ))
-            )}
-          </section>
-        );
-      })}
+                <strong className={styles.columnTitle}>
+                  {taskStatusLabel(col)}
+                </strong>
+                <span className={styles.count}>{items.length}</span>
+              </div>
+              {/* A long list scrolls inside its own box rather than
+                  stretching the page. */}
+              <div className={styles.list}>
+                {items.length === 0 ? (
+                  <p className={styles.empty}>{COPY.emptyColumn}</p>
+                ) : (
+                  items.map((t) => (
+                    <TaskCard
+                      key={t.id}
+                      task={t}
+                      subvendors={subvendors}
+                      onMove={(status) => onMove(t.id, status)}
+                      onRemove={() => onRemove(t.id)}
+                      onAssign={(subVendorId) => onAssign(t.id, subVendorId)}
+                      onUploadProof={(file) => onUploadProof(t.id, file)}
+                    />
+                  ))
+                )}
+              </div>
+            </section>
+          );
+        })}
+      </div>
     </div>
   );
 }

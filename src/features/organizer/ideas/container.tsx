@@ -73,6 +73,7 @@ export function OrganizerIdeasContainer({ bookingId }: { bookingId: string }) {
       authorName={organizerName}
       counterpartName={clientName}
       organizerName={organizerName}
+      embedded
       backLabel="Event workspace"
       eventTitle={b.title || 'This event'}
       eventDate={b.eventDate}
@@ -91,7 +92,9 @@ export function OrganizerIdeasContainer({ bookingId }: { bookingId: string }) {
           body: {
             status: draft.status,
             text: draft.text,
-            ...(draft.approvalLabel ? { approvalLabel: draft.approvalLabel } : {}),
+            ...(draft.approvalLabel
+              ? { approvalLabel: draft.approvalLabel }
+              : {}),
           },
         });
       }}

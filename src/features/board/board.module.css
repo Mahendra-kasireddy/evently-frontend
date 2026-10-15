@@ -1130,3 +1130,13 @@
     display: none;
   }
 }
+
+/* Inside the organizer shell: its bar, its gutter. */
+.pageEmbedded {
+  min-height: 0;
+  background: none;
+  padding: 0 0 24px;
+}
+.pageEmbedded .container {
+  padding: 0;
+}

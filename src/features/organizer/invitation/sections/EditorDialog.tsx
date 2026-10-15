@@ -70,8 +70,10 @@ export function EditorDialog({
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
-  const set = <K extends keyof InvitationDetails>(key: K, value: InvitationDetails[K]) =>
-    setDraft((prev) => ({ ...prev, [key]: value }));
+  const set = <K extends keyof InvitationDetails>(
+    key: K,
+    value: InvitationDetails[K],
+  ) => setDraft((prev) => ({ ...prev, [key]: value }));
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,25 +112,45 @@ export function EditorDialog({
               {block?.title ?? COPY.newTitle}
             </h2>
           </div>
-          <button type="button" className={styles.dialogClose} onClick={onClose} aria-label={COPY.cancel}>
+          <button
+            type="button"
+            className={styles.dialogClose}
+            onClick={onClose}
+            aria-label={COPY.cancel}
+          >
             <X size={18} />
           </button>
         </header>
 
         <div className={styles.dialogBody}>
-          {block?.owner === 'customer' && <p className={styles.dialogNote}>{COPY.customerNote}</p>}
+          {block?.owner === 'customer' && (
+            <p className={styles.dialogNote}>{COPY.customerNote}</p>
+          )}
 
           <label className={styles.field}>
             <span>{COPY.fieldTitle}</span>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={80} />
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              maxLength={80}
+            />
           </label>
           <label className={styles.field}>
             <span>{COPY.fieldHeading}</span>
-            <input value={heading} onChange={(e) => setHeading(e.target.value)} maxLength={120} />
+            <input
+              value={heading}
+              onChange={(e) => setHeading(e.target.value)}
+              maxLength={120}
+            />
           </label>
           <label className={styles.field}>
             <span>{COPY.fieldBody}</span>
-            <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={3} maxLength={600} />
+            <textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              rows={3}
+              maxLength={600}
+            />
           </label>
 
           {isSaveTheDate && (
@@ -147,7 +169,10 @@ export function EditorDialog({
               <h3 className={styles.fieldGroup}>{COPY.fieldsTitle}</h3>
               <label className={styles.field}>
                 <span>{COPY.template}</span>
-                <select value={draft.template} onChange={(e) => set('template', e.target.value)}>
+                <select
+                  value={draft.template}
+                  onChange={(e) => set('template', e.target.value)}
+                >
                   {templates.map((t) => (
                     <option key={t.id} value={t.id}>
                       {t.label}
@@ -276,7 +301,12 @@ export function EditorDialog({
               {COPY.remove}
             </button>
           )}
-          <Btn kind="outline" sm onClick={onClose} className={styles.footSpacer}>
+          <Btn
+            kind="outline"
+            sm
+            onClick={onClose}
+            className={styles.footSpacer}
+          >
             {COPY.cancel}
           </Btn>
           <Btn kind="primary" sm type="submit" disabled={isSaving}>

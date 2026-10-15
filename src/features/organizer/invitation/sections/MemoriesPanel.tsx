@@ -71,7 +71,11 @@ export function MemoriesPanel({
       </div>
       <p className={styles.artworkLead}>{COPY.memLead}</p>
 
-      <div className={styles.memFilters} role="group" aria-label={COPY.memTabsLabel}>
+      <div
+        className={styles.memFilters}
+        role="group"
+        aria-label={COPY.memTabsLabel}
+      >
         {tabs.map(([id, label, n]) => (
           <button
             key={id}
@@ -87,7 +91,11 @@ export function MemoriesPanel({
 
       {/* The celebrations come from this invitation, never a fixed list. */}
       {gallery && gallery.subEvents.length > 0 && (
-        <div className={styles.memFilters} role="group" aria-label={COPY.memEventsLabel}>
+        <div
+          className={styles.memFilters}
+          role="group"
+          aria-label={COPY.memEventsLabel}
+        >
           <button
             type="button"
             className={`${styles.memChip} ${subEvent === 'all' ? styles.memChipOn : ''}`}
@@ -137,7 +145,9 @@ export function MemoriesPanel({
                     <Play size={20} fill="currentColor" aria-hidden="true" />
                   </span>
                   {item.durationSec > 0 && (
-                    <span className={styles.memLength}>{clock(item.durationSec)}</span>
+                    <span className={styles.memLength}>
+                      {clock(item.durationSec)}
+                    </span>
                   )}
                 </>
               )}
@@ -176,16 +186,27 @@ export function MemoriesPanel({
       />
 
       {say && (
-        <p className={sayWarn ? styles.artworkError : styles.artworkNote} role="status">
+        <p
+          className={sayWarn ? styles.artworkError : styles.artworkNote}
+          role="status"
+        >
           {say}
         </p>
       )}
 
-      <Lightbox open={Boolean(open)} onClose={() => setViewing(-1)} label={COPY.memClose}>
+      <Lightbox
+        open={Boolean(open)}
+        onClose={() => setViewing(-1)}
+        label={COPY.memClose}
+      >
         {open &&
           (open.kind === 'photo' ? (
             /* The display rendition, not the original. */
-            <img className={styles.lightboxMedia} src={open.displayUrl} alt={open.caption} />
+            <img
+              className={styles.lightboxMedia}
+              src={open.displayUrl}
+              alt={open.caption}
+            />
           ) : (
             <video
               className={styles.lightboxMedia}

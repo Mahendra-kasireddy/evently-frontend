@@ -11,12 +11,18 @@ import { useGetMySubvendorsQuery } from '@features/organizer/subvendors/service'
 import type { BookingTaskStatus } from '../types';
 
 export function useEventDetail(bookingId: string) {
-  const { data: booking, isLoading, isError, refetch } = useGetOrganizerBookingQuery(bookingId);
+  const {
+    data: booking,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetOrganizerBookingQuery(bookingId);
   const { data: subvendorLinks = [] } = useGetMySubvendorsQuery();
   const [addTaskMutation, addState] = useAddBookingTaskMutation();
   const [updateTaskMutation] = useUpdateBookingTaskMutation();
   const [removeTaskMutation] = useRemoveBookingTaskMutation();
-  const [updateStatusMutation, statusState] = useUpdateOrganizerBookingStatusMutation();
+  const [updateStatusMutation, statusState] =
+    useUpdateOrganizerBookingStatusMutation();
   const [uploadProof] = useUploadTaskProofMutation();
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskSubVendorId, setNewTaskSubVendorId] = useState('');

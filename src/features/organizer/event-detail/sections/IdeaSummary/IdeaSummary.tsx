@@ -29,15 +29,25 @@ export function IdeaSummary({ counts, clientName, onOpen }: IdeaSummaryProps) {
         <div className={styles.text}>
           <strong>Ideas &amp; planning board</strong>
           {nothingYet ? (
-            <span>{clientName} hasn’t shared an idea yet — post an update to get them started.</span>
+            <span>
+              {clientName} hasn’t shared an idea yet — post an update to get
+              them started.
+            </span>
           ) : (
             <span>
               {counts.shared} shared · {counts.planned} planned
-              {counts.awaitingApproval > 0 ? ` · ${counts.awaitingApproval} awaiting them` : ''}
+              {counts.awaitingApproval > 0
+                ? ` · ${counts.awaitingApproval} awaiting them`
+                : ''}
             </span>
           )}
         </div>
-        <Btn kind="outline" sm icon={<ChevronRight size={14} />} onClick={onOpen}>
+        <Btn
+          kind="outline"
+          sm
+          icon={<ChevronRight size={14} />}
+          onClick={onOpen}
+        >
           Open board
         </Btn>
       </div>

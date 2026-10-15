@@ -171,9 +171,11 @@ const TITLES: Array<[prefix: string, title: string]> = [
   ['/organizer/home', 'Dashboard'],
   ['/organizer/setup', 'Go-live setup'],
   ['/organizer/quotes', 'Enquiries'],
-  ['/organizer/events/', 'Event execution'],
+  // Most specific first: the ideas board sits under one event's workspace.
+  ['/organizer/events/*/ideas', 'Ideas & planning board'],
+  ['/organizer/events/', 'Workspace'],
   ['/organizer/events', 'Active events'],
-  ['/organizer/invitation', 'Invitation setup'],
+  ['/organizer/invitation', 'Guest invitation'],
   ['/organizer/public-events/', 'Event workspace'],
   ['/organizer/public-events', 'Public events'],
   ['/organizer/quote-builder', 'Quote builder'],
@@ -187,23 +189,48 @@ const TITLES: Array<[prefix: string, title: string]> = [
   ['/organizer/profile', 'Profile'],
 ];
 
+/** A prefix may carry one `*` for a single path segment (a booking id). */
+const prefixMatches = (pathname: string, prefix: string): boolean => {
+  if (!prefix.includes('*')) return pathname.startsWith(prefix);
+  const [head = '', tail = ''] = prefix.split('*');
+  if (!pathname.startsWith(head)) return false;
+  const rest = pathname.slice(head.length);
+  const cut = rest.indexOf('/');
+  return cut > 0 && rest.slice(cut).startsWith(tail);
+};
+
 const titleFor = (pathname: string): string =>
-  TITLES.find(([prefix]) => pathname.startsWith(prefix))?.[1] ?? 'Organizer';
+  TITLES.find(([prefix]) => prefixMatches(pathname, prefix))?.[1] ??
+  'Organizer';
 
 /**
  * Drill-ins and where their back arrow returns to. A screen reached from the
- * tabs has none: the tabs are the way between those.
+ * tabs has none: the tabs are the way between those. The event's own screens
+ * (its ideas board, its guest invitation) lead back to that event's workspace,
+ * not to the list.
  */
-const BACK_TO: Array<[prefix: string, to: string]> = [
-  ['/organizer/setup', '/organizer/home'],
-  ['/organizer/respond', '/organizer/quote-builder'],
-  ['/organizer/events/', '/organizer/events'],
-  ['/organizer/invitation', '/organizer/events'],
-  ['/organizer/public-events/', '/organizer/public-events'],
+const BACK_TO: Array<[match: RegExp, to: (m: RegExpMatchArray) => string]> = [
+  [/^\/organizer\/setup/, () => '/organizer/home'],
+  [/^\/organizer\/respond/, () => '/organizer/quote-builder'],
+  [
+    /^\/organizer\/events\/([^/]+)\/ideas/,
+    (m) => `/organizer/events/${m[1] ?? ''}`,
+  ],
+  [/^\/organizer\/events\/[^/]+/, () => '/organizer/events'],
+  [
+    /^\/organizer\/invitation\/([^/]+)/,
+    (m) => `/organizer/events/${m[1] ?? ''}`,
+  ],
+  [/^\/organizer\/public-events\/[^/]+/, () => '/organizer/public-events'],
 ];
 
-const backFor = (pathname: string): string | undefined =>
-  BACK_TO.find(([prefix]) => pathname.startsWith(prefix))?.[1];
+function backFor(pathname: string): string | undefined {
+  for (const [match, to] of BACK_TO) {
+    const m = pathname.match(match);
+    if (m) return to(m);
+  }
+  return undefined;
+}
 
 const NOTIF_STYLE: Record<
   NotificationItem['type'],
@@ -369,7 +396,7 @@ export function OrganizerLayout() {
   const tabs = activeSection?.tabs ?? [];
 
   return (
-    <div className={styles.shell}>
+    <div className={`${styles.shell} ${backTo ? styles.shellDrill : ''}`}>
       <header className={styles.topWrap}>
         <div className={styles.topbar}>
           <Link
@@ -523,18 +550,30 @@ export function OrganizerLayout() {
         </div>
       </header>
 
-      {/* The screen's name, for screen readers only — the tabs and the page's
-          own content already say where you are, so no visible heading repeats it. */}
-      <h1 className={styles.srOnly}>{titleFor(pathname)}</h1>
-
-      {(backTo || tabs.length > 1) && (
-        <div className={styles.pageHead}>
-          {backTo && (
+      {/*
+        A drill-in (one event's workspace, its ideas board, its invitation, one
+        quote) is a screen of its own: a back arrow and its name. On a phone
+        this bar replaces the app bar entirely, as a native app's would.
+      */}
+      {backTo ? (
+        <div className={styles.drillBar}>
+          <div className={styles.drillInner}>
             <Link to={backTo} className={styles.back} aria-label="Back">
               <ChevronLeft size={24} strokeWidth={2.4} />
             </Link>
-          )}
+            <h1 className={styles.drillTitle}>{titleFor(pathname)}</h1>
+          </div>
+        </div>
+      ) : (
+        /* The screen's name, for screen readers only — the tabs and the page's
+           own content already say where you are. */
+        <h1 className={styles.srOnly}>{titleFor(pathname)}</h1>
+      )}
 
+      {!backTo && tabs.length > 1 && (
+        /* Sticky under the app bar, so the section's tabs stay in reach while
+           its list scrolls. */
+        <div className={`${styles.pageHead} ${styles.pageHeadSticky}`}>
           {/* The section's screens, side by side — only when there is a choice,
               and not inside a drill-in, where the chevron is the way back. */}
           {!backTo && tabs.length > 1 && (

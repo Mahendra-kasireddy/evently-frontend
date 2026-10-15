@@ -79,7 +79,9 @@ export const invitationApi = baseApi.injectEndpoints({
              client is configured with a JSON content type, which axios would
              otherwise keep — and a multipart body with no boundary reaches the
              server as no file at all. Same override as the artwork upload. */
-          const config = { headers: { 'Content-Type': undefined } } as unknown as AxiosRequestConfig;
+          const config = {
+            headers: { 'Content-Type': undefined },
+          } as unknown as AxiosRequestConfig;
           return (
             await apiClient.post<{ status: string; message: string }>(
               `/invitation/organizer/${encodeURIComponent(bookingId)}/memories`,
@@ -89,13 +91,21 @@ export const invitationApi = baseApi.injectEndpoints({
           ).data;
         }),
       /* The customer's and the guests' views of the same gallery. */
-      invalidatesTags: ['OrganizerMemories', 'ManagedMemories', 'GuestMemories'],
+      invalidatesTags: [
+        'OrganizerMemories',
+        'ManagedMemories',
+        'GuestMemories',
+      ],
     }),
     getInvitation: build.query<OrganizerInvitation, string>({
       queryFn: (bookingId) =>
         toQueryResult(
           async () =>
-            (await apiClient.get<OrganizerInvitation>(`/invitation/organizer/${bookingId}`)).data,
+            (
+              await apiClient.get<OrganizerInvitation>(
+                `/invitation/organizer/${bookingId}`,
+              )
+            ).data,
         ),
       providesTags: ['Invitation'],
     }),
@@ -106,8 +116,12 @@ export const invitationApi = baseApi.injectEndpoints({
       queryFn: ({ bookingId, body }) =>
         toQueryResult(
           async () =>
-            (await apiClient.patch<OrganizerInvitation>(`/invitation/organizer/${bookingId}`, body))
-              .data,
+            (
+              await apiClient.patch<OrganizerInvitation>(
+                `/invitation/organizer/${bookingId}`,
+                body,
+              )
+            ).data,
         ),
       invalidatesTags: ['Invitation'],
     }),
@@ -115,8 +129,11 @@ export const invitationApi = baseApi.injectEndpoints({
       queryFn: (bookingId) =>
         toQueryResult(
           async () =>
-            (await apiClient.post<OrganizerInvitation>(`/invitation/organizer/${bookingId}/send`))
-              .data,
+            (
+              await apiClient.post<OrganizerInvitation>(
+                `/invitation/organizer/${bookingId}/send`,
+              )
+            ).data,
         ),
       invalidatesTags: ['Invitation', 'Notifications'],
     }),

@@ -152,7 +152,8 @@ const copyCaptionTooLong = (length: number) =>
 const copyTooManyCards = () =>
   `A story can have at most ${STORY_MAX_CARDS} cards.`;
 
-const COPY_MEMORY_FAILED = 'That could not be shared. Check the file and try again.';
+const COPY_MEMORY_FAILED =
+  'That could not be shared. Check the file and try again.';
 const COPY_MEMORY_NO_ROUTE =
   'This API version does not accept organizer uploads yet. The backend needs deploying (or restarting, if you are running it locally).';
 
@@ -701,7 +702,9 @@ export function useInvitation(bookingId: string): UseInvitationResult {
         /* The server's wording, shown as it arrives — duplicate, quality
            warning and waiting-for-approval are all its sentences. */
         setMemorySay(outcome.message);
-        setMemorySayWarn(outcome.status === 'duplicate' || outcome.status === 'flagged');
+        setMemorySayWarn(
+          outcome.status === 'duplicate' || outcome.status === 'flagged',
+        );
       } catch (error) {
         /*
          * The client rejects with its own normalised `{ status, message }`,
@@ -710,11 +713,12 @@ export function useInvitation(bookingId: string): UseInvitationResult {
          * means the route is not there at all, which on a local machine
          * almost always means the API has not been restarted.
          */
-        const { status, message } = (error ?? {}) as { status?: number; message?: string };
+        const { status, message } = (error ?? {}) as {
+          status?: number;
+          message?: string;
+        };
         setMemorySay(
-          status === 404
-            ? COPY_MEMORY_NO_ROUTE
-            : message || COPY_MEMORY_FAILED,
+          status === 404 ? COPY_MEMORY_NO_ROUTE : message || COPY_MEMORY_FAILED,
         );
         setMemorySayWarn(true);
       }
