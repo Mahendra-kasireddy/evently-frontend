@@ -1,7 +1,10 @@
 import type { AxiosRequestConfig } from 'axios';
 import { apiClient } from '@lib/api';
 import { baseApi, toQueryResult } from '@lib/rtk';
-import type { ServicesConfig, StoredFileMeta } from '@features/onboarding/organizer/types';
+import type {
+  ServicesConfig,
+  StoredFileMeta,
+} from '@features/onboarding/organizer/types';
 import type { OrganizerProfile, OrganizerPublicPreview } from './types';
 
 /** A partial section body — only the fields the organizer actually changed. */
@@ -13,37 +16,59 @@ async function fetchProfile(): Promise<OrganizerProfile> {
 }
 
 async function fetchPreview(): Promise<OrganizerPublicPreview> {
-  const { data } = await apiClient.get<OrganizerPublicPreview>('/organizer/profile/preview');
+  const { data } = await apiClient.get<OrganizerPublicPreview>(
+    '/organizer/profile/preview',
+  );
   return data;
 }
 
 async function fetchServicesConfig(): Promise<ServicesConfig> {
-  const { data } = await apiClient.get<ServicesConfig>('/organizer/services-config');
+  const { data } = await apiClient.get<ServicesConfig>(
+    '/organizer/services-config',
+  );
   return data;
 }
 
 /** PATCH the Step-1 (basic identity) fields. */
 async function patchBasics(body: SectionPatch): Promise<OrganizerProfile> {
-  const { data } = await apiClient.patch<OrganizerProfile>('/organizer/profile', body);
+  const { data } = await apiClient.patch<OrganizerProfile>(
+    '/organizer/profile',
+    body,
+  );
   return data;
 }
 
 /** PATCH a named section (`services`, `portfolio`, …). */
-async function patchSection(section: string, body: SectionPatch): Promise<OrganizerProfile> {
-  const { data } = await apiClient.patch<OrganizerProfile>(`/organizer/profile/${section}`, body);
+async function patchSection(
+  section: string,
+  body: SectionPatch,
+): Promise<OrganizerProfile> {
+  const { data } = await apiClient.patch<OrganizerProfile>(
+    `/organizer/profile/${section}`,
+    body,
+  );
   return data;
 }
 
 /** Uploads one file via the shared /upload endpoint; returns metadata only. */
-async function uploadFile(args: { file: File; purpose: string }): Promise<StoredFileMeta> {
+async function uploadFile(args: {
+  file: File;
+  purpose: string;
+}): Promise<StoredFileMeta> {
   const form = new FormData();
   form.append('file', args.file);
   form.append('purpose', args.purpose);
   // Clear the JSON default so the browser sets the multipart boundary. The cast
   // is needed because axios' header type disallows `undefined` under
   // exactOptionalPropertyTypes.
-  const config = { headers: { 'Content-Type': undefined } } as unknown as AxiosRequestConfig;
-  const { data } = await apiClient.post<StoredFileMeta>('/upload', form, config);
+  const config = {
+    headers: { 'Content-Type': undefined },
+  } as unknown as AxiosRequestConfig;
+  const { data } = await apiClient.post<StoredFileMeta>(
+    '/upload',
+    form,
+    config,
+  );
   return data;
 }
 
@@ -78,7 +103,10 @@ export const organizerProfileApi = baseApi.injectEndpoints({
       queryFn: (body) => toQueryResult(() => patchSection('portfolio', body)),
       invalidatesTags: ['OrganizerProfile', 'OrganizerPreview'],
     }),
-    uploadProfileAsset: build.mutation<StoredFileMeta, { file: File; purpose: string }>({
+    uploadProfileAsset: build.mutation<
+      StoredFileMeta,
+      { file: File; purpose: string }
+    >({
       queryFn: (args) => toQueryResult(() => uploadFile(args)),
     }),
   }),

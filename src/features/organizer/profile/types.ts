@@ -1,4 +1,8 @@
-import type { FileRef, Option, OrganizerProfile } from '@features/onboarding/organizer/types';
+import type {
+  FileRef,
+  Option,
+  OrganizerProfile,
+} from '@features/onboarding/organizer/types';
 
 export type { FileRef, Option, OrganizerProfile };
 

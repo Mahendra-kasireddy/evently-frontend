@@ -45,8 +45,14 @@ const schema = z.object({
     .string()
     .trim()
     .max(BUSINESS_NAME_MAX, `Keep this under ${BUSINESS_NAME_MAX} characters`),
-  tagline: z.string().trim().max(TAGLINE_MAX, `Keep the tagline under ${TAGLINE_MAX} characters`),
-  businessDescription: z.string().trim().max(BIO_MAX, `Keep the bio under ${BIO_MAX} characters`),
+  tagline: z
+    .string()
+    .trim()
+    .max(TAGLINE_MAX, `Keep the tagline under ${TAGLINE_MAX} characters`),
+  businessDescription: z
+    .string()
+    .trim()
+    .max(BIO_MAX, `Keep the bio under ${BIO_MAX} characters`),
   secondaryCategories: z.array(z.string()),
 });
 
@@ -66,7 +72,10 @@ export interface UseOrganizerProfileResult {
   saveState: SaveState;
   saveError: string | null;
   uploading: UploadSlot | null;
-  setField: <K extends keyof ProfileEditForm>(key: K, value: ProfileEditForm[K]) => void;
+  setField: <K extends keyof ProfileEditForm>(
+    key: K,
+    value: ProfileEditForm[K],
+  ) => void;
   toggleCategory: (key: string) => void;
   uploadPhoto: (file: File) => void;
   removePhoto: () => void;
@@ -82,7 +91,8 @@ export function useOrganizerProfile(): UseOrganizerProfileResult {
     isError: profileError,
     refetch: refetchProfile,
   } = useGetMyOrganizerProfileQuery();
-  const { data: preview, refetch: refetchPreview } = useGetMyOrganizerPreviewQuery();
+  const { data: preview, refetch: refetchPreview } =
+    useGetMyOrganizerPreviewQuery();
   const { data: servicesConfig, isLoading: categoriesLoading } =
     useGetOrganizerServicesConfigQuery();
 
@@ -168,10 +178,15 @@ export function useOrganizerProfile(): UseOrganizerProfileResult {
       setSaveError(null);
       void (async () => {
         try {
-          const meta = await upload({ file, purpose: PURPOSE_PROFILE_IMAGE }).unwrap();
+          const meta = await upload({
+            file,
+            purpose: PURPOSE_PROFILE_IMAGE,
+          }).unwrap();
           await saveBasics({ profilePhoto: meta }).unwrap();
         } catch {
-          setSaveError('We could not upload that photo. Please try a different image.');
+          setSaveError(
+            'We could not upload that photo. Please try a different image.',
+          );
         } finally {
           setUploading(null);
         }
@@ -204,10 +219,15 @@ export function useOrganizerProfile(): UseOrganizerProfileResult {
       setSaveError(null);
       void (async () => {
         try {
-          const meta = await upload({ file, purpose: PURPOSE_GALLERY }).unwrap();
+          const meta = await upload({
+            file,
+            purpose: PURPOSE_GALLERY,
+          }).unwrap();
           await savePortfolio({ gallery: [...gallery, meta] }).unwrap();
         } catch {
-          setSaveError('We could not add that image. Please try a different file.');
+          setSaveError(
+            'We could not add that image. Please try a different file.',
+          );
         } finally {
           setUploading(null);
         }
@@ -221,7 +241,9 @@ export function useOrganizerProfile(): UseOrganizerProfileResult {
       setSaveError(null);
       void (async () => {
         try {
-          await savePortfolio({ gallery: gallery.filter((_, i) => i !== index) }).unwrap();
+          await savePortfolio({
+            gallery: gallery.filter((_, i) => i !== index),
+          }).unwrap();
         } catch {
           setSaveError('We could not remove that image. Please try again.');
         }
@@ -256,20 +278,31 @@ export function useOrganizerProfile(): UseOrganizerProfileResult {
       try {
         // Only changed sections are sent, so one edit never rewrites unrelated
         // parts of the profile.
-        if (values.businessName !== b.businessName || values.displayName !== b.displayName) {
+        if (
+          values.businessName !== b.businessName ||
+          values.displayName !== b.displayName
+        ) {
           await saveBasics({
             businessName: values.businessName,
             displayName: values.displayName,
           }).unwrap();
         }
-        if (values.tagline !== b.tagline || values.businessDescription !== b.businessDescription) {
+        if (
+          values.tagline !== b.tagline ||
+          values.businessDescription !== b.businessDescription
+        ) {
           await savePortfolio({
             tagline: values.tagline,
             businessDescription: values.businessDescription,
           }).unwrap();
         }
-        if (values.secondaryCategories.join('|') !== b.secondaryCategories.join('|')) {
-          await saveServices({ secondaryCategories: values.secondaryCategories }).unwrap();
+        if (
+          values.secondaryCategories.join('|') !==
+          b.secondaryCategories.join('|')
+        ) {
+          await saveServices({
+            secondaryCategories: values.secondaryCategories,
+          }).unwrap();
         }
         setBaseline(values);
         setForm(values);
@@ -277,7 +310,9 @@ export function useOrganizerProfile(): UseOrganizerProfileResult {
       } catch (error) {
         const message = (error as { message?: string })?.message;
         setSaveState('error');
-        setSaveError(message || 'We could not save your profile. Please try again.');
+        setSaveError(
+          message || 'We could not save your profile. Please try again.',
+        );
       }
     })();
   }, [form, baseline, saveBasics, savePortfolio, saveServices]);
