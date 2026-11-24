@@ -32,6 +32,7 @@ import {
   type BottomTabItem,
 } from '@shared/components';
 import { useAuth } from './auth';
+import { hasNativeBack, isEmbedded } from '@lib/native/bridge';
 import styles from './OrganizerLayout.module.css';
 
 /** One screen inside a section — a tab under the top bar. */
@@ -294,6 +295,10 @@ export function OrganizerLayout() {
   const navigate = useNavigate();
   const { section: activeSection, tab: activeTab } = locate(pathname);
   const backTo = backFor(pathname);
+  // Inside the mobile app's native shell, which draws its own header and tab
+  // bar: keep the page and its section tabs, drop the web's app bar and bar.
+  const embedded = isEmbedded();
+  const nativeBack = hasNativeBack();
   const { user: sessionUser, signOut } = useAuth();
   const { data: unread = 0 } = useGetUnreadCountQuery();
   const { data: notifications = [] } = useGetMyNotificationsQuery();
@@ -396,166 +401,172 @@ export function OrganizerLayout() {
   const tabs = activeSection?.tabs ?? [];
 
   return (
-    <div className={`${styles.shell} ${backTo ? styles.shellDrill : ''}`}>
-      <header className={styles.topWrap}>
-        <div className={styles.topbar}>
-          <Link
-            to="/organizer/home"
-            className={styles.logo}
-            aria-label="Evently organizer home"
-          >
-            <span className={styles.logoMark} aria-hidden>
-              e
-            </span>
-            <span className={styles.logoWord}>EVENTLY</span>
-            <span className={styles.logoTag}>Partner</span>
-          </Link>
-
-          <nav className={styles.nav} aria-label="Organizer">
-            {TOP_SECTIONS.map((section) => {
-              const active = section.id === activeSection?.id;
-              const to = section.tabs[0]?.to ?? '/organizer/home';
-              return (
-                <Link
-                  key={section.id}
-                  to={to}
-                  aria-current={active ? 'page' : undefined}
-                  className={`${styles.navItem} ${active ? styles.navActive : ''}`}
-                  onMouseEnter={() =>
-                    section.tabs.forEach((t) => prefetchRoute(t.to))
-                  }
-                  onFocus={() => prefetchRoute(to)}
-                  onTouchStart={() => prefetchRoute(to)}
-                >
-                  {section.label}
-                </Link>
-              );
-            })}
-          </nav>
-
-          <div className={styles.topbarRight}>
-            <form
-              className={styles.search}
-              onSubmit={submitSearch}
-              role="search"
+    <div
+      className={`${styles.shell} ${backTo ? styles.shellDrill : ''} ${embedded ? styles.shellEmbedded : ''}`}
+    >
+      {!embedded && (
+        <header className={styles.topWrap}>
+          <div className={styles.topbar}>
+            <Link
+              to="/organizer/home"
+              className={styles.logo}
+              aria-label="Evently organizer home"
             >
-              <Search size={15} aria-hidden />
-              <input
-                type="search"
-                aria-label="Search enquiries"
-                placeholder="Search enquiries"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </form>
-
-            <div className={styles.popAnchor} ref={bellRef}>
-              <button
-                type="button"
-                className={styles.iconBtn}
-                aria-label={
-                  unread > 0
-                    ? `Notifications, ${unread} unread`
-                    : 'Notifications'
-                }
-                aria-expanded={bellOpen}
-                onClick={() => setBellOpen((v) => !v)}
-              >
-                <Bell size={19} />
-                {unread > 0 && (
-                  <span className={styles.dot}>
-                    {unread > 9 ? '9+' : unread}
-                  </span>
-                )}
-              </button>
-              {bellOpen && (
-                <div className={styles.notifPanel} role="menu">
-                  <div className={styles.notifHead}>
-                    <span>Notifications</span>
-                    {unread > 0 && (
-                      <button
-                        type="button"
-                        className={styles.markRead}
-                        onClick={() => void markAllRead()}
-                      >
-                        Mark all read
-                      </button>
-                    )}
-                  </div>
-                  {notifications.length === 0 ? (
-                    <p className={styles.notifEmpty}>
-                      You&rsquo;re all caught up.
-                    </p>
-                  ) : (
-                    <div className={styles.notifList}>
-                      {notifications.slice(0, 8).map(renderNotifRow)}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <Link to="/organizer/quote-builder" className={styles.cta}>
-              Build quote
+              <span className={styles.logoMark} aria-hidden>
+                e
+              </span>
+              <span className={styles.logoWord}>EVENTLY</span>
+              <span className={styles.logoTag}>Partner</span>
             </Link>
 
-            <div className={styles.popAnchor} ref={menuRef}>
-              <button
-                type="button"
-                className={styles.avatarBtn}
-                aria-label={`${businessName}, account menu`}
-                aria-haspopup="menu"
-                aria-expanded={menuOpen}
-                onClick={() => setMenuOpen((v) => !v)}
+            <nav className={styles.nav} aria-label="Organizer">
+              {TOP_SECTIONS.map((section) => {
+                const active = section.id === activeSection?.id;
+                const to = section.tabs[0]?.to ?? '/organizer/home';
+                return (
+                  <Link
+                    key={section.id}
+                    to={to}
+                    aria-current={active ? 'page' : undefined}
+                    className={`${styles.navItem} ${active ? styles.navActive : ''}`}
+                    onMouseEnter={() =>
+                      section.tabs.forEach((t) => prefetchRoute(t.to))
+                    }
+                    onFocus={() => prefetchRoute(to)}
+                    onTouchStart={() => prefetchRoute(to)}
+                  >
+                    {section.label}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className={styles.topbarRight}>
+              <form
+                className={styles.search}
+                onSubmit={submitSearch}
+                role="search"
               >
-                <span className={styles.avatar}>{initials}</span>
-              </button>
-              {menuOpen && (
-                <div className={styles.menu} role="menu">
-                  <div className={styles.menuHead}>
-                    <span className={styles.avatarLg}>{initials}</span>
-                    <span className={styles.userInfo}>
-                      <span className={styles.userName}>{businessName}</span>
-                      <span className={styles.userTier}>{tier} organizer</span>
+                <Search size={15} aria-hidden />
+                <input
+                  type="search"
+                  aria-label="Search enquiries"
+                  placeholder="Search enquiries"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </form>
+
+              <div className={styles.popAnchor} ref={bellRef}>
+                <button
+                  type="button"
+                  className={styles.iconBtn}
+                  aria-label={
+                    unread > 0
+                      ? `Notifications, ${unread} unread`
+                      : 'Notifications'
+                  }
+                  aria-expanded={bellOpen}
+                  onClick={() => setBellOpen((v) => !v)}
+                >
+                  <Bell size={19} />
+                  {unread > 0 && (
+                    <span className={styles.dot}>
+                      {unread > 9 ? '9+' : unread}
                     </span>
+                  )}
+                </button>
+                {bellOpen && (
+                  <div className={styles.notifPanel} role="menu">
+                    <div className={styles.notifHead}>
+                      <span>Notifications</span>
+                      {unread > 0 && (
+                        <button
+                          type="button"
+                          className={styles.markRead}
+                          onClick={() => void markAllRead()}
+                        >
+                          Mark all read
+                        </button>
+                      )}
+                    </div>
+                    {notifications.length === 0 ? (
+                      <p className={styles.notifEmpty}>
+                        You&rsquo;re all caught up.
+                      </p>
+                    ) : (
+                      <div className={styles.notifList}>
+                        {notifications.slice(0, 8).map(renderNotifRow)}
+                      </div>
+                    )}
                   </div>
-                  <Link
-                    to="/organizer/profile"
-                    className={styles.menuItem}
-                    role="menuitem"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <User size={16} /> Profile
-                  </Link>
-                  <Link
-                    to="/organizer/badges"
-                    className={styles.menuItem}
-                    role="menuitem"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <Sprout size={16} /> Badges &amp; Academy
-                  </Link>
-                  <button
-                    type="button"
-                    className={styles.menuItem}
-                    role="menuitem"
-                    onClick={handleSignOut}
-                  >
-                    <LogOut size={16} /> Log out
-                  </button>
-                </div>
-              )}
+                )}
+              </div>
+
+              <Link to="/organizer/quote-builder" className={styles.cta}>
+                Build quote
+              </Link>
+
+              <div className={styles.popAnchor} ref={menuRef}>
+                <button
+                  type="button"
+                  className={styles.avatarBtn}
+                  aria-label={`${businessName}, account menu`}
+                  aria-haspopup="menu"
+                  aria-expanded={menuOpen}
+                  onClick={() => setMenuOpen((v) => !v)}
+                >
+                  <span className={styles.avatar}>{initials}</span>
+                </button>
+                {menuOpen && (
+                  <div className={styles.menu} role="menu">
+                    <div className={styles.menuHead}>
+                      <span className={styles.avatarLg}>{initials}</span>
+                      <span className={styles.userInfo}>
+                        <span className={styles.userName}>{businessName}</span>
+                        <span className={styles.userTier}>
+                          {tier} organizer
+                        </span>
+                      </span>
+                    </div>
+                    <Link
+                      to="/organizer/profile"
+                      className={styles.menuItem}
+                      role="menuitem"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <User size={16} /> Profile
+                    </Link>
+                    <Link
+                      to="/organizer/badges"
+                      className={styles.menuItem}
+                      role="menuitem"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <Sprout size={16} /> Badges &amp; Academy
+                    </Link>
+                    <button
+                      type="button"
+                      className={styles.menuItem}
+                      role="menuitem"
+                      onClick={handleSignOut}
+                    >
+                      <LogOut size={16} /> Log out
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       {/*
         A drill-in (one event's workspace, its ideas board, its invitation, one
         quote) is a screen of its own: a back arrow and its name. On a phone
         this bar replaces the app bar entirely, as a native app's would.
       */}
-      {backTo ? (
+      {backTo && nativeBack ? null : backTo ? (
         <div className={styles.drillBar}>
           <div className={styles.drillInner}>
             <Link to={backTo} className={styles.back} aria-label="Back">
@@ -570,7 +581,8 @@ export function OrganizerLayout() {
         <h1 className={styles.srOnly}>{titleFor(pathname)}</h1>
       )}
 
-      {!backTo && tabs.length > 1 && (
+      {/* Not under a native header: that screen is one page, named by it. */}
+      {!backTo && !nativeBack && tabs.length > 1 && (
         /* Sticky under the app bar, so the section's tabs stay in reach while
            its list scrolls. */
         <div className={`${styles.pageHead} ${styles.pageHeadSticky}`}>
@@ -613,12 +625,14 @@ export function OrganizerLayout() {
       <main className={styles.content}>
         <Outlet />
         {/* The room the phone's bar takes, given back. */}
-        {!backTo && <BottomTabsSpacer />}
+        {!backTo && !embedded && <BottomTabsSpacer />}
       </main>
 
       {/* A drill-in (one quote, one event) is a full screen with its own back
           arrow and actions, as in a native app — the tab bar steps aside. */}
-      {!backTo && <BottomTabs items={bottomTabs} ariaLabel="Organizer" />}
+      {!backTo && !embedded && (
+        <BottomTabs items={bottomTabs} ariaLabel="Organizer" />
+      )}
     </div>
   );
 }

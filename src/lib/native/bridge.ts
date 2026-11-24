@@ -27,17 +27,35 @@ export type AppMessage =
 
 interface NativeWindow {
   ReactNativeWebView?: { postMessage: (message: string) => void };
-  __EVENTLY_APP__?: { platform?: string };
+  __EVENTLY_APP__?: { platform?: string; embedded?: 'tab' | 'page' | boolean };
 }
 
 function nativeWindow(): NativeWindow | null {
-  return typeof window === 'undefined' ? null : (window as unknown as NativeWindow);
+  return typeof window === 'undefined'
+    ? null
+    : (window as unknown as NativeWindow);
 }
 
 /** True when this page is running inside the Evently mobile app. */
 export function isInApp(): boolean {
   const w = nativeWindow();
   return Boolean(w?.__EVENTLY_APP__ && w.ReactNativeWebView);
+}
+
+/**
+ * True when the app shows this page inside its own native screen — its own
+ * header and tab bar — so the page should drop its app bar and bottom tabs.
+ */
+export function isEmbedded(): boolean {
+  return isInApp() && Boolean(nativeWindow()?.__EVENTLY_APP__?.embedded);
+}
+
+/**
+ * True when the native screen around the page has its own back arrow, so the
+ * page's back-arrow bar would be a second one.
+ */
+export function hasNativeBack(): boolean {
+  return isInApp() && nativeWindow()?.__EVENTLY_APP__?.embedded === 'page';
 }
 
 /** Sends a message to the mobile app. Returns false (and does nothing) in a browser. */

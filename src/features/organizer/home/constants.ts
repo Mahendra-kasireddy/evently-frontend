@@ -18,8 +18,7 @@ export const HOME_COPY = {
 /** The go-live checklist card (sections/GoLiveCard) shown until verification. */
 export const GO_LIVE_COPY = {
   setupTitle: 'Finish setting up to go live',
-  setupBody:
-    'Your dashboard is ready. Complete these steps and submit for verification — once verified, customers can find you and send enquiries.',
+  setupBody: 'Complete your profile and get verified so customers can find you.',
   changesTitle: 'A few changes needed',
   changesBody: 'Our team asked for some changes. Update your profile and submit it again.',
   submittedTitle: 'Verification in progress',
@@ -28,15 +27,8 @@ export const GO_LIVE_COPY = {
   rejectedTitle: 'Registration not approved',
   rejectedBody: 'Your organizer registration was not approved. Contact Evently support if you think this is a mistake.',
   progress: (done: number, total: number) => `${done} of ${total} done`,
-  missing: (fields: string[]) =>
-    fields.length > 2 ? `${fields.slice(0, 2).join(', ')} and ${fields.length - 2} more` : fields.join(', '),
-  fill: 'Complete',
-  bankNote: 'Optional for now — needed before your first payout',
-  start: 'Start setup',
-  continue: 'Continue setup',
-  submit: 'Submit for verification',
-  submitting: 'Submitting…',
-  verifyNote: 'Verification takes 24–48 hrs.',
+  nextStep: (title: string) => `Next: ${title}`,
+  readyToSubmit: 'Ready — submit for verification',
   payoutBody: 'Add your bank details so your first payout isn’t held up.',
   payoutCta: 'Add bank details',
 };

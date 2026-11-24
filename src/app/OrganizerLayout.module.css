@@ -806,3 +806,8 @@
     padding-bottom: 8px;
   }
 }
+
+/* Inside the mobile app's native shell: no web app bar above the tabs. */
+.shellEmbedded .pageHeadSticky {
+  top: 0;
+}
